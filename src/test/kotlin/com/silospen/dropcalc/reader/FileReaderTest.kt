@@ -9,8 +9,8 @@ class FileReaderTest {
     fun testReadTsv() {
         val tempFile = File.createTempFile("fileReaderTest", null)
         tempFile.deleteOnExit()
-        tempFile.writeText("header1\theader2\nval1\tval2\nval3\tval4")
-        val actual = readTsv(tempFile) { Pair(it[1], it[0]) }
+        tempFile.writeText("header1\theader2\nval1\tval2\nval3\tval4\nignore\tignore")
+        val actual = readTsv(tempFile) { if (it.contains("ignore")) null else Pair(it[1], it[0]) }
         val expected = listOf(Pair("val2", "val1"), Pair("val4", "val3"))
         assertEquals(expected, actual)
     }
