@@ -20,18 +20,11 @@ data class Outcome(
 
 sealed interface OutcomeType
 
-interface Monster {
-    val id: String
-    val minionIds: Set<String>
-//    val
-}
+data class MonsterConfig(
+    val id: String,
+    val minionIds: Set<String> = emptySet(),
+    val hasQuestTreasureClass: Boolean = false,
+    val isBoss: Boolean = false
+)
 
-data class BossMonster(
-    override val id: String,
-    override val minionIds: Set<String> = emptySet(),
-    val hasQuestTreasureClass: Boolean = false
-) : Monster
-
-data class RegularMonster(override val id: String, override val minionIds: Set<String> = emptySet()) : Monster
-
-data class SuperUniqueMonster(val id: String, val monsterClass: String, val hasMinions: Boolean)
+data class SuperUniqueMonsterConfig(val id: String, val monsterClass: String, val hasMinions: Boolean)
