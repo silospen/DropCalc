@@ -37,4 +37,13 @@ private fun parseNonBoss(line: List<String>): RegularMonster {
     return RegularMonster(id, parseMinions(line))
 }
 
+fun superUniqueLineParser(line: List<String>): SuperUniqueMonster? {
+    val id = line[0]
+    val name = line[1]
+    val monsterClass = line[2]
+    if (name.isBlank() || monsterClass.isBlank()) return null
+    return SuperUniqueMonster(id, monsterClass)
+}
+
+
 private fun parseNumericBoolean(s: String) = s == "1"

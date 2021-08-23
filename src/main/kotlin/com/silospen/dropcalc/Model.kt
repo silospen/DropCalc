@@ -33,3 +33,5 @@ data class BossMonster(
 ) : Monster
 
 data class RegularMonster(override val id: String, override val minionIds: Set<String> = emptySet()) : Monster
+
+data class SuperUniqueMonster(val id: String, val monsterClass: String)

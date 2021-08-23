@@ -1,0 +1,3 @@
+Superunique	Name	Class	hcIdx	MonSound	Mod1	Mod2	Mod3	MinGrp	MaxGrp	EClass	AutoPos	Stacks	Replaceable	Utrans	Utrans(N)	Utrans(H)	TC	TC(N)	TC(H)	*eol
+The Feature Creep	The Feature Creep	hephasto	41	smithdemon	27	30	0	0	0	0	1	0		20	20	20	Haphesto	Haphesto (N)	Haphesto (H)	0
+Expansion																				0
