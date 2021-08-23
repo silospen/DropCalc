@@ -27,17 +27,5 @@ interface Monster {
 
 data class BossMonster(override val id: String, val hasQuestTreasureClass: Boolean = false) : Monster
 data class RegularMonster(override val id: String) : Monster
-//data class ChampionMonster(override val id: String) : Monster
-//data class UniqueMonster(override val id: String) : Monster
-data class MinionMonster(val minion: Monster, val owner: Monster) : Monster {
-    override val id: String
-        get() = minion.id
-}
-
-
-class MonsterLibrary(monsters: Set<Monster>) {
-
-    private val monstersById: Map<String, Monster> = monsters.associateBy { it.id }
-
-    fun lookupMonster(id: String) = monstersById.getValue(id)
-}
+data class ChampionMonster(override val id: String) : Monster
+data class UniqueMonster(override val id: String) : Monster
