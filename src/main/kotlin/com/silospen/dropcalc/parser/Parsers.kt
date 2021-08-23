@@ -41,9 +41,9 @@ fun superUniqueLineParser(line: List<String>): SuperUniqueMonster? {
     val id = line[0]
     val name = line[1]
     val monsterClass = line[2]
+    val hasMinions = line[9].toIntOrNull()?.let { it > 0 } ?: false
     if (name.isBlank() || monsterClass.isBlank()) return null
-    return SuperUniqueMonster(id, monsterClass)
+    return SuperUniqueMonster(id, monsterClass, hasMinions)
 }
-
 
 private fun parseNumericBoolean(s: String) = s == "1"

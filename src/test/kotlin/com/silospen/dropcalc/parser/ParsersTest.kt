@@ -4,7 +4,6 @@ import com.silospen.dropcalc.BossMonster
 import com.silospen.dropcalc.RegularMonster
 import com.silospen.dropcalc.SuperUniqueMonster
 import com.silospen.dropcalc.reader.readTsv
-import net.bytebuddy.implementation.bind.annotation.Super
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -36,7 +35,8 @@ class ParsersTest {
             ::superUniqueLineParser
         ).toSet()
         val expected = setOf(
-            SuperUniqueMonster("The Feature Creep", "hephasto")
+            SuperUniqueMonster("The Feature Creep", "hephasto", false),
+            SuperUniqueMonster("Corpsefire", "zombie1", true)
         )
         assertEquals(expected, actual)
     }
