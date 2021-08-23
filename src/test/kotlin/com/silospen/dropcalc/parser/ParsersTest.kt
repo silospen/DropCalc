@@ -17,12 +17,9 @@ class ParsersTest {
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\monstats.txt"),
             getResource("monstats.txt"),
             ::monstatsLineParser
-        ).flatten().toSet()
+        ).toSet()
         val expected = setOf(
             RegularMonster("skeleton1"),
-            ChampionMonster("skeleton1"),
-            UniqueMonster("skeleton1"),
-            BossMonster("duriel"),
             BossMonster("duriel", true),
             BossMonster("putriddefiler2")
         )

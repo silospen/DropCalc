@@ -2,7 +2,7 @@ package com.silospen.dropcalc.parser
 
 import com.silospen.dropcalc.*
 
-fun monstatsLineParser(line: List<String>): Set<Monster>? {
+fun monstatsLineParser(line: List<String>): Monster? {
     val isEnabled: Boolean = parseNumericBoolean(line[12])
     val isKillable: Boolean = parseNumericBoolean(line[89])
     val treasureClass1: String = line[236]
@@ -20,17 +20,15 @@ fun monstatsLineParser(line: List<String>): Set<Monster>? {
     }
 }
 
-private fun parseBoss(line: List<String>): Set<Monster> {
+private fun parseBoss(line: List<String>): BossMonster {
     val id = line[0]
-    val result = mutableSetOf(BossMonster(id))
     val hasQuestTreasureClass = line[239].isNotBlank()
-    if (hasQuestTreasureClass) result.add(BossMonster(id, hasQuestTreasureClass))
-    return result
+    return BossMonster(id, hasQuestTreasureClass)
 }
 
-private fun parseNonBoss(line: List<String>): Set<Monster> {
+private fun parseNonBoss(line: List<String>): RegularMonster {
     val id = line[0]
-    return mutableSetOf(RegularMonster(id), ChampionMonster(id), UniqueMonster(id))
+    return RegularMonster(id)
 }
 
 private fun parseNumericBoolean(s: String) = s == "1"
