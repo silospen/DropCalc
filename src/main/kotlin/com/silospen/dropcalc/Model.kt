@@ -1,17 +1,27 @@
 package com.silospen.dropcalc
 
-data class TreasureClass(
+import com.silospen.dropcalc.MonsterConfigType.REGULAR
+
+data class TreasureClassConfig(
     val name: String,
-    val group: Int,
-    val level: Int,
-    val picks: Int,
-    val unique: Int,
-    val set: Int,
-    val rare: Int,
-    val magic: Int,
-    val noDrop: Int,
-    val outcomes: Set<Outcome>
+    val properties: TreasureClassProperties,
+    val items: Set<Pair<String, Int>>
 ) : OutcomeType
+
+data class ItemClass(
+    val name: String
+)
+
+data class TreasureClassProperties(
+    val group: Int? = null,
+    val level: Int? = null,
+    val picks: Int,
+    val unique: Int? = null,
+    val set: Int? = null,
+    val rare: Int? = null,
+    val magic: Int? = null,
+    val noDrop: Int? = null
+)
 
 data class Outcome(
     val outcomeType: OutcomeType,
@@ -20,11 +30,40 @@ data class Outcome(
 
 sealed interface OutcomeType
 
-data class MonsterConfig(
+data class MonsterClass(
     val id: String,
     val minionIds: Set<String> = emptySet(),
     val hasQuestTreasureClass: Boolean = false,
-    val isBoss: Boolean = false
+    val monsterConfigType: MonsterConfigType = REGULAR
 )
 
-data class SuperUniqueMonsterConfig(val id: String, val monsterClass: String, val hasMinions: Boolean)
+data class SuperUniqueMonsterConfig(val id: String, val monsterClassId: String, val hasMinions: Boolean)
+
+data class Monster(
+    val id: String,
+    val name: String,
+    val monsterClass: String,
+    val difficulty: Difficulty,
+    val type: MonsterType
+)
+
+enum class Difficulty {
+    NORMAL,
+    NIGHTMARE,
+    HELL
+}
+
+enum class MonsterConfigType {
+    REGULAR,
+    SUPERUNIQUE,
+    BOSS
+}
+
+enum class MonsterType {
+    REGULAR,
+    CHAMPION,
+    UNIQUE,
+    SUPERUNIQUE,
+    BOSS,
+    MINION
+}

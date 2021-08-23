@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class DropCalcApplicationTest {
 
-    @Test
+//    @Test
     fun contextLoads() {
         println("foo")
     }

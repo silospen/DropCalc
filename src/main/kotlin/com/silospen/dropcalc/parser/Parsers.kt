@@ -1,8 +1,10 @@
 package com.silospen.dropcalc.parser
 
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.MonsterConfigType.BOSS
+import com.silospen.dropcalc.MonsterConfigType.REGULAR
 
-fun monstatsLineParser(line: List<String>): MonsterConfig? {
+fun monstatsLineParser(line: List<String>): MonsterClass? {
     val isEnabled: Boolean = parseNumericBoolean(line[12])
     val isKillable: Boolean = parseNumericBoolean(line[89])
     val treasureClass1: String = line[236]
@@ -14,11 +16,11 @@ fun monstatsLineParser(line: List<String>): MonsterConfig? {
     val id = line[0]
     val isBoss: Boolean = parseNumericBoolean(line[87])
     val hasQuestTreasureClass = line[239].isNotBlank()
-    return MonsterConfig(
+    return MonsterClass(
         id = id,
         minionIds = parseMinions(line),
         hasQuestTreasureClass = hasQuestTreasureClass,
-        isBoss = isBoss
+        monsterConfigType = if (isBoss) BOSS else REGULAR
     )
 }
 
@@ -36,5 +38,48 @@ fun superUniqueLineParser(line: List<String>): SuperUniqueMonsterConfig? {
     if (name.isBlank() || monsterClass.isBlank()) return null
     return SuperUniqueMonsterConfig(id, monsterClass, hasMinions)
 }
+
+fun treasureClassesParser(line: List<String>): TreasureClassConfig? {
+    val name = line[0]
+    if (name.isBlank()) return null
+    val group = line[1].toIntOrNull()
+    val level = line[2].toIntOrNull()
+    val picks = line[3].toInt()
+    val unique = line[4].toIntOrNull()
+    val set = line[5].toIntOrNull()
+    val rare = line[6].toIntOrNull()
+    val magic = line[7].toIntOrNull()
+    val noDrop = line[8].toIntOrNull()
+
+    val outcomes = parseOutcomes(line)
+
+    return TreasureClassConfig(
+        name,
+        TreasureClassProperties(
+            group,
+            level,
+            picks,
+            unique,
+            set,
+            rare,
+            magic,
+            noDrop,
+        ), outcomes
+    )
+}
+
+fun parseOutcomes(line: List<String>): Set<Pair<String, Int>> =
+    generateSequence(9) { it + 2 }
+        .take(10)
+        .mapNotNull {
+            val item = line[it]
+            val prob = line[it + 1]
+            if (item.isBlank()) {
+                null
+            } else {
+                item to prob.toInt()
+            }
+        }
+        .toSet()
 
 private fun parseNumericBoolean(s: String) = s == "1"
