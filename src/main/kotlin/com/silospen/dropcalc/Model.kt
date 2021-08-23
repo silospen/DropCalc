@@ -22,10 +22,14 @@ sealed interface OutcomeType
 
 interface Monster {
     val id: String
+    val minionIds: Set<String>
 //    val
 }
 
-data class BossMonster(override val id: String, val hasQuestTreasureClass: Boolean = false) : Monster
-data class RegularMonster(override val id: String) : Monster
-data class ChampionMonster(override val id: String) : Monster
-data class UniqueMonster(override val id: String) : Monster
+data class BossMonster(
+    override val id: String,
+    override val minionIds: Set<String> = emptySet(),
+    val hasQuestTreasureClass: Boolean = false
+) : Monster
+
+data class RegularMonster(override val id: String, override val minionIds: Set<String> = emptySet()) : Monster

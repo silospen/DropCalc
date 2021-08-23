@@ -1,9 +1,7 @@
 package com.silospen.dropcalc.parser
 
 import com.silospen.dropcalc.BossMonster
-import com.silospen.dropcalc.ChampionMonster
 import com.silospen.dropcalc.RegularMonster
-import com.silospen.dropcalc.UniqueMonster
 import com.silospen.dropcalc.reader.readTsv
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -20,8 +18,10 @@ class ParsersTest {
         ).toSet()
         val expected = setOf(
             RegularMonster("skeleton1"),
-            BossMonster("duriel", true),
-            BossMonster("putriddefiler2")
+            BossMonster("duriel", hasQuestTreasureClass = true),
+            BossMonster("putriddefiler2"),
+            RegularMonster("fetishshaman2", setOf("fetish2", "fetishblow2")),
+            BossMonster("radament", setOf("skeleton4"))
         )
         assertEquals(expected, actual)
     }

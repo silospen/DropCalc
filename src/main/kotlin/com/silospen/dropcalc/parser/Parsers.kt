@@ -20,15 +20,21 @@ fun monstatsLineParser(line: List<String>): Monster? {
     }
 }
 
+private fun parseMinions(line: List<String>): Set<String> {
+    val minion1Id: String = line[19]
+    val minion2Id: String = line[20]
+    return sequenceOf(minion1Id, minion2Id).filter { it.isNotBlank() }.toSet()
+}
+
 private fun parseBoss(line: List<String>): BossMonster {
     val id = line[0]
     val hasQuestTreasureClass = line[239].isNotBlank()
-    return BossMonster(id, hasQuestTreasureClass)
+    return BossMonster(id, parseMinions(line), hasQuestTreasureClass)
 }
 
 private fun parseNonBoss(line: List<String>): RegularMonster {
     val id = line[0]
-    return RegularMonster(id)
+    return RegularMonster(id, parseMinions(line))
 }
 
 private fun parseNumericBoolean(s: String) = s == "1"
