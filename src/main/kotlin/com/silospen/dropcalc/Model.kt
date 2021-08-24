@@ -6,11 +6,19 @@ data class TreasureClassConfig(
     val name: String,
     val properties: TreasureClassProperties,
     val items: Set<Pair<String, Int>>
+)
+
+data class TreasureClass(
+    override val name: String,
+    val probabilityDenominator: Int,
+    val properties: TreasureClassProperties,
+    val outcomes: Set<Outcome>
 ) : OutcomeType
 
 data class ItemClass(
-    val name: String
-)
+    override val name: String
+//    override val probabilitySum: Int
+) : OutcomeType
 
 data class TreasureClassProperties(
     val group: Int? = null,
@@ -28,7 +36,10 @@ data class Outcome(
     val probability: Int
 )
 
-sealed interface OutcomeType
+sealed interface OutcomeType {
+    val name: String
+//    val probabilitySum: Int
+}
 
 data class MonsterClass(
     val id: String,

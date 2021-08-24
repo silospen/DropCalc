@@ -13,7 +13,7 @@ class ParsersTest {
     fun monstatsParser() {
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\monstats.txt"),
-            getResource("monstats.txt"),
+            getResource("parsersTestData/monstats.txt"),
             ::monstatsLineParser
         ).toSet()
         val expected = setOf(
@@ -30,7 +30,7 @@ class ParsersTest {
     fun superUniquesParser() {
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SuperUniques.txt"),
-            getResource("superuniques.txt"),
+            getResource("parsersTestData/superuniques.txt"),
             ::superUniqueLineParser
         ).toSet()
         val expected = setOf(
@@ -44,7 +44,7 @@ class ParsersTest {
     fun treasureClassesParser() {
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\TreasureClassEx.txt"),
-            getResource("treasureclass.txt"),
+            getResource("parsersTestData/treasureclass.txt"),
             ::treasureClassesParser
         ).toSet()
         val expected = setOf(
@@ -84,6 +84,6 @@ class ParsersTest {
             expected, actual
         )
     }
-
-    private fun getResource(name: String) = File(object {}.javaClass.getResource("/$name")!!.toURI())
 }
+
+fun getResource(name: String) = File(object {}.javaClass.getResource("/$name")!!.toURI())
