@@ -2,6 +2,8 @@ package com.silospen.dropcalc
 
 import org.apache.commons.math3.fraction.Fraction
 import java.lang.RuntimeException
+import kotlin.math.floor
+import kotlin.math.pow
 
 class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
 
@@ -34,10 +36,10 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         }
     }
 
-    fun getLeafOutcomes(treasureClassName: String): Map<ItemClass, Fraction> {
+    fun getLeafOutcomes(treasureClassName: String, nPlayers: Int = 1, partySize: Int = 1): Map<ItemClass, Fraction> {
         val treasureClass = treasureClassesByName.getValue(treasureClassName)
         val result = mutableMapOf<ItemClass, Fraction>()
-        calculatePathSum(Outcome(treasureClass, 1), Fraction(1), 1, result)
+        calculatePathSum(Outcome(treasureClass, 1), Fraction(1), 1, result, nPlayers, partySize)
         return result
     }
 
@@ -45,21 +47,28 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         outcome: Outcome,
         pathProbabilityAccumulator: Fraction,
         tcProbabilityDenominator: Int,
-        leafAccumulator: MutableMap<ItemClass, Fraction>
+        leafAccumulator: MutableMap<ItemClass, Fraction>,
+        nPlayers: Int,
+        partySize: Int
     ) {
         val outcomeChance = Fraction(outcome.probability, tcProbabilityDenominator)
         val selectionProbability = outcomeChance.multiply(pathProbabilityAccumulator)
         when (val outcomeType = outcome.outcomeType) {
             is TreasureClass -> {
+                val denominatorWithNoDrop = calculateDenominatorWithNoDrop(
+                    outcomeType.probabilityDenominator,
+                    outcomeType.properties.noDrop,
+                    nPlayers,
+                    partySize
+                )
                 outcomeType.outcomes.forEach {
                     calculatePathSum(
                         it,
                         selectionProbability,
-                        calculateDenominatorWithNoDrop(
-                            outcomeType.probabilityDenominator,
-                            outcomeType.properties.noDrop
-                        ),
-                        leafAccumulator
+                        denominatorWithNoDrop,
+                        leafAccumulator,
+                        nPlayers,
+                        partySize
                     )
                 }
             }
@@ -70,6 +79,24 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         }
     }
 
-    private fun calculateDenominatorWithNoDrop(tcProbabilityDenominator: Int, noDrop: Int?): Int =
-        noDrop?.let { tcProbabilityDenominator + noDrop } ?: tcProbabilityDenominator
+    private fun calculateDenominatorWithNoDrop(
+        tcProbabilityDenominator: Int,
+        noDrop: Int?,
+        nPlayers: Int,
+        partySize: Int
+    ): Int {
+        return tcProbabilityDenominator + calculateNoDrop(tcProbabilityDenominator, noDrop, nPlayers, partySize)
+    }
+}
+
+internal fun calculateNoDrop(
+    tcProbabilityDenominator: Int,
+    noDrop: Int?,
+    nPlayers: Int,
+    partySize: Int
+): Int {
+    if (noDrop == null || noDrop < 1) return 0
+    val noDropExponent = floor(1 + ((nPlayers - 1) / 2.0) + ((partySize - 1) / 2.0)).toInt()
+    val pow = (noDrop.toDouble() / (tcProbabilityDenominator + noDrop)).pow(noDropExponent)
+    return floor((pow / (1 - pow)) * tcProbabilityDenominator).toInt()
 }
