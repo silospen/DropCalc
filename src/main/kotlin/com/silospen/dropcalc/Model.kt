@@ -1,6 +1,7 @@
 package com.silospen.dropcalc
 
-import com.silospen.dropcalc.MonsterConfigType.REGULAR
+import com.google.common.collect.Table
+import com.silospen.dropcalc.MonsterClassType.REGULAR
 
 data class TreasureClassConfig(
     val name: String,
@@ -43,19 +44,26 @@ sealed interface OutcomeType {
 
 data class MonsterClass(
     val id: String,
+    val monsterClassProperties: Table<Difficulty, MonsterType, MonsterClassProperty>,
     val minionIds: Set<String> = emptySet(),
-    val hasQuestTreasureClass: Boolean = false,
-    val monsterConfigType: MonsterConfigType = REGULAR
+    val monsterClassType: MonsterClassType = REGULAR
+)
+
+data class MonsterClassProperty(
+    val level: Int,
+    val treasureClass: TreasureClass
 )
 
 data class SuperUniqueMonsterConfig(val id: String, val monsterClassId: String, val hasMinions: Boolean)
 
 data class Monster(
-    val id: String,
-    val name: String,
-    val monsterClass: String,
-    val difficulty: Difficulty,
+    val monsterClass: MonsterClass,
+    val area: Area,
     val type: MonsterType
+)
+
+data class Area(
+    val id: String
 )
 
 enum class Difficulty {
@@ -64,7 +72,7 @@ enum class Difficulty {
     HELL
 }
 
-enum class MonsterConfigType {
+enum class MonsterClassType {
     REGULAR,
     SUPERUNIQUE,
     BOSS
@@ -74,7 +82,9 @@ enum class MonsterType {
     REGULAR,
     CHAMPION,
     UNIQUE,
+    QUEST,
     SUPERUNIQUE,
     BOSS,
+    BOSS_QUEST,
     MINION
 }

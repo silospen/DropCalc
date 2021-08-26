@@ -1,7 +1,7 @@
 package com.silospen.dropcalc
 
+import com.silospen.dropcalc.parser.TreasureClassesLineParser
 import com.silospen.dropcalc.parser.getResource
-import com.silospen.dropcalc.parser.treasureClassesParser
 import com.silospen.dropcalc.reader.readTsv
 import org.apache.commons.math3.fraction.Fraction
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -11,7 +11,7 @@ class TreasureClassCalculatorTest {
 
     private val treasureClassConfigs = readTsv(
         getResource("treasureClassCalculatorTestData/treasureclass.txt"),
-        ::treasureClassesParser
+        TreasureClassesLineParser()
     ).toList()
 
     private val treasureClassCalculator = TreasureClassCalculator(treasureClassConfigs)

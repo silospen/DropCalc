@@ -1,14 +1,13 @@
 package com.silospen.dropcalc
 
 import org.apache.commons.math3.fraction.Fraction
+import org.springframework.stereotype.Component
 import java.lang.RuntimeException
 import kotlin.math.floor
 import kotlin.math.pow
 
+@Component
 class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
-
-//    private val treasureClassesByName = treasureClassConfigs.associateBy { it.name }
-
     private val treasureClasses = generateTreasureClasses(treasureClassConfigs)
     private val treasureClassesByName = treasureClasses.associateBy { it.name }
 
@@ -36,12 +35,17 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         }
     }
 
-    fun getLeafOutcomes(treasureClassName: String, nPlayers: Int = 1, partySize: Int = 1): Map<ItemClass, Fraction> {
-        val treasureClass = treasureClassesByName.getValue(treasureClassName)
+    fun getLeafOutcomes(treasureClassName: String, nPlayers: Int = 1, partySize: Int = 1): Map<ItemClass, Fraction> =
+        getLeafOutcomes(getTreasureClass(treasureClassName), nPlayers, partySize)
+
+    fun getLeafOutcomes(treasureClass: TreasureClass, nPlayers: Int = 1, partySize: Int = 1): Map<ItemClass, Fraction> {
         val result = mutableMapOf<ItemClass, Fraction>()
         calculatePathSum(Outcome(treasureClass, 1), Fraction(1), 1, result, nPlayers, partySize)
         return result
     }
+
+    fun getTreasureClass(treasureClassName: String) =
+        treasureClassesByName.getValue(treasureClassName) //TODO: Add logic for MLVL upgrade here
 
     private fun calculatePathSum(
         outcome: Outcome,
@@ -74,7 +78,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
             }
             is ItemClass -> {
                 val put = leafAccumulator.put(outcomeType, selectionProbability)
-                if (put != null) throw RuntimeException("${outcome.outcomeType} already in map?")
+                if (put != null) throw RuntimeException("${outcome.outcomeType} already in map?") // EG FOR SUMMONER!
             }
         }
     }
