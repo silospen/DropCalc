@@ -23,13 +23,16 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
 
         return MonsterClass(
             id = id,
-            monsterClassProperties = parseMonsterClassProperties(line),
+            monsterClassProperties = parseMonsterClassProperties(line, isBoss),
             minionIds = parseMinions(line),
             monsterClassType = if (isBoss) BOSS else REGULAR
         )
     }
 
-    private fun parseMonsterClassProperties(line: List<String>): HashBasedTable<Difficulty, MonsterType, MonsterClassProperty> {
+    private fun parseMonsterClassProperties(
+        line: List<String>,
+        isBoss: Boolean
+    ): HashBasedTable<Difficulty, MonsterType, MonsterClassProperty> {
         val treasureClass1: String = line[236]
         val treasureClass2: String = line[237]
         val treasureClass3: String = line[238]
@@ -45,19 +48,27 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
         val level: Int = line[31].toInt()
         val levelN: Int = line[32].toInt()
         val levelH: Int = line[33].toInt()
+        val championLevelIncrease = if (isBoss) 0 else 2
+        val uniqueLevelIncrease = if (isBoss) 0 else 3
+        val championLevel: Int = level + championLevelIncrease
+        val championLevelN: Int = levelN + championLevelIncrease
+        val championLevelH: Int = levelH + championLevelIncrease
+        val uniqueLevel: Int = level + uniqueLevelIncrease
+        val uniqueLevelN: Int = levelN + uniqueLevelIncrease
+        val uniqueLevelH: Int = levelH + uniqueLevelIncrease
 
         val monsterClassProperties = HashBasedTable.create<Difficulty, MonsterType, MonsterClassProperty>()
         addIfNotBlank(monsterClassProperties, NORMAL, MonsterType.REGULAR, level, treasureClass1)
-        addIfNotBlank(monsterClassProperties, NORMAL, CHAMPION, level, treasureClass2)
-        addIfNotBlank(monsterClassProperties, NORMAL, UNIQUE, level, treasureClass3)
+        addIfNotBlank(monsterClassProperties, NORMAL, CHAMPION, championLevel, treasureClass2)
+        addIfNotBlank(monsterClassProperties, NORMAL, UNIQUE, uniqueLevel, treasureClass3)
         addIfNotBlank(monsterClassProperties, NORMAL, QUEST, level, treasureClass4)
         addIfNotBlank(monsterClassProperties, NIGHTMARE, MonsterType.REGULAR, levelN, treasureClass1N)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, CHAMPION, levelN, treasureClass2N)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, UNIQUE, levelN, treasureClass3N)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, CHAMPION, championLevelN, treasureClass2N)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, UNIQUE, uniqueLevelN, treasureClass3N)
         addIfNotBlank(monsterClassProperties, NIGHTMARE, QUEST, levelN, treasureClass4N)
         addIfNotBlank(monsterClassProperties, HELL, MonsterType.REGULAR, levelH, treasureClass1H)
-        addIfNotBlank(monsterClassProperties, HELL, CHAMPION, levelH, treasureClass2H)
-        addIfNotBlank(monsterClassProperties, HELL, UNIQUE, levelH, treasureClass3H)
+        addIfNotBlank(monsterClassProperties, HELL, CHAMPION, championLevelH, treasureClass2H)
+        addIfNotBlank(monsterClassProperties, HELL, UNIQUE, uniqueLevelH, treasureClass3H)
         addIfNotBlank(monsterClassProperties, HELL, QUEST, levelH, treasureClass4H)
         return monsterClassProperties
     }

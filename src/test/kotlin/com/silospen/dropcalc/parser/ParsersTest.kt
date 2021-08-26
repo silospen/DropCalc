@@ -55,16 +55,16 @@ class MonstatsLineParserTest {
     private fun getSkeletonClassProperties(): HashBasedTable<Difficulty, MonsterType, MonsterClassProperty> {
         val properties = HashBasedTable.create<Difficulty, MonsterType, MonsterClassProperty>()
         properties.put(NORMAL, REGULAR, MonsterClassProperty(2, tc("Act 1 H2H A")))
-        properties.put(NORMAL, CHAMPION, MonsterClassProperty(2, tc("Act 1 Champ A")))
-        properties.put(NORMAL, UNIQUE, MonsterClassProperty(2, tc("Act 1 Unique A")))
+        properties.put(NORMAL, CHAMPION, MonsterClassProperty(2+2, tc("Act 1 Champ A")))
+        properties.put(NORMAL, UNIQUE, MonsterClassProperty(2+3, tc("Act 1 Unique A")))
 
         properties.put(NIGHTMARE, REGULAR, MonsterClassProperty(37, tc("Act 1 (N) H2H A")))
-        properties.put(NIGHTMARE, CHAMPION, MonsterClassProperty(37, tc("Act 1 (N) Champ A")))
-        properties.put(NIGHTMARE, UNIQUE, MonsterClassProperty(37, tc("Act 1 (N) Unique A")))
+        properties.put(NIGHTMARE, CHAMPION, MonsterClassProperty(37+2, tc("Act 1 (N) Champ A")))
+        properties.put(NIGHTMARE, UNIQUE, MonsterClassProperty(37+3, tc("Act 1 (N) Unique A")))
 
         properties.put(HELL, REGULAR, MonsterClassProperty(68, tc("Act 1 (H) H2H A")))
-        properties.put(HELL, CHAMPION, MonsterClassProperty(68, tc("Act 1 (H) Champ A")))
-        properties.put(HELL, UNIQUE, MonsterClassProperty(68, tc("Act 1 (H) Unique A")))
+        properties.put(HELL, CHAMPION, MonsterClassProperty(68+2, tc("Act 1 (H) Champ A")))
+        properties.put(HELL, UNIQUE, MonsterClassProperty(68+3, tc("Act 1 (H) Unique A")))
         return properties
     }
 
@@ -106,16 +106,16 @@ class MonstatsLineParserTest {
     private fun getFetishShamanClassProperties(): HashBasedTable<Difficulty, MonsterType, MonsterClassProperty> {
         val properties = HashBasedTable.create<Difficulty, MonsterType, MonsterClassProperty>()
         properties.put(NORMAL, REGULAR, MonsterClassProperty(22, tc("Act 3 Cast A")))
-        properties.put(NORMAL, CHAMPION, MonsterClassProperty(22, tc("Act 3 Champ A")))
-        properties.put(NORMAL, UNIQUE, MonsterClassProperty(22, tc("Act 3 Unique A")))
+        properties.put(NORMAL, CHAMPION, MonsterClassProperty(22+2, tc("Act 3 Champ A")))
+        properties.put(NORMAL, UNIQUE, MonsterClassProperty(22+3, tc("Act 3 Unique A")))
 
         properties.put(NIGHTMARE, REGULAR, MonsterClassProperty(49, tc("Act 3 (N) Cast A")))
-        properties.put(NIGHTMARE, CHAMPION, MonsterClassProperty(49, tc("Act 3 (N) Champ A")))
-        properties.put(NIGHTMARE, UNIQUE, MonsterClassProperty(49, tc("Act 3 (N) Unique A")))
+        properties.put(NIGHTMARE, CHAMPION, MonsterClassProperty(49+2, tc("Act 3 (N) Champ A")))
+        properties.put(NIGHTMARE, UNIQUE, MonsterClassProperty(49+3, tc("Act 3 (N) Unique A")))
 
         properties.put(HELL, REGULAR, MonsterClassProperty(80, tc("Act 3 (H) Cast A")))
-        properties.put(HELL, CHAMPION, MonsterClassProperty(80, tc("Act 3 (H) Champ A")))
-        properties.put(HELL, UNIQUE, MonsterClassProperty(80, tc("Act 3 (H) Unique A")))
+        properties.put(HELL, CHAMPION, MonsterClassProperty(80+2, tc("Act 3 (H) Champ A")))
+        properties.put(HELL, UNIQUE, MonsterClassProperty(80+3, tc("Act 3 (H) Unique A")))
         return properties
     }
 
