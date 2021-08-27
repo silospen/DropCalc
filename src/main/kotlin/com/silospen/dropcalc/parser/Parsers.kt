@@ -1,12 +1,14 @@
 package com.silospen.dropcalc.parser
 
 import com.google.common.collect.HashBasedTable
+import com.google.common.collect.Table
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterClassType.BOSS
 import com.silospen.dropcalc.MonsterClassType.REGULAR
 import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.reader.LineParser
+import java.util.*
 
 class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalculator) : LineParser<MonsterClass?> {
     override fun parseLine(line: List<String>): MonsterClass? {
@@ -150,6 +152,52 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
                 }
             }
             .toSet()
+}
+
+class LevelsLineParser : LineParser<Area?> {
+    override fun parseLine(line: List<String>): Area? {
+        val id = line[0]
+        val level = line[59].toIntOrNull()
+        val levelN = line[60].toIntOrNull()
+        val levelH = line[61].toIntOrNull()
+        if (level == null || levelN == null || levelH == null) return null
+        val monsterClassIds = parseMonsterClassIds(line)
+        return Area(
+            id,
+            EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
+                put(NORMAL, level)
+                put(NIGHTMARE, levelN)
+                put(HELL, levelH)
+            },
+            monsterClassIds
+        )
+    }
+
+    private fun parseMonsterClassIds(line: List<String>): Table<Difficulty, MonsterType, Set<String>> {
+        val mons = (74..83)
+            .map { line[it] }
+            .filter { it.isNotBlank() }
+            .toSet()
+        val nmons = (85..94)
+            .map { line[it] }
+            .filter { it.isNotBlank() }
+            .toSet()
+        val umons = (95..104)
+            .map { line[it] }
+            .filter { it.isNotBlank() }
+            .toSet()
+        val monsterClassIds = HashBasedTable.create<Difficulty, MonsterType, Set<String>>()
+        monsterClassIds.put(NORMAL, MonsterType.REGULAR, mons)
+        monsterClassIds.put(NORMAL, CHAMPION, umons)
+        monsterClassIds.put(NORMAL, UNIQUE, umons)
+        monsterClassIds.put(NIGHTMARE, MonsterType.REGULAR, nmons)
+        monsterClassIds.put(NIGHTMARE, CHAMPION, nmons)
+        monsterClassIds.put(NIGHTMARE, UNIQUE, nmons)
+        monsterClassIds.put(HELL, MonsterType.REGULAR, nmons)
+        monsterClassIds.put(HELL, CHAMPION, nmons)
+        monsterClassIds.put(HELL, UNIQUE, nmons)
+        return monsterClassIds
+    }
 }
 
 private fun parseNumericBoolean(s: String) = s == "1"

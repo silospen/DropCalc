@@ -2,6 +2,7 @@ package com.silospen.dropcalc
 
 import com.google.common.collect.Table
 import com.silospen.dropcalc.MonsterClassType.REGULAR
+import java.util.*
 
 data class TreasureClassConfig(
     val name: String,
@@ -63,7 +64,9 @@ data class Monster(
 )
 
 data class Area(
-    val id: String
+    val id: String,
+    val monsterLevels: EnumMap<Difficulty, Int>,
+    val monsterClassIds: Table<Difficulty, MonsterType, Set<String>>
 )
 
 enum class Difficulty {
@@ -83,8 +86,5 @@ enum class MonsterType {
     CHAMPION,
     UNIQUE,
     QUEST,
-    SUPERUNIQUE,
-    BOSS,
-    BOSS_QUEST,
     MINION
 }

@@ -12,6 +12,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.io.File
+import java.util.*
 
 class MonstatsLineParserTest {
     @Test
@@ -55,16 +56,16 @@ class MonstatsLineParserTest {
     private fun getSkeletonClassProperties(): HashBasedTable<Difficulty, MonsterType, MonsterClassProperty> {
         val properties = HashBasedTable.create<Difficulty, MonsterType, MonsterClassProperty>()
         properties.put(NORMAL, REGULAR, MonsterClassProperty(2, tc("Act 1 H2H A")))
-        properties.put(NORMAL, CHAMPION, MonsterClassProperty(2+2, tc("Act 1 Champ A")))
-        properties.put(NORMAL, UNIQUE, MonsterClassProperty(2+3, tc("Act 1 Unique A")))
+        properties.put(NORMAL, CHAMPION, MonsterClassProperty(2 + 2, tc("Act 1 Champ A")))
+        properties.put(NORMAL, UNIQUE, MonsterClassProperty(2 + 3, tc("Act 1 Unique A")))
 
         properties.put(NIGHTMARE, REGULAR, MonsterClassProperty(37, tc("Act 1 (N) H2H A")))
-        properties.put(NIGHTMARE, CHAMPION, MonsterClassProperty(37+2, tc("Act 1 (N) Champ A")))
-        properties.put(NIGHTMARE, UNIQUE, MonsterClassProperty(37+3, tc("Act 1 (N) Unique A")))
+        properties.put(NIGHTMARE, CHAMPION, MonsterClassProperty(37 + 2, tc("Act 1 (N) Champ A")))
+        properties.put(NIGHTMARE, UNIQUE, MonsterClassProperty(37 + 3, tc("Act 1 (N) Unique A")))
 
         properties.put(HELL, REGULAR, MonsterClassProperty(68, tc("Act 1 (H) H2H A")))
-        properties.put(HELL, CHAMPION, MonsterClassProperty(68+2, tc("Act 1 (H) Champ A")))
-        properties.put(HELL, UNIQUE, MonsterClassProperty(68+3, tc("Act 1 (H) Unique A")))
+        properties.put(HELL, CHAMPION, MonsterClassProperty(68 + 2, tc("Act 1 (H) Champ A")))
+        properties.put(HELL, UNIQUE, MonsterClassProperty(68 + 3, tc("Act 1 (H) Unique A")))
         return properties
     }
 
@@ -106,16 +107,16 @@ class MonstatsLineParserTest {
     private fun getFetishShamanClassProperties(): HashBasedTable<Difficulty, MonsterType, MonsterClassProperty> {
         val properties = HashBasedTable.create<Difficulty, MonsterType, MonsterClassProperty>()
         properties.put(NORMAL, REGULAR, MonsterClassProperty(22, tc("Act 3 Cast A")))
-        properties.put(NORMAL, CHAMPION, MonsterClassProperty(22+2, tc("Act 3 Champ A")))
-        properties.put(NORMAL, UNIQUE, MonsterClassProperty(22+3, tc("Act 3 Unique A")))
+        properties.put(NORMAL, CHAMPION, MonsterClassProperty(22 + 2, tc("Act 3 Champ A")))
+        properties.put(NORMAL, UNIQUE, MonsterClassProperty(22 + 3, tc("Act 3 Unique A")))
 
         properties.put(NIGHTMARE, REGULAR, MonsterClassProperty(49, tc("Act 3 (N) Cast A")))
-        properties.put(NIGHTMARE, CHAMPION, MonsterClassProperty(49+2, tc("Act 3 (N) Champ A")))
-        properties.put(NIGHTMARE, UNIQUE, MonsterClassProperty(49+3, tc("Act 3 (N) Unique A")))
+        properties.put(NIGHTMARE, CHAMPION, MonsterClassProperty(49 + 2, tc("Act 3 (N) Champ A")))
+        properties.put(NIGHTMARE, UNIQUE, MonsterClassProperty(49 + 3, tc("Act 3 (N) Unique A")))
 
         properties.put(HELL, REGULAR, MonsterClassProperty(80, tc("Act 3 (H) Cast A")))
-        properties.put(HELL, CHAMPION, MonsterClassProperty(80+2, tc("Act 3 (H) Champ A")))
-        properties.put(HELL, UNIQUE, MonsterClassProperty(80+3, tc("Act 3 (H) Unique A")))
+        properties.put(HELL, CHAMPION, MonsterClassProperty(80 + 2, tc("Act 3 (H) Champ A")))
+        properties.put(HELL, UNIQUE, MonsterClassProperty(80 + 3, tc("Act 3 (H) Unique A")))
         return properties
     }
 
@@ -198,6 +199,54 @@ class TreasureClassesLineParserTest {
         assertEquals(
             expected, actual
         )
+    }
+}
+
+class LevelsLineParserTest {
+    @Test
+    fun levelsLineParser() {
+        val actual = readTsv(
+//            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
+            getResource("parsersTestData/levels.txt"),
+            LevelsLineParser()
+        ).toSet()
+
+        val monsterClassIds = HashBasedTable.create<Difficulty, MonsterType, Set<String>>()
+        val mon = setOf("bloodlord5", "succubuswitch3")
+        val nmon = setOf(
+            "bloodlord5",
+            "succubuswitch5",
+            "bonefetish7",
+            "sandraider10",
+            "willowisp7",
+            "vampire8",
+            "megademon5",
+            "unraveler9",
+            "dkmag2",
+            "clawviper10"
+        )
+        val umon = setOf("bloodlord5", "succubuswitch4")
+        monsterClassIds.put(NORMAL, REGULAR, mon)
+        monsterClassIds.put(NIGHTMARE, REGULAR, nmon)
+        monsterClassIds.put(HELL, REGULAR, nmon)
+        monsterClassIds.put(NORMAL, CHAMPION, umon)
+        monsterClassIds.put(NIGHTMARE, CHAMPION, nmon)
+        monsterClassIds.put(HELL, CHAMPION, nmon)
+        monsterClassIds.put(NORMAL, UNIQUE, umon)
+        monsterClassIds.put(NIGHTMARE, UNIQUE, nmon)
+        monsterClassIds.put(HELL, UNIQUE, nmon)
+        val expected = setOf(
+            Area(
+                "Act 5 - Throne Room",
+                EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
+                    put(NORMAL, 43)
+                    put(NIGHTMARE, 66)
+                    put(HELL, 85)
+                },
+                monsterClassIds
+            )
+        )
+        assertEquals(expected, actual)
     }
 }
 
