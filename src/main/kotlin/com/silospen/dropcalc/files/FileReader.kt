@@ -1,4 +1,4 @@
-package com.silospen.dropcalc.reader
+package com.silospen.dropcalc.files
 
 import java.io.File
 

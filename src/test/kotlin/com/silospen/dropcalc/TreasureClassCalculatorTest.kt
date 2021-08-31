@@ -1,8 +1,8 @@
 package com.silospen.dropcalc
 
-import com.silospen.dropcalc.parser.TreasureClassesLineParser
-import com.silospen.dropcalc.parser.getResource
-import com.silospen.dropcalc.reader.readTsv
+import com.silospen.dropcalc.files.TreasureClassesLineParser
+import com.silospen.dropcalc.files.getResource
+import com.silospen.dropcalc.files.readTsv
 import org.apache.commons.math3.fraction.Fraction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

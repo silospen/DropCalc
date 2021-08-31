@@ -2,6 +2,7 @@ package com.silospen.dropcalc
 
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.ImmutableTable
+import com.silospen.dropcalc.monsters.Monster
 import java.util.*
 
 private fun getSkeletonClassProperties(): HashBasedTable<Difficulty, MonsterType, MonsterClassProperty> {

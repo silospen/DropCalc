@@ -1,4 +1,4 @@
-package com.silospen.dropcalc.reader
+package com.silospen.dropcalc.files
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

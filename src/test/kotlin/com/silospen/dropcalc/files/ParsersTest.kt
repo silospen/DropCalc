@@ -1,10 +1,9 @@
-package com.silospen.dropcalc.parser
+package com.silospen.dropcalc.files
 
 import com.google.common.collect.HashBasedTable
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.*
-import com.silospen.dropcalc.reader.readTsv
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any

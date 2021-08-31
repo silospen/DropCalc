@@ -1,9 +1,10 @@
-package com.silospen.dropcalc
+package com.silospen.dropcalc.areas
 
 import com.silospen.dropcalc.Difficulty.HELL
 import com.silospen.dropcalc.Difficulty.NORMAL
 import com.silospen.dropcalc.MonsterType.CHAMPION
 import com.silospen.dropcalc.MonsterType.REGULAR
+import com.silospen.dropcalc.areasTestData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 

@@ -1,6 +1,7 @@
 package com.silospen.dropcalc.monsters
 
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.areas.AreasLibrary
 
 class MonsterLibrary(monsters: Set<Monster>) {
     private val monstersByMonsterClassId = monsters.groupBy { it.monsterClass.id }.mapValues { it.value.toSet() }

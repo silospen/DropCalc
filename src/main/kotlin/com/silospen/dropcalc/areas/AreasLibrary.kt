@@ -1,4 +1,8 @@
-package com.silospen.dropcalc
+package com.silospen.dropcalc.areas
+
+import com.silospen.dropcalc.Area
+import com.silospen.dropcalc.Difficulty
+import com.silospen.dropcalc.MonsterType
 
 class AreasLibrary(private val areasByMonsterProperties: Map<Triple<String, Difficulty, MonsterType>, Set<Area>>) {
     companion object {
