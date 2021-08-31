@@ -1,8 +1,10 @@
 package com.silospen.dropcalc.monsters
 
-import com.silospen.dropcalc.*
 import com.silospen.dropcalc.areas.AreasLibrary
-import org.junit.jupiter.api.Assertions
+import com.silospen.dropcalc.areasTestData
+import com.silospen.dropcalc.monsterClassTestdata
+import com.silospen.dropcalc.monstersTestData
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class MonsterLibraryTest {
@@ -14,9 +16,7 @@ class MonsterLibraryTest {
             monsterClassConfigs,
             areasLibrary
         )
-
         val expected = MonsterLibrary(monstersTestData)
-
-        Assertions.assertEquals(expected, actual)
+        assertEquals(expected, actual)
     }
 }

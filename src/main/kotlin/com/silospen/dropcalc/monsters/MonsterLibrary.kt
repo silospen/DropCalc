@@ -4,7 +4,8 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.areas.AreasLibrary
 
 class MonsterLibrary(monsters: Set<Monster>) {
-    private val monstersByMonsterClassId = monsters.groupBy { it.monsterClass.id }.mapValues { it.value.toSet() }
+    private val monstersByMonsterClassIdDifficultyType =
+        monsters.groupBy { Triple(it.monsterClass.id, it.difficulty, it.type) }.mapValues { it.value.toSet() }
 
     companion object {
         fun fromConfig(
@@ -13,7 +14,7 @@ class MonsterLibrary(monsters: Set<Monster>) {
         ): MonsterLibrary {
             return MonsterLibrary(
                 monsterClassConfigs.flatMap { monsterClass ->
-                    monsterClass.monsterClassProperties.cellSet().mapNotNull {
+                    monsterClass.monsterClassProperties.cellSet().flatMap {
                         createMonster(areasLibrary, monsterClass, it.rowKey!!, it.columnKey!!)
                     }
                 }.toSet()
@@ -25,20 +26,23 @@ class MonsterLibrary(monsters: Set<Monster>) {
             monsterClass: MonsterClass,
             difficulty: Difficulty,
             monsterType: MonsterType
-        ): Monster? {
-            val areas = areasLibrary.getAreasForMonsterClassId(monsterClass.id, difficulty, monsterType)
-            return if (areas.isEmpty()) null else Monster(
-                monsterClass,
-                areas,
-                monsterType
-            )
+        ): List<Monster> {
+            return areasLibrary.getAreasForMonsterClassId(monsterClass.id, difficulty, monsterType).map {
+                Monster(
+                    monsterClass,
+                    it,
+                    difficulty,
+                    monsterType
+                )
+            }
         }
     }
 
-    fun getMonsterByClassId(monsterClassId: String) = monstersByMonsterClassId.getOrDefault(monsterClassId, emptySet())
+    fun getMonsters(monsterClassId: String, difficulty: Difficulty, monsterType: MonsterType) =
+        monstersByMonsterClassIdDifficultyType.getOrDefault(Triple(monsterClassId, difficulty, monsterType), emptySet())
 
     override fun toString(): String {
-        return "MonsterLibrary(monstersByMonsterClassId=$monstersByMonsterClassId)"
+        return "MonsterLibrary(monstersByMonsterClassIdDifficultyType=$monstersByMonsterClassIdDifficultyType)"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -47,12 +51,13 @@ class MonsterLibrary(monsters: Set<Monster>) {
 
         other as MonsterLibrary
 
-        if (monstersByMonsterClassId != other.monstersByMonsterClassId) return false
+        if (monstersByMonsterClassIdDifficultyType != other.monstersByMonsterClassIdDifficultyType) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return monstersByMonsterClassId.hashCode()
+        return monstersByMonsterClassIdDifficultyType.hashCode()
     }
+
 }
