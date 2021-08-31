@@ -1,5 +1,6 @@
 package com.silospen.dropcalc
 
+import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import com.silospen.dropcalc.MonsterClassType.REGULAR
 import java.util.*
@@ -59,9 +60,13 @@ data class SuperUniqueMonsterConfig(val id: String, val monsterClassId: String, 
 
 data class Monster(
     val monsterClass: MonsterClass,
-    val area: Area,
+    val areas: Set<Area>,
     val type: MonsterType
-)
+) {
+    fun getTreasureClass(monsterType: MonsterType, difficulty: Difficulty): TreasureClass? {
+        return monsterClass.monsterClassProperties.get(difficulty, monsterType)?.treasureClass
+    }
+}
 
 data class Area(
     val id: String,

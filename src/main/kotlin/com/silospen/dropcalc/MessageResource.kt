@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class MessageResource(
-//    private val treasureClassCalculator: TreasureClassCalculator,
-    private val monsterClassConfigs: List<MonsterClass>
+    private val treasureClassCalculator: TreasureClassCalculator,
+    private val monsterLibrary: MonsterLibrary
 ) {
     @GetMapping("/atomicTcs")
     fun getAtomicTcs(
@@ -18,22 +18,26 @@ class MessageResource(
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int
-    ): List<Message> {
-//        val monster: Monster = monsterLibrary.getMonsters(monsterId)
-//
-//
-//
-//        val treasureClass: TreasureClass = monster.getTreasureClass(monsterType, difficulty)
-//        val leafOutcomes: Map<ItemClass, Fraction> =
-//            treasureClassCalculator.getLeafOutcomes(treasureClass, nPlayers, partySize)
-
-
-        return listOf(
-            Message("1", "Hello!"),
-            Message("2", "Bonjour!"),
-            Message("3", "Privet!"),
-        )
+    ): List<AtomicTcsResponse> {
+        return monsterLibrary.getMonsterByClassId(monsterId).flatMap { monster ->
+            monster.areas.flatMap { area ->
+                val treasureClass: TreasureClass? = monster.getTreasureClass(monsterType, difficulty) //NEEDS AREA
+                val leafOutcomes: Map<ItemClass, Fraction> =
+                    treasureClassCalculator.getLeafOutcomes(treasureClass!!, nPlayers, partySize)
+                leafOutcomes.map { leafOutcome ->
+                    AtomicTcsResponse(
+                        leafOutcome.key.name,
+                        area.id,
+                        Probability(leafOutcome.value)
+                    )
+                }
+            }
+        }
     }
 }
 
-data class Message(val id: String?, val text: String)
+data class AtomicTcsResponse(val tc: String, val area: String, val prob: Probability)
+
+data class Probability(val frac: String, val dec: Double) {
+    constructor(fraction: Fraction) : this("${fraction.numerator}/${fraction.denominator}", fraction.toDouble())
+}
