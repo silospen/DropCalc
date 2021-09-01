@@ -21,9 +21,9 @@ class ApiResource(
     ): List<AtomicTcsResponse> {
         return monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
             println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.id}")
-            val treasureClass: TreasureClass? = monster.getTreasureClass(monsterType, difficulty) //TODO NEEDS AREA
+            val treasureClass: TreasureClass = monster.getTreasureClass(monsterType, difficulty)
             val leafOutcomes: Map<ItemClass, Fraction> =
-                treasureClassCalculator.getLeafOutcomes(treasureClass!!, nPlayers, partySize)//TODO fill null handling
+                treasureClassCalculator.getLeafOutcomes(treasureClass, nPlayers, partySize)
             leafOutcomes.map { leafOutcome ->
                 AtomicTcsResponse(
                     leafOutcome.key.name,

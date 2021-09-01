@@ -46,14 +46,10 @@ sealed interface OutcomeType {
 
 data class MonsterClass(
     val id: String,
-    val monsterClassProperties: Table<Difficulty, MonsterType, MonsterClassProperty>,
+    val monsterClassProperties: Table<Difficulty, MonsterType, TreasureClass>,
+    val monsterLevels: EnumMap<Difficulty, Int>,
     val minionIds: Set<String> = emptySet(),
     val monsterClassType: MonsterClassType = REGULAR
-)
-
-data class MonsterClassProperty(
-    val level: Int,
-    val treasureClass: TreasureClass
 )
 
 data class SuperUniqueMonsterConfig(val id: String, val monsterClassId: String, val hasMinions: Boolean)
@@ -83,3 +79,6 @@ enum class MonsterType {
     QUEST,
     MINION
 }
+
+fun <R, C, V> Table<R, C, V>.getValue(rowKey: R, columnKey: C) =
+    this.get(rowKey, columnKey) ?: throw NoSuchElementException("Row $rowKey Col $columnKey is missing in the map.")

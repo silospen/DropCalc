@@ -22,9 +22,7 @@ class MonstatsLineParserTest {
             getResource("parsersTestData/monstats.txt"),
             MonstatsLineParser(mockTreasureClassCalculator)
         ).toSet()
-
-
-        assertEquals(monsterClassTestdata, actual)
+        assertEquals(monsterClassTestData, actual)
     }
 }
 

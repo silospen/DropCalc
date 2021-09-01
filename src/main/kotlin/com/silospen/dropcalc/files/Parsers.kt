@@ -21,19 +21,26 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
 
         val id = line[0]
         val isBoss: Boolean = parseNumericBoolean(line[87])
+        val level: Int = line[31].toInt()
+        val levelN: Int = line[32].toInt()
+        val levelH: Int = line[33].toInt()
 
         return MonsterClass(
             id = id,
-            monsterClassProperties = parseMonsterClassProperties(line, isBoss),
+            monsterLevels = EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
+                put(NORMAL, level)
+                put(NIGHTMARE, levelN)
+                put(HELL, levelH)
+            },
+            monsterClassProperties = parseMonsterClassProperties(line),
             minionIds = parseMinions(line),
             monsterClassType = if (isBoss) BOSS else REGULAR
         )
     }
 
     private fun parseMonsterClassProperties(
-        line: List<String>,
-        isBoss: Boolean
-    ): HashBasedTable<Difficulty, MonsterType, MonsterClassProperty> {
+        line: List<String>
+    ): HashBasedTable<Difficulty, MonsterType, TreasureClass> {
         val treasureClass1: String = line[236]
         val treasureClass2: String = line[237]
         val treasureClass3: String = line[238]
@@ -46,46 +53,33 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
         val treasureClass2H: String = line[245]
         val treasureClass3H: String = line[246]
         val treasureClass4H: String = line[247]
-        val level: Int = line[31].toInt()
-        val levelN: Int = line[32].toInt()
-        val levelH: Int = line[33].toInt()
-        val championLevelIncrease = if (isBoss) 0 else 2
-        val uniqueLevelIncrease = if (isBoss) 0 else 3
-        val championLevel: Int = level + championLevelIncrease
-        val championLevelN: Int = levelN + championLevelIncrease
-        val championLevelH: Int = levelH + championLevelIncrease
-        val uniqueLevel: Int = level + uniqueLevelIncrease
-        val uniqueLevelN: Int = levelN + uniqueLevelIncrease
-        val uniqueLevelH: Int = levelH + uniqueLevelIncrease
-
-        val monsterClassProperties = HashBasedTable.create<Difficulty, MonsterType, MonsterClassProperty>()
-        addIfNotBlank(monsterClassProperties, NORMAL, MonsterType.REGULAR, level, treasureClass1)
-        addIfNotBlank(monsterClassProperties, NORMAL, CHAMPION, championLevel, treasureClass2)
-        addIfNotBlank(monsterClassProperties, NORMAL, UNIQUE, uniqueLevel, treasureClass3)
-        addIfNotBlank(monsterClassProperties, NORMAL, QUEST, level, treasureClass4)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, MonsterType.REGULAR, levelN, treasureClass1N)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, CHAMPION, championLevelN, treasureClass2N)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, UNIQUE, uniqueLevelN, treasureClass3N)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, QUEST, levelN, treasureClass4N)
-        addIfNotBlank(monsterClassProperties, HELL, MonsterType.REGULAR, levelH, treasureClass1H)
-        addIfNotBlank(monsterClassProperties, HELL, CHAMPION, championLevelH, treasureClass2H)
-        addIfNotBlank(monsterClassProperties, HELL, UNIQUE, uniqueLevelH, treasureClass3H)
-        addIfNotBlank(monsterClassProperties, HELL, QUEST, levelH, treasureClass4H)
+        val monsterClassProperties = HashBasedTable.create<Difficulty, MonsterType, TreasureClass>()
+        addIfNotBlank(monsterClassProperties, NORMAL, MonsterType.REGULAR, treasureClass1)
+        addIfNotBlank(monsterClassProperties, NORMAL, CHAMPION, treasureClass2)
+        addIfNotBlank(monsterClassProperties, NORMAL, UNIQUE, treasureClass3)
+        addIfNotBlank(monsterClassProperties, NORMAL, QUEST, treasureClass4)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, MonsterType.REGULAR, treasureClass1N)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, CHAMPION, treasureClass2N)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, UNIQUE, treasureClass3N)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, QUEST, treasureClass4N)
+        addIfNotBlank(monsterClassProperties, HELL, MonsterType.REGULAR, treasureClass1H)
+        addIfNotBlank(monsterClassProperties, HELL, CHAMPION, treasureClass2H)
+        addIfNotBlank(monsterClassProperties, HELL, UNIQUE, treasureClass3H)
+        addIfNotBlank(monsterClassProperties, HELL, QUEST, treasureClass4H)
         return monsterClassProperties
     }
 
     private fun addIfNotBlank(
-        monsterClassProperties: HashBasedTable<Difficulty, MonsterType, MonsterClassProperty>,
+        monsterClassProperties: HashBasedTable<Difficulty, MonsterType, TreasureClass>,
         difficulty: Difficulty,
         monsterType: MonsterType,
-        level: Int,
         treasureClassName: String
     ) {
         if (treasureClassName.isNotBlank()) {
             monsterClassProperties.put(
                 difficulty,
                 monsterType,
-                MonsterClassProperty(level, treasureClassCalculator.getTreasureClass(treasureClassName))
+                treasureClassCalculator.getTreasureClass(treasureClassName)
             )
         }
     }

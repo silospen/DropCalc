@@ -41,10 +41,6 @@ class MonsterLibrary(monsters: Set<Monster>) {
     fun getMonsters(monsterClassId: String, difficulty: Difficulty, monsterType: MonsterType) =
         monstersByMonsterClassIdDifficultyType.getOrDefault(Triple(monsterClassId, difficulty, monsterType), emptySet())
 
-    override fun toString(): String {
-        return "MonsterLibrary(monstersByMonsterClassIdDifficultyType=$monstersByMonsterClassIdDifficultyType)"
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

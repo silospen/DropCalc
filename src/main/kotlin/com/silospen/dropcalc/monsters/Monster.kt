@@ -1,6 +1,9 @@
 package com.silospen.dropcalc.monsters
 
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.Difficulty.NORMAL
+import com.silospen.dropcalc.MonsterClassType.BOSS
+import com.silospen.dropcalc.MonsterType.*
 
 data class Monster(
     val monsterClass: MonsterClass,
@@ -11,10 +14,19 @@ data class Monster(
     val level: Int = constructLevel()
 
     private fun constructLevel(): Int {
-        return 1
+        return (if (difficulty == NORMAL || monsterClass.monsterClassType == BOSS)
+            monsterClass.monsterLevels.getValue(difficulty)
+        else area.monsterLevels.getValue(difficulty)) + getLevelAdjustment()
     }
 
-    fun getTreasureClass(monsterType: MonsterType, difficulty: Difficulty): TreasureClass? {
-        return monsterClass.monsterClassProperties.get(difficulty, monsterType)?.treasureClass
+    private fun getLevelAdjustment(): Int {
+        if (monsterClass.monsterClassType == BOSS) return 0
+        if (type == CHAMPION) return 2
+        if (type == UNIQUE) return 3
+        return 0
+    }
+
+    fun getTreasureClass(monsterType: MonsterType, difficulty: Difficulty): TreasureClass {
+        return monsterClass.monsterClassProperties.getValue(difficulty, monsterType)
     }
 }
