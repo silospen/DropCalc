@@ -1,5 +1,6 @@
 package com.silospen.dropcalc
 
+import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.files.TreasureClassesLineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
@@ -18,7 +19,7 @@ class TreasureClassCalculatorTest {
 
     @Test
     fun getLeafOutcomes() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A")
+        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL)
         val expected = mapOf(
             ItemClass(name = "gld") to Fraction(21, 160),
             ItemClass(name = "weap3") to Fraction(1, 20),
@@ -36,9 +37,19 @@ class TreasureClassCalculatorTest {
     }
 
     @Test
-    fun getLeafOutcomes_withPartyAndPlayersSet() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 3, 3)
+    fun getLeafOutcomes_withTcUpgraded() {
+        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 50, HELL)
+        val expected = mapOf(
+            ItemClass(name = "gld") to Fraction(5, 110),
+            ItemClass(name = "weap3") to Fraction(5, 110).multiply(Fraction(7, 14)),
+            ItemClass(name = "armo3") to Fraction(5, 110).multiply(Fraction(7, 14)),
+        )
+        assertEquals(expected, actual)
+    }
 
+    @Test
+    fun getLeafOutcomes_withPartyAndPlayersSet() {
+        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, 3, 3)
         val expected = mapOf(
             ItemClass(name = "gld") to Fraction(21, 79),
             ItemClass(name = "weap3") to Fraction(8, 79),
@@ -63,5 +74,21 @@ class TreasureClassCalculatorTest {
         assertEquals(19, calculateNoDrop(60, 100, 3, 3))
         assertEquals(1, calculateNoDrop(60, 100, 8, 8))
         assertEquals(0, calculateNoDrop(60, null, 8, 8))
+    }
+
+    @Test
+    fun treasureClassUpgrades() {
+        val levelZeroTc = treasureClassCalculator.getTreasureClass("Act 1 Equip A")
+        val levelNineTc = treasureClassCalculator.getTreasureClass("Act 1 Equip B")
+        assertEquals(levelZeroTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 1, HELL))
+        assertEquals(levelZeroTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 8, HELL))
+        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 9, HELL))
+        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 15, HELL))
+        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 15, NIGHTMARE))
+        assertEquals(levelZeroTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 15, NORMAL))
+
+        assertEquals(levelZeroTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 4, HELL))
+        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 9, HELL))
+        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 15, HELL))
     }
 }
