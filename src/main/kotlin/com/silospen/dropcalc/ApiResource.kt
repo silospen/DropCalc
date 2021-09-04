@@ -1,7 +1,7 @@
 package com.silospen.dropcalc
 
 import com.silospen.dropcalc.monsters.MonsterLibrary
-import org.apache.commons.math3.fraction.Fraction
+import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -22,7 +22,7 @@ class ApiResource(
         return monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
             println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.id}")
             val treasureClass: TreasureClass = monster.getTreasureClass(monsterType, difficulty)
-            val leafOutcomes: Map<ItemClass, Fraction> =
+            val leafOutcomes: Map<ItemClass, BigFraction> =
                 treasureClassCalculator.getLeafOutcomes(treasureClass, monster.level, difficulty, nPlayers, partySize)
             leafOutcomes.map { leafOutcome ->
                 AtomicTcsResponse(
@@ -31,12 +31,12 @@ class ApiResource(
                     Probability(leafOutcome.value)
                 )
             }
-        }
+        }.sortedBy { it.tc }
     }
 }
 
 data class AtomicTcsResponse(val tc: String, val area: String, val prob: Probability)
 
 data class Probability(val frac: String, val dec: Double) {
-    constructor(fraction: Fraction) : this("${fraction.numerator}/${fraction.denominator}", fraction.toDouble())
+    constructor(fraction: BigFraction) : this("${fraction.numerator}/${fraction.denominator}", fraction.toDouble())
 }

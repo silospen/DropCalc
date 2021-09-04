@@ -1,8 +1,7 @@
 package com.silospen.dropcalc
 
-import org.apache.commons.math3.fraction.Fraction
+import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.stereotype.Component
-import java.lang.RuntimeException
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.floor
@@ -47,7 +46,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         difficulty: Difficulty,
         nPlayers: Int = 1,
         partySize: Int = 1
-    ): Map<ItemClass, Fraction> =
+    ): Map<ItemClass, BigFraction> =
         getLeafOutcomes(getTreasureClass(treasureClassName), monsterLevel, difficulty, nPlayers, partySize)
 
     fun getLeafOutcomes(
@@ -56,10 +55,10 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         difficulty: Difficulty,
         nPlayers: Int = 1,
         partySize: Int = 1
-    ): Map<ItemClass, Fraction> {
-        val result = mutableMapOf<ItemClass, Fraction>()
+    ): Map<ItemClass, BigFraction> {
+        val result = mutableMapOf<ItemClass, BigFraction>()
         val possiblyUpgradedTreasureClass = changeTcBasedOnLevel(treasureClass, monsterLevel, difficulty)
-        calculatePathSum(Outcome(possiblyUpgradedTreasureClass, 1), Fraction(1), 1, result, nPlayers, partySize)
+        calculatePathSum(Outcome(possiblyUpgradedTreasureClass, 1), BigFraction(1), 1, result, nPlayers, partySize)
         return result
     }
 
@@ -71,13 +70,13 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
 
     private fun calculatePathSum(
         outcome: Outcome,
-        pathProbabilityAccumulator: Fraction,
+        pathProbabilityAccumulator: BigFraction,
         tcProbabilityDenominator: Int,
-        leafAccumulator: MutableMap<ItemClass, Fraction>,
+        leafAccumulator: MutableMap<ItemClass, BigFraction>,
         nPlayers: Int,
         partySize: Int
     ) {
-        val outcomeChance = Fraction(outcome.probability, tcProbabilityDenominator)
+        val outcomeChance = BigFraction(outcome.probability, tcProbabilityDenominator)
         val selectionProbability = outcomeChance.multiply(pathProbabilityAccumulator)
         when (val outcomeType = outcome.outcomeType) {
             is TreasureClass -> {
@@ -99,8 +98,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
                 }
             }
             is ItemClass -> {
-                val put = leafAccumulator.put(outcomeType, selectionProbability)
-                if (put != null) throw RuntimeException("${outcome.outcomeType} already in map?") // EG FOR SUMMONER!
+                leafAccumulator[outcomeType] =
+                    selectionProbability.add(leafAccumulator.getOrDefault(outcomeType, BigFraction.ZERO))
             }
         }
     }
