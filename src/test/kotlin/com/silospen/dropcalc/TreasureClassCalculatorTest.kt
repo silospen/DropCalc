@@ -4,7 +4,7 @@ import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.files.TreasureClassesLineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
-import org.apache.commons.math3.fraction.Fraction
+import org.apache.commons.math3.fraction.BigFraction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -21,17 +21,17 @@ class TreasureClassCalculatorTest {
     fun getLeafOutcomes() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL)
         val expected = mapOf(
-            ItemClass(name = "gld") to Fraction(21, 160),
-            ItemClass(name = "weap3") to Fraction(1, 20),
-            ItemClass(name = "armo3") to Fraction(1, 20),
-            ItemClass(name = "Act 1 Junk") to Fraction(21, 160),
-            ItemClass(name = "rin") to Fraction(1, 400),
-            ItemClass(name = "amu") to Fraction(1, 800),
-            ItemClass(name = "jew") to Fraction(1, 1600),
-            ItemClass(name = "cm3") to Fraction(1, 1600),
-            ItemClass(name = "cm2") to Fraction(1, 1600),
-            ItemClass(name = "cm1") to Fraction(1, 1600),
-            ItemClass(name = "Chipped Gem") to Fraction(1, 160)
+            ItemClass(name = "gld") to BigFraction(21, 160),
+            ItemClass(name = "weap3") to BigFraction(1, 20),
+            ItemClass(name = "armo3") to BigFraction(1, 20),
+            ItemClass(name = "Act 1 Junk") to BigFraction(21, 160),
+            ItemClass(name = "rin") to BigFraction(1, 400),
+            ItemClass(name = "amu") to BigFraction(1, 800),
+            ItemClass(name = "jew") to BigFraction(1, 1600),
+            ItemClass(name = "cm3") to BigFraction(1, 1600),
+            ItemClass(name = "cm2") to BigFraction(1, 1600),
+            ItemClass(name = "cm1") to BigFraction(1, 1600),
+            ItemClass(name = "Chipped Gem") to BigFraction(1, 160)
         )
         assertEquals(expected, actual)
     }
@@ -40,9 +40,9 @@ class TreasureClassCalculatorTest {
     fun getLeafOutcomes_withTcUpgraded() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 50, HELL)
         val expected = mapOf(
-            ItemClass(name = "gld") to Fraction(5, 110),
-            ItemClass(name = "weap3") to Fraction(5, 110).multiply(Fraction(7, 14)),
-            ItemClass(name = "armo3") to Fraction(5, 110).multiply(Fraction(7, 14)),
+            ItemClass(name = "gld") to BigFraction(5, 110),
+            ItemClass(name = "weap3") to BigFraction(5, 110).multiply(BigFraction(7, 14)),
+            ItemClass(name = "armo3") to BigFraction(5, 110).multiply(BigFraction(7, 14)),
         )
         assertEquals(expected, actual)
     }
@@ -51,17 +51,17 @@ class TreasureClassCalculatorTest {
     fun getLeafOutcomes_withPartyAndPlayersSet() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, 3, 3)
         val expected = mapOf(
-            ItemClass(name = "gld") to Fraction(21, 79),
-            ItemClass(name = "weap3") to Fraction(8, 79),
-            ItemClass(name = "armo3") to Fraction(8, 79),
-            ItemClass(name = "Act 1 Junk") to Fraction(21, 79),
-            ItemClass(name = "rin") to Fraction(2, 395),
-            ItemClass(name = "amu") to Fraction(1, 395),
-            ItemClass(name = "jew") to Fraction(1, 790),
-            ItemClass(name = "cm3") to Fraction(1, 790),
-            ItemClass(name = "cm2") to Fraction(1, 790),
-            ItemClass(name = "cm1") to Fraction(1, 790),
-            ItemClass(name = "Chipped Gem") to Fraction(1, 79)
+            ItemClass(name = "gld") to BigFraction(21, 79),
+            ItemClass(name = "weap3") to BigFraction(8, 79),
+            ItemClass(name = "armo3") to BigFraction(8, 79),
+            ItemClass(name = "Act 1 Junk") to BigFraction(21, 79),
+            ItemClass(name = "rin") to BigFraction(2, 395),
+            ItemClass(name = "amu") to BigFraction(1, 395),
+            ItemClass(name = "jew") to BigFraction(1, 790),
+            ItemClass(name = "cm3") to BigFraction(1, 790),
+            ItemClass(name = "cm2") to BigFraction(1, 790),
+            ItemClass(name = "cm1") to BigFraction(1, 790),
+            ItemClass(name = "Chipped Gem") to BigFraction(1, 79)
         )
         assertEquals(expected, actual)
     }
@@ -78,17 +78,16 @@ class TreasureClassCalculatorTest {
 
     @Test
     fun treasureClassUpgrades() {
-        val levelZeroTc = treasureClassCalculator.getTreasureClass("Act 1 Equip A")
+        val levelTwoTc = treasureClassCalculator.getTreasureClass("Act 1 Equip A")
         val levelNineTc = treasureClassCalculator.getTreasureClass("Act 1 Equip B")
-        assertEquals(levelZeroTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 1, HELL))
-        assertEquals(levelZeroTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 8, HELL))
-        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 9, HELL))
-        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 15, HELL))
-        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 15, NIGHTMARE))
-        assertEquals(levelZeroTc, treasureClassCalculator.changeTcBasedOnLevel(levelZeroTc, 15, NORMAL))
-
-        assertEquals(levelZeroTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 4, HELL))
+        assertEquals(levelTwoTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 1, HELL))
+        assertEquals(levelTwoTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 2, HELL))
+        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 8, HELL))
         assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 9, HELL))
         assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 15, HELL))
+        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 15, HELL))
+
+        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 15, NIGHTMARE))
+        assertEquals(levelTwoTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 15, NORMAL))
     }
 }

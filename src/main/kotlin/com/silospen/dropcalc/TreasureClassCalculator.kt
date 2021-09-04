@@ -63,8 +63,12 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
     }
 
     fun changeTcBasedOnLevel(treasureClass: TreasureClass, monsterLevel: Int, difficulty: Difficulty): TreasureClass =
-        if (difficulty == Difficulty.NORMAL) treasureClass else treasureClassesByGroup[treasureClass.properties.group]?.lastOrNull { it.properties.level!! <= monsterLevel }
-            ?: treasureClass
+        if (difficulty == Difficulty.NORMAL) treasureClass else {
+            val treasureClassGroup = treasureClassesByGroup[treasureClass.properties.group]
+            treasureClassGroup?.firstOrNull { it.properties.level!! >= monsterLevel }
+                ?: treasureClassGroup?.lastOrNull()
+                ?: treasureClass
+        }
 
     fun getTreasureClass(treasureClassName: String) = treasureClassesByName.getValue(treasureClassName)
 
