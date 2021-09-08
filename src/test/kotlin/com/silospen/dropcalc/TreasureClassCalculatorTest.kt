@@ -67,6 +67,19 @@ class TreasureClassCalculatorTest {
     }
 
     @Test
+    fun getLeafOutcomes_withPicks() {
+        val actual = treasureClassCalculator.getLeafOutcomes("Radament", 50, NORMAL)
+        val expected = mapOf(
+            ItemClass(name = "\"gld,mul=1280\"") to BigFraction(799393331, 1350125107),
+            ItemClass(name = "Act 3 Equip B") to BigFraction(1095321139, 1350125107),
+            ItemClass(name = "Act 3 Junk") to BigFraction(969921075, 1350125107),
+            ItemClass(name = "Act 3 Good") to BigFraction(276383283, 1350125107)
+        )
+        assertEquals(expected, actual)
+    }
+
+
+    @Test
     fun calculateNoDrop() {
         assertEquals(100, calculateNoDrop(60, 100, 1, 1))
         assertEquals(100, calculateNoDrop(60, 100, 2, 1))

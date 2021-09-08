@@ -47,7 +47,7 @@ sealed interface OutcomeType {
 data class MonsterClass(
     val id: String,
     val monsterClassProperties: Table<Difficulty, MonsterType, TreasureClass>,
-    val monsterLevels: EnumMap<Difficulty, Int>,
+    val monsterLevels: Map<Difficulty, Int>,
     val minionIds: Set<String> = emptySet(),
     val monsterClassType: MonsterClassType = REGULAR
 )
@@ -56,7 +56,7 @@ data class SuperUniqueMonsterConfig(val id: String, val monsterClassId: String, 
 
 data class Area(
     val id: String,
-    val monsterLevels: EnumMap<Difficulty, Int>,
+    val monsterLevels: Map<Difficulty, Int>,
     val monsterClassIds: Table<Difficulty, MonsterType, Set<String>>
 )
 

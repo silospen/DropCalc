@@ -5,6 +5,7 @@ import com.silospen.dropcalc.MonsterClass
 import com.silospen.dropcalc.TreasureClassCalculator
 import com.silospen.dropcalc.TreasureClassConfig
 import com.silospen.dropcalc.areas.AreasLibrary
+import com.silospen.dropcalc.areas.hardcodedBossAreas
 import com.silospen.dropcalc.files.LevelsLineParser
 import com.silospen.dropcalc.files.MonstatsLineParser
 import com.silospen.dropcalc.files.TreasureClassesLineParser
@@ -29,10 +30,13 @@ class Beans {
     )
 
     @Bean
-    fun getAreas(): List<Area> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
-        LevelsLineParser()
-    )
+    fun getAreas(): List<Area> {
+        val areasFromLevelsTxt = readTsv(
+            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
+            LevelsLineParser()
+        )
+        return areasFromLevelsTxt + hardcodedBossAreas
+    }
 
     @Bean
     fun getAreasLibrary(areas: List<Area>): AreasLibrary {

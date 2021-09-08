@@ -1,6 +1,7 @@
 package com.silospen.dropcalc
 
 import org.apache.commons.math3.fraction.BigFraction
+import org.apache.commons.math3.fraction.BigFraction.ONE
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -59,8 +60,16 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         val result = mutableMapOf<ItemClass, BigFraction>()
         val possiblyUpgradedTreasureClass = changeTcBasedOnLevel(treasureClass, monsterLevel, difficulty)
         calculatePathSum(Outcome(possiblyUpgradedTreasureClass, 1), BigFraction(1), 1, result, nPlayers, partySize)
-        return result
+        return applyPicks(result, possiblyUpgradedTreasureClass.properties.picks)
     }
+
+    private fun applyPicks(outcomes: Map<ItemClass, BigFraction>, picks: Int): Map<ItemClass, BigFraction> =
+        when {
+            picks > 6 -> TODO("Not yet implemented")
+            picks > 1 -> outcomes.mapValues { ONE.subtract(ONE.subtract(it.value).pow(picks)) }
+            picks < 0 -> TODO("Not yet implemented")
+            else -> outcomes
+        }
 
     fun changeTcBasedOnLevel(treasureClass: TreasureClass, monsterLevel: Int, difficulty: Difficulty): TreasureClass =
         if (difficulty == Difficulty.NORMAL) treasureClass else {
