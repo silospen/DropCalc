@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.monsters.Monster
+import com.silospen.dropcalc.translations.Translations
 import java.util.*
 
 private fun getSkeletonClassProperties(): HashBasedTable<Difficulty, MonsterType, TreasureClass> {
@@ -139,11 +140,13 @@ val monsterClassTestData = setOf(
 
 val area1Data = Area(
     "area-1",
+    "my-area-1",
     levelsPerDifficulty(normal = 5),
     ImmutableTable.of(NORMAL, REGULAR, setOf("skeleton1", "fetishshaman2"))
 )
 val area2Data = Area(
     "area-2",
+    "my-area-2",
     levelsPerDifficulty(normal = 12, hell = 83),
     ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
         .put(NORMAL, REGULAR, setOf("fetishshaman2"))
@@ -174,3 +177,9 @@ val monstersTestData = setOf(
     Monster(fetishShamanMonsterClass, area2Data, NORMAL, REGULAR),
     Monster(fetishShamanMonsterClass, area2Data, HELL, CHAMPION)
 )
+
+val stubTranslations = object : Translations {
+    override fun getTranslation(key: String): String {
+        return "$key-name"
+    }
+}

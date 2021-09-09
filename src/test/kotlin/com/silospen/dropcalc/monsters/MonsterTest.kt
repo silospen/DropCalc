@@ -19,6 +19,7 @@ class MonsterTest {
             83, Monster(
                 radamentMonsterClass, Area(
                     "area-radament",
+                    "area-radament-name",
                     levelsPerDifficulty(hell = 80),
                     ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
                         .put(HELL, REGULAR, setOf("radament"))

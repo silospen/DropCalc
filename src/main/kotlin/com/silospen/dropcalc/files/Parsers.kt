@@ -7,6 +7,8 @@ import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterClassType.BOSS
 import com.silospen.dropcalc.MonsterClassType.REGULAR
 import com.silospen.dropcalc.MonsterType.*
+import com.silospen.dropcalc.translations.Translations
+import java.lang.IllegalArgumentException
 import java.util.*
 
 class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalculator) : LineParser<MonsterClass?> {
@@ -147,9 +149,10 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
             .toSet()
 }
 
-class LevelsLineParser : LineParser<Area?> {
+class LevelsLineParser(private val translations: Translations) : LineParser<Area?> {
     override fun parseLine(line: List<String>): Area? {
         val id = line[0]
+        val name = line[120]
         val level = line[59].toIntOrNull()
         val levelN = line[60].toIntOrNull()
         val levelH = line[61].toIntOrNull()
@@ -157,6 +160,7 @@ class LevelsLineParser : LineParser<Area?> {
         val monsterClassIds = parseMonsterClassIds(line)
         return Area(
             id,
+            translations.getTranslation(name) ?: throw IllegalArgumentException("Missing translation for $name"),
             EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
                 put(NORMAL, level)
                 put(NIGHTMARE, levelN)

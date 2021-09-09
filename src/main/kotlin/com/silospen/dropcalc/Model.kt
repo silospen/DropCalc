@@ -56,6 +56,7 @@ data class SuperUniqueMonsterConfig(val id: String, val monsterClassId: String, 
 
 data class Area(
     val id: String,
+    val name: String,
     val monsterLevels: Map<Difficulty, Int>,
     val monsterClassIds: Table<Difficulty, MonsterType, Set<String>>
 )

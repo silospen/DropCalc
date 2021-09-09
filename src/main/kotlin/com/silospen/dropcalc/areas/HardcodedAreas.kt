@@ -31,6 +31,7 @@ val hardcodedBossAreas: List<Area> = listOf(
 
 private fun bossArea(areaId: String, bossId: String) = Area(
     areaId,
+    "",//FIXME
     emptyMap(),
     ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
         .put(NORMAL, REGULAR, setOf(bossId))

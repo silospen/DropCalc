@@ -11,6 +11,9 @@ import com.silospen.dropcalc.files.MonstatsLineParser
 import com.silospen.dropcalc.files.TreasureClassesLineParser
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.monsters.MonsterLibrary
+import com.silospen.dropcalc.translations.CompositeTranslations
+import com.silospen.dropcalc.translations.MapBasedTranslations
+import com.silospen.dropcalc.translations.Translations
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.io.File
@@ -30,10 +33,10 @@ class Beans {
     )
 
     @Bean
-    fun getAreas(): List<Area> {
+    fun getAreas(translations: Translations): List<Area> {
         val areasFromLevelsTxt = readTsv(
             File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
-            LevelsLineParser()
+            LevelsLineParser(translations)
         )
         return areasFromLevelsTxt + hardcodedBossAreas
     }
@@ -47,4 +50,12 @@ class Beans {
     fun getMonsterLibrary(monsterClassConfigs: List<MonsterClass>, areasLibrary: AreasLibrary): MonsterLibrary {
         return MonsterLibrary.fromConfig(monsterClassConfigs, areasLibrary)
     }
+
+    @Bean
+    fun getTranslations(): Translations =
+        CompositeTranslations(
+            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\1.12a\\patchstring.tbl")),
+            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\expansionstring.tbl")),
+            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\string.tbl"))
+        )
 }

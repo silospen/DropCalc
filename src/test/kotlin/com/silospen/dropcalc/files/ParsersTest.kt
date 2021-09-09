@@ -95,7 +95,7 @@ class LevelsLineParserTest {
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
             getResource("parsersTestData/levels.txt"),
-            LevelsLineParser()
+            LevelsLineParser(stubTranslations)
         ).toSet()
 
         val monsterClassIds = HashBasedTable.create<Difficulty, MonsterType, Set<String>>()
@@ -125,6 +125,7 @@ class LevelsLineParserTest {
         val expected = setOf(
             Area(
                 "Act 5 - Throne Room",
+                "Throne of Destruction-name",
                 EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
                     put(NORMAL, 43)
                     put(NIGHTMARE, 66)

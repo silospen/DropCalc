@@ -4,7 +4,16 @@ import java.io.File
 import java.nio.ByteBuffer
 import java.nio.ByteOrder.LITTLE_ENDIAN
 
-class Translations(private val translationData: Map<String, String>) {
+interface Translations {
+    fun getTranslation(key: String): String?
+}
+
+class CompositeTranslations(private vararg val translations: Translations) : Translations {
+    override fun getTranslation(key: String): String? =
+        translations.asSequence().firstNotNullOfOrNull { it.getTranslation(key) }
+}
+
+class MapBasedTranslations(private val translationData: Map<String, String>) : Translations {
     companion object {
         fun loadTranslations(file: File): Translations {
             val buffer = ByteBuffer.wrap(file.readBytes()).order(LITTLE_ENDIAN)
@@ -12,7 +21,7 @@ class Translations(private val translationData: Map<String, String>) {
             val header = TableFileHeader.fromByteBuffer(headerBuffer)
             val hashTableBuffer =
                 buffer.sliceKeepEndian(21 + (header.numElements * 2), header.hashTableSize.toInt() * 17)
-            return Translations(readDataTable(readHashTable(hashTableBuffer), buffer))
+            return MapBasedTranslations(readDataTable(readHashTable(hashTableBuffer), buffer))
         }
 
         private fun readDataTable(hashTable: List<TableFileHashEntries>, buffer: ByteBuffer): Map<String, String> =
@@ -40,13 +49,18 @@ class Translations(private val translationData: Map<String, String>) {
         }
     }
 
-    fun getTranslation(key: String) = translationData[key]
+    override fun getTranslation(key: String) = translationData[key]
+
+
+    override fun toString(): String {
+        return "Translations(translationData=$translationData)"
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Translations
+        other as MapBasedTranslations
 
         if (translationData != other.translationData) return false
 
@@ -55,10 +69,6 @@ class Translations(private val translationData: Map<String, String>) {
 
     override fun hashCode(): Int {
         return translationData.hashCode()
-    }
-
-    override fun toString(): String {
-        return "Translations(translationData=$translationData)"
     }
 }
 
@@ -106,6 +116,7 @@ private data class TableFileHeader(
 
 private fun ByteBuffer.getUInt8(): Short = java.lang.Byte.toUnsignedInt(get()).toShort()
 private fun ByteBuffer.getUInt16(): Int = java.lang.Short.toUnsignedInt(short)
+@Suppress("RemoveRedundantQualifierName")
 private fun ByteBuffer.getUInt32(): Long = java.lang.Integer.toUnsignedLong(int)
 private fun ByteBuffer.getString(offset: Int, length: Int) =
     ByteArray(length).apply { get(offset, this) }.run { decodeToString().removeSuffix("\u0000") }
