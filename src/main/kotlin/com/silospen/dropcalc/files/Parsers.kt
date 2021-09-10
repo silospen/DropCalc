@@ -8,7 +8,6 @@ import com.silospen.dropcalc.MonsterClassType.BOSS
 import com.silospen.dropcalc.MonsterClassType.REGULAR
 import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.translations.Translations
-import java.lang.IllegalArgumentException
 import java.util.*
 
 class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalculator) : LineParser<MonsterClass?> {
@@ -149,7 +148,8 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
             .toSet()
 }
 
-class LevelsLineParser(private val translations: Translations) : LineParser<Area?> {
+class LevelsLineParser(private val translations: Translations, private val hardcodedAreas: Map<String, List<String>>) :
+    LineParser<Area?> {
     override fun parseLine(line: List<String>): Area? {
         val id = line[0]
         val name = line[120]
@@ -157,7 +157,7 @@ class LevelsLineParser(private val translations: Translations) : LineParser<Area
         val levelN = line[60].toIntOrNull()
         val levelH = line[61].toIntOrNull()
         if (level == null || levelN == null || levelH == null) return null
-        val monsterClassIds = parseMonsterClassIds(line)
+        val monsterClassIds = parseMonsterClassIds(line, hardcodedAreas.getOrDefault(id, emptyList()))
         return Area(
             id,
             translations.getTranslation(name) ?: throw IllegalArgumentException("Missing translation for $name"),
@@ -170,19 +170,22 @@ class LevelsLineParser(private val translations: Translations) : LineParser<Area
         )
     }
 
-    private fun parseMonsterClassIds(line: List<String>): Table<Difficulty, MonsterType, Set<String>> {
+    private fun parseMonsterClassIds(
+        line: List<String>,
+        hardcodedMons: List<String>
+    ): Table<Difficulty, MonsterType, Set<String>> {
         val mons = (74..83)
             .map { line[it] }
             .filter { it.isNotBlank() }
-            .toSet()
+            .toSet() + hardcodedMons
         val nmons = (85..94)
             .map { line[it] }
             .filter { it.isNotBlank() }
-            .toSet()
+            .toSet() + hardcodedMons
         val umons = (95..104)
             .map { line[it] }
             .filter { it.isNotBlank() }
-            .toSet()
+            .toSet() + hardcodedMons
         val monsterClassIds = HashBasedTable.create<Difficulty, MonsterType, Set<String>>()
         monsterClassIds.put(NORMAL, MonsterType.REGULAR, mons)
         monsterClassIds.put(NORMAL, CHAMPION, umons)

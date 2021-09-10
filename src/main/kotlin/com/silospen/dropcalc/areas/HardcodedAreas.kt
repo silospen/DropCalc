@@ -7,34 +7,26 @@ import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType
 import com.silospen.dropcalc.MonsterType.REGULAR
 
-val hardcodedBossAreas: List<Area> = listOf(
-    bossArea("Act 1 - Catacombs 4", "andariel"),
-    bossArea("Act 2 - Duriel's Lair", "duriel"),
-    bossArea("Act 2 - Sewer 1 C", "radament"),
-    bossArea("Act 3 - Mephisto 3", "mephisto"),
-    bossArea("Act 4 - Diablo 1", "diablo"),
-    bossArea("Act 2 - Arcane", "summoner"),
-    bossArea("Act 4 - Mesa 2", "izual"),
-    bossArea("Act 1 - Graveyard", "bloodraven"),
-    bossArea("Act 1 - Tristram", "griswold"),
-    bossArea("Act 5 - Temple Boss", "nihlathakboss"),
-    bossArea("Act 5 - World Stone", "baalcrab"),
-    bossArea("Act 5 - Temple 2", "putriddefiler1"),
-    bossArea("Act 5 - Temple Boss", "putriddefiler1"),
-    bossArea("Act 5 - Baal Temple 1", "putriddefiler2"),
-    bossArea("Act 5 - Temple Boss", "putriddefiler2"),
-    bossArea("Act 5 - Baal Temple 1", "putriddefiler3"),
-    bossArea("Act 5 - Baal Temple 3", "putriddefiler3"),
-    bossArea("Act 5 - Baal Temple 3", "putriddefiler4"),
-    bossArea("Act 5 - Baal Temple 3", "putriddefiler5"),
+ private val hardcodedBossAreas = listOf(
+    "Act 1 - Catacombs 4" to "andariel",
+    "Act 2 - Duriel's Lair" to "duriel",
+    "Act 2 - Sewer 1 C" to "radament",
+    "Act 3 - Mephisto 3" to "mephisto",
+    "Act 4 - Diablo 1" to "diablo",
+    "Act 2 - Arcane" to "summoner",
+    "Act 4 - Mesa 2" to "izual",
+    "Act 1 - Graveyard" to "bloodraven",
+    "Act 1 - Tristram" to "griswold",
+    "Act 5 - Temple Boss" to "nihlathakboss",
+    "Act 5 - World Stone" to "baalcrab",
+    "Act 5 - Temple 2" to "putriddefiler1",
+    "Act 5 - Temple Boss" to "putriddefiler1",
+    "Act 5 - Baal Temple 1" to "putriddefiler2",
+    "Act 5 - Temple Boss" to "putriddefiler2",
+    "Act 5 - Baal Temple 1" to "putriddefiler3",
+    "Act 5 - Baal Temple 3" to "putriddefiler3",
+    "Act 5 - Baal Temple 3" to "putriddefiler4",
+    "Act 5 - Baal Temple 3" to "putriddefiler5",
 )
 
-private fun bossArea(areaId: String, bossId: String) = Area(
-    areaId,
-    "",//FIXME
-    emptyMap(),
-    ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
-        .put(NORMAL, REGULAR, setOf(bossId))
-        .put(NIGHTMARE, REGULAR, setOf(bossId))
-        .put(HELL, REGULAR, setOf(bossId)).build()
-)
+val hardcodedAreas = hardcodedBossAreas.groupBy({ it.first }) { it.second }

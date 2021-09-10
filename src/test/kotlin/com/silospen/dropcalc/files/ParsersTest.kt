@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.*
+import com.silospen.dropcalc.areas.hardcodedAreas
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -95,11 +96,14 @@ class LevelsLineParserTest {
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
             getResource("parsersTestData/levels.txt"),
-            LevelsLineParser(stubTranslations)
+            LevelsLineParser(
+                stubTranslations,
+                mapOf("Act 5 - Throne Room" to listOf("hardcoded-mon-1", "hardcoded-mon-2"))
+            )
         ).toSet()
 
         val monsterClassIds = HashBasedTable.create<Difficulty, MonsterType, Set<String>>()
-        val mon = setOf("bloodlord5", "succubuswitch3")
+        val mon = setOf("bloodlord5", "succubuswitch3", "hardcoded-mon-1", "hardcoded-mon-2")
         val nmon = setOf(
             "bloodlord5",
             "succubuswitch5",
@@ -110,9 +114,11 @@ class LevelsLineParserTest {
             "megademon5",
             "unraveler9",
             "dkmag2",
-            "clawviper10"
+            "clawviper10",
+            "hardcoded-mon-1",
+            "hardcoded-mon-2"
         )
-        val umon = setOf("bloodlord5", "succubuswitch4")
+        val umon = setOf("bloodlord5", "succubuswitch4", "hardcoded-mon-1", "hardcoded-mon-2")
         monsterClassIds.put(NORMAL, REGULAR, mon)
         monsterClassIds.put(NIGHTMARE, REGULAR, nmon)
         monsterClassIds.put(HELL, REGULAR, nmon)
