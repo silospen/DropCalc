@@ -5,6 +5,7 @@ import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.math.RoundingMode
 
 @RestController
 class ApiResource(
@@ -20,14 +21,14 @@ class ApiResource(
         @RequestParam("party", required = true) partySize: Int
     ): List<AtomicTcsResponse> {
         return monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
-            println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.id}")
+            println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.name} - ${monster.level}")
             val treasureClass: TreasureClass = monster.getTreasureClass(monsterType, difficulty)
             val leafOutcomes: Map<ItemClass, BigFraction> =
                 treasureClassCalculator.getLeafOutcomes(treasureClass, monster.level, difficulty, nPlayers, partySize)
             leafOutcomes.map { leafOutcome ->
                 AtomicTcsResponse(
                     leafOutcome.key.name,
-                    monster.area.id,
+                    monster.area.name,
                     Probability(leafOutcome.value)
                 )
             }
@@ -38,5 +39,8 @@ class ApiResource(
 data class AtomicTcsResponse(val tc: String, val area: String, val prob: Probability)
 
 data class Probability(val frac: String, val dec: Double) {
-    constructor(fraction: BigFraction) : this("${fraction.numerator}/${fraction.denominator}", fraction.toDouble())
+    constructor(fraction: BigFraction) : this(
+        "${fraction.numerator}/${fraction.denominator}",
+        fraction.bigDecimalValue(20, RoundingMode.HALF_UP.ordinal).toDouble()
+    )
 }
