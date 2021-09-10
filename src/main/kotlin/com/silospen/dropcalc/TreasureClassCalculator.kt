@@ -3,6 +3,7 @@ package com.silospen.dropcalc
 import org.apache.commons.math3.fraction.BigFraction
 import org.apache.commons.math3.fraction.BigFraction.ONE
 import org.springframework.stereotype.Component
+import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.floor
@@ -57,19 +58,47 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         nPlayers: Int = 1,
         partySize: Int = 1
     ): Map<ItemClass, BigFraction> {
-        val result = mutableMapOf<ItemClass, BigFraction>()
         val possiblyUpgradedTreasureClass = changeTcBasedOnLevel(treasureClass, monsterLevel, difficulty)
-        calculatePathSum(Outcome(possiblyUpgradedTreasureClass, 1), BigFraction(1), 1, result, nPlayers, partySize)
-        return applyPicks(result, possiblyUpgradedTreasureClass.properties.picks)
+        return if (possiblyUpgradedTreasureClass.properties.picks > 0) getLeafOutcomesForPositivePicks(
+            possiblyUpgradedTreasureClass,
+            nPlayers,
+            partySize
+        ) else getLeafOutcomesForNegativePicks(possiblyUpgradedTreasureClass, nPlayers, partySize)
     }
 
-    private fun applyPicks(outcomes: Map<ItemClass, BigFraction>, picks: Int): Map<ItemClass, BigFraction> =
-        when {
+    private fun getLeafOutcomesForPositivePicks(
+        treasureClass: TreasureClass,
+        nPlayers: Int,
+        partySize: Int
+    ): Map<ItemClass, BigFraction> {
+        val result = calculatePathSum(Outcome(treasureClass, 1), BigFraction(1), 1, nPlayers, partySize)
+        val picks = treasureClass.properties.picks
+        return when {
+            picks == 1 -> result
             picks > 6 -> TODO("Not yet implemented")
-            picks > 1 -> outcomes.mapValues { ONE.subtract(ONE.subtract(it.value).pow(picks)) }
-            picks < 0 -> TODO("Not yet implemented")
-            else -> outcomes
+            picks > 1 -> result.mapValues { ONE.subtract(ONE.subtract(it.value).pow(picks)) }
+            else -> throw IllegalArgumentException("Unexpected picks: $picks")
         }
+    }
+
+    private fun getLeafOutcomesForNegativePicks(
+        treasureClass: TreasureClass,
+        nPlayers: Int,
+        partySize: Int
+    ): Map<ItemClass, BigFraction> {
+        val results = mutableListOf<Map<ItemClass, BigFraction>>()
+        var picksCounter = treasureClass.properties.picks //TODO: Use this!
+        for (outcome in treasureClass.outcomes) {
+            results.add(calculatePathSum(outcome, BigFraction(1), 1, nPlayers, partySize))
+        }
+        val finalResult = mutableMapOf<ItemClass, BigFraction>()
+        for (result in results) {
+            for (entry in result) {
+                finalResult.merge(entry.key, entry.value) { old, new -> old.add(new) }
+            }
+        }
+        return finalResult
+    }
 
     fun changeTcBasedOnLevel(
         baseTreasureClass: TreasureClass,
@@ -92,6 +121,24 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         outcome: Outcome,
         pathProbabilityAccumulator: BigFraction,
         tcProbabilityDenominator: Int,
+        nPlayers: Int,
+        partySize: Int
+    ): Map<ItemClass, BigFraction> =
+        mutableMapOf<ItemClass, BigFraction>().apply {
+            calculatePathSumRecurse(
+                outcome,
+                pathProbabilityAccumulator,
+                tcProbabilityDenominator,
+                this,
+                nPlayers,
+                partySize
+            )
+        }
+
+    private fun calculatePathSumRecurse(
+        outcome: Outcome,
+        pathProbabilityAccumulator: BigFraction,
+        tcProbabilityDenominator: Int,
         leafAccumulator: MutableMap<ItemClass, BigFraction>,
         nPlayers: Int,
         partySize: Int
@@ -107,7 +154,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
                     partySize
                 )
                 outcomeType.outcomes.forEach {
-                    calculatePathSum(
+                    calculatePathSumRecurse(
                         it,
                         selectionProbability,
                         denominatorWithNoDrop,
