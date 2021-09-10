@@ -75,8 +75,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         val picks = treasureClass.properties.picks
         return when {
             picks == 1 -> result
-            picks > 6 -> TODO("Not yet implemented")
-            picks > 1 -> result.mapValues { ONE.subtract(ONE.subtract(it.value).pow(picks)) }
+            picks > 1 -> result.mapValues { ONE.subtract(ONE.subtract(it.value).pow(if (picks > 6) 6 else 1)) }
             else -> throw IllegalArgumentException("Unexpected picks: $picks")
         }
     }
