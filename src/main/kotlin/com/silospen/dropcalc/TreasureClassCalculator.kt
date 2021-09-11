@@ -75,10 +75,13 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         val picks = treasureClass.properties.picks
         return when {
             picks == 1 -> result
-            picks > 1 -> result.mapValues { ONE.subtract(ONE.subtract(it.value).pow(if (picks > 6) 6 else picks)) }
+            picks > 1 -> result.mapValues { calculateProbabilityForPicks(it.value, if (picks > 6) 6 else picks) }
             else -> throw IllegalArgumentException("Unexpected picks: $picks")
         }
     }
+
+    private fun calculateProbabilityForPicks(baseProb: BigFraction, picks: Int) =
+        ONE.subtract(ONE.subtract(baseProb).pow(picks))
 
     private fun getLeafOutcomesForNegativePicks(
         treasureClass: TreasureClass,
@@ -88,12 +91,15 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         val results = mutableListOf<Map<ItemClass, BigFraction>>()
         var picksCounter = treasureClass.properties.picks //TODO: Use this!
         for (outcome in treasureClass.outcomes) {
-            results.add(calculatePathSum(outcome, BigFraction(1), 1, nPlayers, partySize))
+            results.add(calculatePathSum(outcome, BigFraction(1), outcome.probability, nPlayers, partySize)
+                .mapValues { calculateProbabilityForPicks(it.value, outcome.probability) })
         }
         val finalResult = mutableMapOf<ItemClass, BigFraction>()
         for (result in results) {
             for (entry in result) {
-                finalResult.merge(entry.key, entry.value) { old, new -> old.add(new) }
+                finalResult.merge(entry.key, entry.value) { old, new ->
+                    ONE.subtract(old.subtract(1).negate().multiply(ONE.subtract(new)))
+                }
             }
         }
         return finalResult

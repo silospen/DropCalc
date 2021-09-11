@@ -82,8 +82,41 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_withNegativePicks() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", 4, NORMAL)
-        assertEquals(BigFraction(37, 200), actual.entries.find { it.key.name == "weap3" }!!.value)
+        val expected = mapOf(
+            ItemClass(name = "\"gld,mul=1280\"") to BigFraction(60, 100),
+            ItemClass(name = "weap3") to BigFraction(37, 200),
+            ItemClass(name = "armo3") to BigFraction(37, 200),
+            ItemClass(name = "rin") to BigFraction(3, 500),
+            ItemClass(name = "amu") to BigFraction(3, 1000),
+            ItemClass(name = "jew") to BigFraction(3, 2000),
+            ItemClass(name = "cm3") to BigFraction(3, 2000),
+            ItemClass(name = "cm2") to BigFraction(3, 2000),
+            ItemClass(name = "cm1") to BigFraction(3, 2000),
+            ItemClass(name = "Chipped Gem") to BigFraction(3, 200),
+            ItemClass(name = "Act 1 Cpot A") to BigFraction(1)
+        )
+        assertEquals(expected, actual)
     }
+
+    @Test
+    fun getLeafOutcomes_withNegativePicks_unevenPickDistribution() {
+        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", 4, NORMAL)
+        val expected = mapOf(
+            ItemClass(name = "\"gld,mul=1280\"") to BigFraction(60, 100),
+            ItemClass(name = "weap3") to BigFraction(2405, 3872),
+            ItemClass(name = "armo3") to BigFraction(2405, 3872),
+            ItemClass(name = "rin") to BigFraction(3, 500),
+            ItemClass(name = "amu") to BigFraction(3, 1000),
+            ItemClass(name = "jew") to BigFraction(3, 2000),
+            ItemClass(name = "cm3") to BigFraction(3, 2000),
+            ItemClass(name = "cm2") to BigFraction(3, 2000),
+            ItemClass(name = "cm1") to BigFraction(3, 2000),
+            ItemClass(name = "Chipped Gem") to BigFraction(3, 200),
+            ItemClass(name = "armo6") to BigFraction(72, 121)
+        )
+        assertEquals(expected, actual)
+    }
+
 
     @Test
     fun calculateNoDrop() {

@@ -1,16 +1,16 @@
 package com.silospen.dropcalc
 
 import com.silospen.dropcalc.files.LineParser
+import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
 import io.ktor.client.*
 import org.apache.commons.math3.util.Precision
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import kotlin.math.exp
+import java.io.File
 
 @SpringBootTest
 class DropCalcIntegTest {
@@ -20,111 +20,127 @@ class DropCalcIntegTest {
 
     @Test
     fun test() {
-        runAtomicTcTest("snowyeti2", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1)
-        runAtomicTcTest("snowyeti2", MonsterType.REGULAR, Difficulty.NORMAL, 3, 3)
-        runAtomicTcTest("snowyeti2", MonsterType.REGULAR, Difficulty.NIGHTMARE, 3, 3)
-        runAtomicTcTest("snowyeti2", MonsterType.REGULAR, Difficulty.HELL, 1, 1)
-        runAtomicTcTest("snowyeti2", MonsterType.REGULAR, Difficulty.HELL, 3, 3)
-        runAtomicTcTest("snowyeti2", MonsterType.CHAMPION, Difficulty.NORMAL, 1, 1)
-        runAtomicTcTest("snowyeti2", MonsterType.CHAMPION, Difficulty.HELL, 1, 1)
-        runAtomicTcTest("snowyeti2", MonsterType.CHAMPION, Difficulty.HELL, 8, 8)
-        runAtomicTcTest("snowyeti2", MonsterType.UNIQUE, Difficulty.HELL, 8, 8)
+        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.REGULAR, Difficulty.NORMAL, 3, 3)
+        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.REGULAR, Difficulty.NIGHTMARE, 3, 3)
+        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.REGULAR, Difficulty.HELL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.REGULAR, Difficulty.HELL, 3, 3)
+        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.CHAMPION, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.CHAMPION, Difficulty.HELL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.CHAMPION, Difficulty.HELL, 8, 8)
+        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.UNIQUE, Difficulty.HELL, 8, 8)
     }
 
     @Test
     fun primeEvilTest() {
-        runAtomicTcTest("mephisto", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("mephisto", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTest("mephisto", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
-        runAtomicTcTest("diablo", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("diablo", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTest("diablo", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
-        runAtomicTcTest("baalcrab", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("baalcrab", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTest("baalcrab", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
+        runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
+        runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
+        runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
     }
 
     @Test
     fun bossTest() {
-        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.NIGHTMARE, 6, 6, true)
-        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.REGULAR, Difficulty.NIGHTMARE, 6, 6, true)
+        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
 
-        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
 
-        runAtomicTcTest("izual", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("izual", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTest("izual", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTest("izual", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
 
-        runAtomicTcTest("bloodraven", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("bloodraven", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTest("bloodraven", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTest("bloodraven", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
 
-        runAtomicTcTest("nihlathakboss", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("nihlathakboss", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTest("nihlathakboss", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTest("nihlathakboss", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
 
-        runAtomicTcTest("andariel", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("andariel", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTest("andariel", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTest("andariel", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
 
-        runAtomicTcTest("putriddefiler1", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("putriddefiler2", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("putriddefiler3", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("putriddefiler4", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("putriddefiler5", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTest("putriddefiler1", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTest("putriddefiler2", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTest("putriddefiler3", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTest("putriddefiler4", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTest("putriddefiler5", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTest("putriddefiler1", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-        runAtomicTcTest("putriddefiler2", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-        runAtomicTcTest("putriddefiler3", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-        runAtomicTcTest("putriddefiler4", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-        runAtomicTcTest("putriddefiler5", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-
-        //BAD
-//        runAtomicTcTest("griswold", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-//        runAtomicTcTest("griswold", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-//        runAtomicTcTest("griswold", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-//        runAtomicTcTest("griswold", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler1", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler2", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler3", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler4", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler5", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler1", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler2", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler3", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler4", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler5", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler1", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler2", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler3", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler4", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler5", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
 
 //        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
 //        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
 //        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
 //        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
 //
-
-
     }
 
-    fun runAtomicTcTest(
+    @Test
+    fun runLocalTests() = getResource("integExpectations/tcTests").listFiles()!!.forEach {
+        val parts = it.name.removeSuffix(".tsv").split("_")
+        runAtomicTcTestWithLocalExpectations(
+            parts[0],
+            MonsterType.valueOf(parts[1]),
+            Difficulty.valueOf(parts[2]),
+            parts[3].toInt(),
+            parts[4].toInt(),
+            it
+        )
+    }
+
+    fun runAtomicTcTestWithRemoteExpectations(
         monsterId: String,
         monsterType: MonsterType,
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
         isBoss: Boolean = false
+    ) = runAtomicTcTestWithLocalExpectations(
+        monsterId, monsterType, difficulty, nPlayers, partySize, testDataGenerator.generateTcExpectationDataToFile(
+            monsterId,
+            monsterType,
+            difficulty,
+            nPlayers,
+            partySize,
+            isBoss
+        )
+    )
+
+    fun runAtomicTcTestWithLocalExpectations(
+        monsterId: String,
+        monsterType: MonsterType,
+        difficulty: Difficulty,
+        nPlayers: Int,
+        partySize: Int,
+        file: File
     ) {
         val actual = apiResource.getAtomicTcs(monsterId, monsterType, difficulty, nPlayers, partySize)
         val expected = readTsv(
-            testDataGenerator.generateTcExpectationDataToFile(
-                monsterId,
-                monsterType,
-                difficulty,
-                nPlayers,
-                partySize,
-                isBoss
-            ),
+            file,
             tcExpectationDataLineParser
         )
         assertTrue(expected.isNotEmpty(), "Expected is empty")
