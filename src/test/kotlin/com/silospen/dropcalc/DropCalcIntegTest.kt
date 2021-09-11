@@ -32,7 +32,7 @@ class DropCalcIntegTest {
     }
 
     @Test
-    fun primeEvilTest(){
+    fun primeEvilTest() {
         runAtomicTcTest("mephisto", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
         runAtomicTcTest("mephisto", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
         runAtomicTcTest("mephisto", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
@@ -46,6 +46,36 @@ class DropCalcIntegTest {
 
     @Test
     fun bossTest() {
+        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.NIGHTMARE, 6, 6, true)
+        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+
+        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+
+        runAtomicTcTest("izual", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTest("izual", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTest("izual", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTest("izual", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+
+        runAtomicTcTest("bloodraven", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTest("bloodraven", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTest("bloodraven", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTest("bloodraven", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+
+        runAtomicTcTest("nihlathakboss", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTest("nihlathakboss", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTest("nihlathakboss", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTest("nihlathakboss", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+
+        runAtomicTcTest("andariel", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+        runAtomicTcTest("andariel", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+        runAtomicTcTest("andariel", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTest("andariel", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+
         runAtomicTcTest("putriddefiler1", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
         runAtomicTcTest("putriddefiler2", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
         runAtomicTcTest("putriddefiler3", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
@@ -62,27 +92,18 @@ class DropCalcIntegTest {
         runAtomicTcTest("putriddefiler4", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
         runAtomicTcTest("putriddefiler5", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
 
+        //BAD
+//        runAtomicTcTest("griswold", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+//        runAtomicTcTest("griswold", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+//        runAtomicTcTest("griswold", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+//        runAtomicTcTest("griswold", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
 
-//        runAtomicTcTest("andariel", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
+//        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
+//        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
+//        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+//        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+//
 
-
-//        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-//        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-//        runAtomicTcTest("radament", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
-
-//        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-//        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-//        runAtomicTcTest("summoner", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
-
-
-
-//        "duriel"
-//        "radament"
-//        "summoner"
-//        "izual"
-//        "bloodraven"
-//        "griswold"
-//        "nihlathakboss"
 
     }
 
@@ -149,6 +170,8 @@ class DropCalcIntegTest {
         "cm3",
         "jew",
         "rin",
-        "amu"
+        "amu",
+        "pk2",
+        "pk3"
     )
 }
