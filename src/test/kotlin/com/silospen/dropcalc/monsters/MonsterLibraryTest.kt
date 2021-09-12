@@ -41,11 +41,11 @@ class MonsterLibraryTest {
         )
         val expected  = MonsterLibrary(setOf(
             Monster("duriel", durielMonsterClass, durielArea, Difficulty.NORMAL, MonsterType.REGULAR, TreasureClassType.REGULAR),
-            Monster("duriel_q", durielMonsterClass, durielArea, Difficulty.NORMAL, MonsterType.REGULAR, TreasureClassType.QUEST),
+            Monster("durielq", durielMonsterClass, durielArea, Difficulty.NORMAL, MonsterType.REGULAR, TreasureClassType.QUEST),
             Monster("duriel", durielMonsterClass, durielArea, Difficulty.NIGHTMARE, MonsterType.REGULAR, TreasureClassType.REGULAR),
-            Monster("duriel_q", durielMonsterClass, durielArea, Difficulty.NIGHTMARE, MonsterType.REGULAR, TreasureClassType.QUEST),
+            Monster("durielq", durielMonsterClass, durielArea, Difficulty.NIGHTMARE, MonsterType.REGULAR, TreasureClassType.QUEST),
             Monster("duriel", durielMonsterClass, durielArea, Difficulty.HELL, MonsterType.REGULAR, TreasureClassType.REGULAR),
-            Monster("duriel_q", durielMonsterClass, durielArea, Difficulty.HELL, MonsterType.REGULAR, TreasureClassType.QUEST),
+            Monster("durielq", durielMonsterClass, durielArea, Difficulty.HELL, MonsterType.REGULAR, TreasureClassType.QUEST),
         ))
         assertEquals(expected, actual)
     }

@@ -77,14 +77,15 @@ enum class MonsterType {
     CHAMPION,
     UNIQUE,
     QUEST,
-    MINION
+    MINION,
+    BOSS
 }
 
 enum class TreasureClassType(val validMonsterType: MonsterType, val idSuffix: String) {
     REGULAR(MonsterType.REGULAR, ""),
     CHAMPION(MonsterType.CHAMPION, ""),
     UNIQUE(MonsterType.UNIQUE, ""),
-    QUEST(MonsterType.REGULAR, "_q")
+    QUEST(MonsterType.REGULAR, "q")
 }
 
 fun <R, C, V> Table<R, C, V>.getValue(rowKey: R, columnKey: C) =

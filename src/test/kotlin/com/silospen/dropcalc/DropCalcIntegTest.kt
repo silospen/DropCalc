@@ -36,12 +36,15 @@ class DropCalcIntegTest {
         runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
         runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
         runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
+        runAtomicTcTestWithRemoteExpectations("mephistoq", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
         runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
         runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
         runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
+        runAtomicTcTestWithRemoteExpectations("diabloq", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
         runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
         runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
         runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
+        runAtomicTcTestWithRemoteExpectations("baalcrabq", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
     }
 
     @Test
