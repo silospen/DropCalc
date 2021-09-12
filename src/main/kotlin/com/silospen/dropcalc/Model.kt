@@ -1,8 +1,6 @@
 package com.silospen.dropcalc
 
 import com.google.common.collect.Table
-import com.silospen.dropcalc.MonsterClassType.REGULAR
-import java.util.*
 
 data class TreasureClassConfig(
     val name: String,
@@ -15,7 +13,12 @@ data class TreasureClass(
     val probabilityDenominator: Int,
     val properties: TreasureClassProperties,
     val outcomes: Set<Outcome>
-) : OutcomeType
+
+) : OutcomeType {
+    override fun toString(): String {
+        return "TreasureClass(name='$name', probabilityDenominator=$probabilityDenominator, properties=$properties)"
+    }
+}
 
 data class ItemClass(
     override val name: String
@@ -48,7 +51,7 @@ data class MonsterClass(
     val monsterClassProperties: Table<Difficulty, TreasureClassType, TreasureClass>,
     val monsterLevels: Map<Difficulty, Int>,
     val minionIds: Set<String> = emptySet(),
-    val monsterClassType: MonsterClassType = REGULAR
+    val isBoss: Boolean = false
 )
 
 data class SuperUniqueMonsterConfig(val id: String, val monsterClassId: String, val hasMinions: Boolean)
@@ -66,12 +69,6 @@ enum class Difficulty {
     HELL
 }
 
-enum class MonsterClassType {
-    REGULAR,
-    SUPERUNIQUE,
-    BOSS
-}
-
 enum class MonsterType {
     REGULAR,
     CHAMPION,
@@ -81,11 +78,11 @@ enum class MonsterType {
     BOSS
 }
 
-enum class TreasureClassType(val validMonsterType: MonsterType, val idSuffix: String) {
-    REGULAR(MonsterType.REGULAR, ""),
-    CHAMPION(MonsterType.CHAMPION, ""),
-    UNIQUE(MonsterType.UNIQUE, ""),
-    QUEST(MonsterType.REGULAR, "q")
+enum class TreasureClassType(val validMonsterTypes: List<MonsterType>, val idSuffix: String) {
+    REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS), ""),
+    CHAMPION(listOf(MonsterType.CHAMPION), ""),
+    UNIQUE(listOf(MonsterType.UNIQUE), ""),
+    QUEST(listOf(MonsterType.REGULAR, MonsterType.BOSS), "q")
 }
 
 fun <R, C, V> Table<R, C, V>.getValue(rowKey: R, columnKey: C) =

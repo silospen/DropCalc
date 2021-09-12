@@ -33,73 +33,67 @@ class DropCalcIntegTest {
 
     @Test
     fun primeEvilTest() {
-        runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
-        runAtomicTcTestWithRemoteExpectations("mephistoq", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
-        runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
-        runAtomicTcTestWithRemoteExpectations("diabloq", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
-        runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
-        runAtomicTcTestWithRemoteExpectations("baalcrabq", MonsterType.REGULAR, Difficulty.HELL, 6, 6, true)
+        runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.BOSS, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("mephisto", MonsterType.BOSS, Difficulty.HELL, 6, 6)
+        runAtomicTcTestWithRemoteExpectations("mephistoq", MonsterType.BOSS, Difficulty.HELL, 6, 6)
+        runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.BOSS, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("diablo", MonsterType.BOSS, Difficulty.HELL, 6, 6)
+        runAtomicTcTestWithRemoteExpectations("diabloq", MonsterType.BOSS, Difficulty.HELL, 6, 6)
+        runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.BOSS, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("baalcrab", MonsterType.BOSS, Difficulty.HELL, 6, 6)
+        runAtomicTcTestWithRemoteExpectations("baalcrabq", MonsterType.BOSS, Difficulty.HELL, 6, 6)
     }
 
     @Test
     fun bossTest() {
-        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.REGULAR, Difficulty.NIGHTMARE, 6, 6, true)
-        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
+        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.BOSS, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.BOSS, Difficulty.NIGHTMARE, 6, 6)
+        runAtomicTcTestWithRemoteExpectations("radament", MonsterType.BOSS, Difficulty.HELL, 1, 1)
 
-        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.BOSS, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.BOSS, Difficulty.HELL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("summoner", MonsterType.BOSS, Difficulty.HELL, 7, 7)
 
-        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.BOSS, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.BOSS, Difficulty.HELL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("izual", MonsterType.BOSS, Difficulty.HELL, 7, 7)
 
-        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.BOSS, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.BOSS, Difficulty.HELL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("bloodraven", MonsterType.BOSS, Difficulty.HELL, 7, 7)
 
-        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.BOSS, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.BOSS, Difficulty.HELL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("nihlathakboss", MonsterType.BOSS, Difficulty.HELL, 7, 7)
 
-        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
+        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.BOSS, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.BOSS, Difficulty.HELL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("andariel", MonsterType.BOSS, Difficulty.HELL, 7, 7)
 
-        runAtomicTcTestWithRemoteExpectations("putriddefiler1", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler2", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler3", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler4", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler5", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler1", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler2", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler3", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler4", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler5", MonsterType.REGULAR, Difficulty.NIGHTMARE, 5, 3, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler1", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler2", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler3", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler4", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler5", MonsterType.REGULAR, Difficulty.HELL, 8, 8, true)
-
-//        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.NORMAL, 1, 1, true)
-//        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.NIGHTMARE, 1, 1, true)
-//        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.HELL, 1, 1, true)
-//        runAtomicTcTest("duriel", MonsterType.REGULAR, Difficulty.HELL, 7, 7, true)
-//
+        runAtomicTcTestWithRemoteExpectations("putriddefiler1", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler2", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler3", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler4", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler5", MonsterType.BOSS, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler1", MonsterType.BOSS, Difficulty.NIGHTMARE, 5, 3)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler2", MonsterType.BOSS, Difficulty.NIGHTMARE, 5, 3)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler3", MonsterType.BOSS, Difficulty.NIGHTMARE, 5, 3)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler4", MonsterType.BOSS, Difficulty.NIGHTMARE, 5, 3)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler5", MonsterType.BOSS, Difficulty.NIGHTMARE, 5, 3)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler1", MonsterType.BOSS, Difficulty.HELL, 8, 8)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler2", MonsterType.BOSS, Difficulty.HELL, 8, 8)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler3", MonsterType.BOSS, Difficulty.HELL, 8, 8)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler4", MonsterType.BOSS, Difficulty.HELL, 8, 8)
+        runAtomicTcTestWithRemoteExpectations("putriddefiler5", MonsterType.BOSS, Difficulty.HELL, 8, 8)
     }
 
     @Test
@@ -120,16 +114,14 @@ class DropCalcIntegTest {
         monsterType: MonsterType,
         difficulty: Difficulty,
         nPlayers: Int,
-        partySize: Int,
-        isBoss: Boolean = false
+        partySize: Int
     ) = runAtomicTcTestWithLocalExpectations(
         monsterId, monsterType, difficulty, nPlayers, partySize, testDataGenerator.generateTcExpectationDataToFile(
             monsterId,
             monsterType,
             difficulty,
             nPlayers,
-            partySize,
-            isBoss
+            partySize
         )
     )
 

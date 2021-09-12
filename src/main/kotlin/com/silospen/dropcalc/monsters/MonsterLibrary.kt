@@ -27,7 +27,7 @@ class MonsterLibrary(monsters: Set<Monster>) {
             difficulty: Difficulty,
             treasureClassType: TreasureClassType
         ): List<Monster> {
-            return listOf(treasureClassType.validMonsterType).flatMap { monsterType ->
+            return treasureClassType.validMonsterTypes.flatMap { monsterType ->
                 areasLibrary.getAreasForMonsterClassId(monsterClass.id, difficulty, monsterType).map {
                     Monster(
                         monsterClass.id + treasureClassType.idSuffix,
@@ -58,6 +58,10 @@ class MonsterLibrary(monsters: Set<Monster>) {
 
     override fun hashCode(): Int {
         return monstersByMonsterClassIdDifficultyType.hashCode()
+    }
+
+    override fun toString(): String {
+        return "MonsterLibrary(monstersByMonsterClassIdDifficultyType=$monstersByMonsterClassIdDifficultyType)"
     }
 
 }

@@ -2,6 +2,8 @@ package com.silospen.dropcalc.monsters
 
 import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.Difficulty.*
+import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.areas.AreasLibrary
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -24,11 +26,11 @@ class MonsterLibraryTest {
         val durielArea = Area(
             "duriels-house",
             "DurielsHouse",
-            mapOf(Difficulty.NORMAL to 10, Difficulty.NIGHTMARE to 20, Difficulty.HELL to 30),
+            mapOf(NORMAL to 10, NIGHTMARE to 20, HELL to 30),
             ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
-                .put(Difficulty.NORMAL, MonsterType.REGULAR, setOf("duriel"))
-                .put(Difficulty.NIGHTMARE, MonsterType.REGULAR, setOf("duriel"))
-                .put(Difficulty.HELL, MonsterType.REGULAR, setOf("duriel"))
+                .put(NORMAL, BOSS, setOf("duriel"))
+                .put(NIGHTMARE, BOSS, setOf("duriel"))
+                .put(HELL, BOSS, setOf("duriel"))
                 .build()
         )
         val actual = MonsterLibrary.fromConfig(
@@ -40,12 +42,12 @@ class MonsterLibraryTest {
             )
         )
         val expected  = MonsterLibrary(setOf(
-            Monster("duriel", durielMonsterClass, durielArea, Difficulty.NORMAL, MonsterType.REGULAR, TreasureClassType.REGULAR),
-            Monster("durielq", durielMonsterClass, durielArea, Difficulty.NORMAL, MonsterType.REGULAR, TreasureClassType.QUEST),
-            Monster("duriel", durielMonsterClass, durielArea, Difficulty.NIGHTMARE, MonsterType.REGULAR, TreasureClassType.REGULAR),
-            Monster("durielq", durielMonsterClass, durielArea, Difficulty.NIGHTMARE, MonsterType.REGULAR, TreasureClassType.QUEST),
-            Monster("duriel", durielMonsterClass, durielArea, Difficulty.HELL, MonsterType.REGULAR, TreasureClassType.REGULAR),
-            Monster("durielq", durielMonsterClass, durielArea, Difficulty.HELL, MonsterType.REGULAR, TreasureClassType.QUEST),
+            Monster("duriel", durielMonsterClass, durielArea, NORMAL, BOSS, TreasureClassType.REGULAR),
+            Monster("durielq", durielMonsterClass, durielArea, NORMAL, BOSS, TreasureClassType.QUEST),
+            Monster("duriel", durielMonsterClass, durielArea, NIGHTMARE, BOSS, TreasureClassType.REGULAR),
+            Monster("durielq", durielMonsterClass, durielArea, NIGHTMARE, BOSS, TreasureClassType.QUEST),
+            Monster("duriel", durielMonsterClass, durielArea, HELL, BOSS, TreasureClassType.REGULAR),
+            Monster("durielq", durielMonsterClass, durielArea, HELL, BOSS, TreasureClassType.QUEST),
         ))
         assertEquals(expected, actual)
     }

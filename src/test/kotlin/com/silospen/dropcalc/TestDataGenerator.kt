@@ -16,8 +16,7 @@ class TestDataGenerator(private val client: HttpClient) {
         monsterType: MonsterType,
         difficulty: Difficulty,
         nPlayers: Int,
-        partySize: Int,
-        isBoss: Boolean
+        partySize: Int
     ): File {
         val tempFile = File.createTempFile("dropcalcIntegTest", null)
         tempFile.deleteOnExit()
@@ -27,8 +26,7 @@ class TestDataGenerator(private val client: HttpClient) {
                 monsterType,
                 difficulty,
                 nPlayers,
-                partySize,
-                isBoss
+                partySize
             )
         )
         return tempFile
@@ -41,17 +39,16 @@ class TestDataGenerator(private val client: HttpClient) {
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
-        isBoss: Boolean
     ): String = callSilospenDropCalcAndParseResponse(
         "attc",
         monsterId,
-        when {
-            monsterType == REGULAR && isBoss -> "bossMon"
-            monsterType == REGULAR -> "regMon"
-            monsterType == CHAMPION -> "champMon"
-            monsterType == UNIQUE -> "uniqMon"
-            monsterType == QUEST -> "supUniqMon"
-            monsterType == MINION -> "minMon"
+        when (monsterType) {
+            BOSS -> "bossMon"
+            REGULAR -> "regMon"
+            CHAMPION -> "champMon"
+            UNIQUE -> "uniqMon"
+            QUEST -> "supUniqMon"
+            MINION -> "minMon"
             else -> throw RuntimeException("Unrecognized monsterType $monsterType")
         },
         when (difficulty) {

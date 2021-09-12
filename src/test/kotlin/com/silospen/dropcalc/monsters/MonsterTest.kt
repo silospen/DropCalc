@@ -65,7 +65,7 @@ class MonsterTest {
                     ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
                         .put(HELL, REGULAR, setOf("radament"))
                         .build()
-                ), HELL, REGULAR, TreasureClassType.REGULAR
+                ), HELL, BOSS, TreasureClassType.REGULAR
             ).level
         )
     }

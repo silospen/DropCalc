@@ -3,7 +3,8 @@ package com.silospen.dropcalc
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.Difficulty.*
-import com.silospen.dropcalc.MonsterType.*
+import com.silospen.dropcalc.MonsterType.CHAMPION
+import com.silospen.dropcalc.MonsterType.REGULAR
 import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.translations.Translations
 import java.util.*
@@ -107,13 +108,13 @@ val skeletonMonsterClass = MonsterClass(
 val durielMonsterClass =
     MonsterClass(
         "duriel",
-        monsterClassType = MonsterClassType.BOSS,
+        isBoss = true,
         monsterClassProperties = durielClassProperties,
         monsterLevels = levelsPerDifficulty(22, 55, 88)
     )
 val putridDefilerMonsterClass = MonsterClass(
     "putriddefiler2",
-    monsterClassType = MonsterClassType.BOSS,
+    isBoss = true,
     monsterClassProperties = putridDefilerClassProperties,
     monsterLevels = levelsPerDifficulty(37, 62, 81)
 )
@@ -126,7 +127,7 @@ val fetishShamanMonsterClass = MonsterClass(
 val radamentMonsterClass = MonsterClass(
     "radament",
     minionIds = setOf("skeleton4"),
-    monsterClassType = MonsterClassType.BOSS,
+    isBoss = true,
     monsterClassProperties = radamentClassProperties,
     monsterLevels = levelsPerDifficulty(16, 49, 83)
 )

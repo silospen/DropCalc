@@ -4,8 +4,6 @@ import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
-import com.silospen.dropcalc.MonsterClassType.BOSS
-import com.silospen.dropcalc.MonsterClassType.REGULAR
 import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.translations.Translations
 import java.util.*
@@ -35,7 +33,7 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
             },
             monsterClassProperties = parseMonsterClassProperties(line),
             minionIds = parseMinions(line),
-            monsterClassType = if (isBoss) BOSS else REGULAR
+            isBoss = isBoss
         )
     }
 
@@ -148,7 +146,10 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
             .toSet()
 }
 
-class LevelsLineParser(private val translations: Translations, private val hardcodedAreas: Map<String, List<String>>) :
+class LevelsLineParser(
+    private val translations: Translations,
+    private val hardcodedAreas: Table<String, MonsterType, Set<String>>
+) :
     LineParser<Area?> {
     override fun parseLine(line: List<String>): Area? {
         val id = line[0]
@@ -157,7 +158,7 @@ class LevelsLineParser(private val translations: Translations, private val hardc
         val levelN = line[60].toIntOrNull()
         val levelH = line[61].toIntOrNull()
         if (level == null || levelN == null || levelH == null) return null
-        val monsterClassIds = parseMonsterClassIds(line, hardcodedAreas.getOrDefault(id, emptyList()))
+        val monsterClassIds = parseMonsterClassIds(line, id)
         return Area(
             id,
             translations.getTranslation(name) ?: throw IllegalArgumentException("Missing translation for $name"),
@@ -172,32 +173,49 @@ class LevelsLineParser(private val translations: Translations, private val hardc
 
     private fun parseMonsterClassIds(
         line: List<String>,
-        hardcodedMons: List<String>
+        id: String
     ): Table<Difficulty, MonsterType, Set<String>> {
         val mons = (74..83)
             .map { line[it] }
             .filter { it.isNotBlank() }
-            .toSet() + hardcodedMons
+            .toSet()
         val nmons = (85..94)
             .map { line[it] }
             .filter { it.isNotBlank() }
-            .toSet() + hardcodedMons
+            .toSet()
         val umons = (95..104)
             .map { line[it] }
             .filter { it.isNotBlank() }
-            .toSet() + hardcodedMons
+            .toSet()
         val monsterClassIds = HashBasedTable.create<Difficulty, MonsterType, Set<String>>()
-        monsterClassIds.put(NORMAL, MonsterType.REGULAR, mons)
-        monsterClassIds.put(NORMAL, CHAMPION, umons)
-        monsterClassIds.put(NORMAL, UNIQUE, umons)
-        monsterClassIds.put(NIGHTMARE, MonsterType.REGULAR, nmons)
-        monsterClassIds.put(NIGHTMARE, CHAMPION, nmons)
-        monsterClassIds.put(NIGHTMARE, UNIQUE, nmons)
-        monsterClassIds.put(HELL, MonsterType.REGULAR, nmons)
-        monsterClassIds.put(HELL, CHAMPION, nmons)
-        monsterClassIds.put(HELL, UNIQUE, nmons)
+        val hardcodedMonsterClassIds =
+            MonsterType.values().associateWith { hardcodedAreas.getOrDefault(id, it, emptySet()) }
+        monsterClassIds.putIfNotEmpty(NORMAL, REGULAR, mons + hardcodedMonsterClassIds.getValue(REGULAR))
+        monsterClassIds.putIfNotEmpty(NORMAL, CHAMPION, umons + hardcodedMonsterClassIds.getValue(CHAMPION))
+        monsterClassIds.putIfNotEmpty(NORMAL, UNIQUE, umons + hardcodedMonsterClassIds.getValue(UNIQUE))
+        monsterClassIds.putIfNotEmpty(NORMAL, BOSS, hardcodedMonsterClassIds.getValue(BOSS))
+        monsterClassIds.putIfNotEmpty(NIGHTMARE, REGULAR, nmons + hardcodedMonsterClassIds.getValue(REGULAR))
+        monsterClassIds.putIfNotEmpty(NIGHTMARE, CHAMPION, nmons + hardcodedMonsterClassIds.getValue(CHAMPION))
+        monsterClassIds.putIfNotEmpty(NIGHTMARE, UNIQUE, nmons + hardcodedMonsterClassIds.getValue(UNIQUE))
+        monsterClassIds.putIfNotEmpty(NIGHTMARE, BOSS, hardcodedMonsterClassIds.getValue(BOSS))
+        monsterClassIds.putIfNotEmpty(HELL, REGULAR, nmons + hardcodedMonsterClassIds.getValue(REGULAR))
+        monsterClassIds.putIfNotEmpty(HELL, CHAMPION, nmons + hardcodedMonsterClassIds.getValue(CHAMPION))
+        monsterClassIds.putIfNotEmpty(HELL, UNIQUE, nmons + hardcodedMonsterClassIds.getValue(UNIQUE))
+        monsterClassIds.putIfNotEmpty(HELL, BOSS, hardcodedMonsterClassIds.getValue(BOSS))
         return monsterClassIds
     }
 }
 
 private fun parseNumericBoolean(s: String) = s == "1"
+
+private fun <R, C, V> Table<R, C, V>.getOrDefault(rowKey: R, colKey: C, default: V): V {
+    return get(rowKey, colKey) ?: default
+}
+
+private fun Table<Difficulty, MonsterType, Set<String>>.putIfNotEmpty(
+    rowKey: Difficulty,
+    colKey: MonsterType,
+    value: Set<String>
+) {
+    if (value.isNotEmpty()) put(rowKey, colKey, value)
+}
