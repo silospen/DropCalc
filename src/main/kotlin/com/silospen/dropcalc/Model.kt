@@ -1,6 +1,5 @@
 package com.silospen.dropcalc
 
-import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import com.silospen.dropcalc.MonsterClassType.REGULAR
 import java.util.*
@@ -46,7 +45,7 @@ sealed interface OutcomeType {
 
 data class MonsterClass(
     val id: String,
-    val monsterClassProperties: Table<Difficulty, MonsterType, TreasureClass>,
+    val monsterClassProperties: Table<Difficulty, TreasureClassType, TreasureClass>,
     val monsterLevels: Map<Difficulty, Int>,
     val minionIds: Set<String> = emptySet(),
     val monsterClassType: MonsterClassType = REGULAR
@@ -79,6 +78,13 @@ enum class MonsterType {
     UNIQUE,
     QUEST,
     MINION
+}
+
+enum class TreasureClassType(val validMonsterType: MonsterType, val idSuffix: String) {
+    REGULAR(MonsterType.REGULAR, ""),
+    CHAMPION(MonsterType.CHAMPION, ""),
+    UNIQUE(MonsterType.UNIQUE, ""),
+    QUEST(MonsterType.REGULAR, "_q")
 }
 
 fun <R, C, V> Table<R, C, V>.getValue(rowKey: R, columnKey: C) =

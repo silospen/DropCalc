@@ -5,7 +5,7 @@ import com.silospen.dropcalc.areas.AreasLibrary
 
 class MonsterLibrary(monsters: Set<Monster>) {
     private val monstersByMonsterClassIdDifficultyType =
-        monsters.groupBy { Triple(it.monsterClass.id, it.difficulty, it.type) }.mapValues { it.value.toSet() }
+        monsters.groupBy { Triple(it.id, it.difficulty, it.type) }.mapValues { it.value.toSet() }
 
     companion object {
         fun fromConfig(
@@ -25,15 +25,19 @@ class MonsterLibrary(monsters: Set<Monster>) {
             areasLibrary: AreasLibrary,
             monsterClass: MonsterClass,
             difficulty: Difficulty,
-            monsterType: MonsterType
+            treasureClassType: TreasureClassType
         ): List<Monster> {
-            return areasLibrary.getAreasForMonsterClassId(monsterClass.id, difficulty, monsterType).map {
-                Monster(
-                    monsterClass,
-                    it,
-                    difficulty,
-                    monsterType
-                )
+            return listOf(treasureClassType.validMonsterType).flatMap { monsterType ->
+                areasLibrary.getAreasForMonsterClassId(monsterClass.id, difficulty, monsterType).map {
+                    Monster(
+                        monsterClass.id + treasureClassType.idSuffix,
+                        monsterClass,
+                        it,
+                        difficulty,
+                        monsterType,
+                        treasureClassType
+                    )
+                }
             }
         }
     }

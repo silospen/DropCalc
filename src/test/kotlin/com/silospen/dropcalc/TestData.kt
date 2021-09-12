@@ -8,86 +8,86 @@ import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.translations.Translations
 import java.util.*
 
-private fun getSkeletonClassProperties(): HashBasedTable<Difficulty, MonsterType, TreasureClass> {
-    val properties = HashBasedTable.create<Difficulty, MonsterType, TreasureClass>()
-    properties.put(NORMAL, REGULAR, tc("Act 1 H2H A"))
-    properties.put(NORMAL, CHAMPION, tc("Act 1 Champ A"))
-    properties.put(NORMAL, UNIQUE, tc("Act 1 Unique A"))
+private fun getSkeletonClassProperties(): HashBasedTable<Difficulty, TreasureClassType, TreasureClass> {
+    val properties = HashBasedTable.create<Difficulty, TreasureClassType, TreasureClass>()
+    properties.put(NORMAL, TreasureClassType.REGULAR, tc("Act 1 H2H A"))
+    properties.put(NORMAL, TreasureClassType.CHAMPION, tc("Act 1 Champ A"))
+    properties.put(NORMAL, TreasureClassType.UNIQUE, tc("Act 1 Unique A"))
 
-    properties.put(NIGHTMARE, REGULAR, tc("Act 1 (N) H2H A"))
-    properties.put(NIGHTMARE, CHAMPION, tc("Act 1 (N) Champ A"))
-    properties.put(NIGHTMARE, UNIQUE, tc("Act 1 (N) Unique A"))
+    properties.put(NIGHTMARE, TreasureClassType.REGULAR, tc("Act 1 (N) H2H A"))
+    properties.put(NIGHTMARE, TreasureClassType.CHAMPION, tc("Act 1 (N) Champ A"))
+    properties.put(NIGHTMARE, TreasureClassType.UNIQUE, tc("Act 1 (N) Unique A"))
 
-    properties.put(HELL, REGULAR, tc("Act 1 (H) H2H A"))
-    properties.put(HELL, CHAMPION, tc("Act 1 (H) Champ A"))
-    properties.put(HELL, UNIQUE, tc("Act 1 (H) Unique A"))
+    properties.put(HELL, TreasureClassType.REGULAR, tc("Act 1 (H) H2H A"))
+    properties.put(HELL, TreasureClassType.CHAMPION, tc("Act 1 (H) Champ A"))
+    properties.put(HELL, TreasureClassType.UNIQUE, tc("Act 1 (H) Unique A"))
     return properties
 }
 
-private fun getDurielClassProperties(): HashBasedTable<Difficulty, MonsterType, TreasureClass> {
-    val properties = HashBasedTable.create<Difficulty, MonsterType, TreasureClass>()
-    properties.put(NORMAL, REGULAR, tc("Duriel"))
-    properties.put(NORMAL, CHAMPION, tc("Duriel"))
-    properties.put(NORMAL, UNIQUE, tc("Duriel"))
-    properties.put(NORMAL, QUEST, tc("Durielq"))
+private fun getDurielClassProperties(): HashBasedTable<Difficulty, TreasureClassType, TreasureClass> {
+    val properties = HashBasedTable.create<Difficulty, TreasureClassType, TreasureClass>()
+    properties.put(NORMAL, TreasureClassType.REGULAR, tc("Duriel"))
+    properties.put(NORMAL, TreasureClassType.CHAMPION, tc("Duriel"))
+    properties.put(NORMAL, TreasureClassType.UNIQUE, tc("Duriel"))
+    properties.put(NORMAL, TreasureClassType.QUEST, tc("Durielq"))
 
-    properties.put(NIGHTMARE, REGULAR, tc("Duriel (N)"))
-    properties.put(NIGHTMARE, CHAMPION, tc("Duriel (N)"))
-    properties.put(NIGHTMARE, UNIQUE, tc("Duriel (N)"))
-    properties.put(NIGHTMARE, QUEST, tc("Durielq (N)"))
+    properties.put(NIGHTMARE, TreasureClassType.REGULAR, tc("Duriel (N)"))
+    properties.put(NIGHTMARE, TreasureClassType.CHAMPION, tc("Duriel (N)"))
+    properties.put(NIGHTMARE, TreasureClassType.UNIQUE, tc("Duriel (N)"))
+    properties.put(NIGHTMARE, TreasureClassType.QUEST, tc("Durielq (N)"))
 
-    properties.put(HELL, REGULAR, tc("Duriel (H)"))
-    properties.put(HELL, CHAMPION, tc("Duriel (H)"))
-    properties.put(HELL, UNIQUE, tc("Duriel (H)"))
-    properties.put(HELL, QUEST, tc("Durielq (H)"))
+    properties.put(HELL, TreasureClassType.REGULAR, tc("Duriel (H)"))
+    properties.put(HELL, TreasureClassType.CHAMPION, tc("Duriel (H)"))
+    properties.put(HELL, TreasureClassType.UNIQUE, tc("Duriel (H)"))
+    properties.put(HELL, TreasureClassType.QUEST, tc("Durielq (H)"))
     return properties
 }
 
-private fun getPutridDefilerClassProperties(): HashBasedTable<Difficulty, MonsterType, TreasureClass> {
-    val properties = HashBasedTable.create<Difficulty, MonsterType, TreasureClass>()
-    properties.put(NORMAL, REGULAR, tc("Act 5 Cast A"))
-    properties.put(NORMAL, CHAMPION, tc("Act 5 Champ A"))
-    properties.put(NORMAL, UNIQUE, tc("Act 5 Unique A"))
+private fun getPutridDefilerClassProperties(): HashBasedTable<Difficulty, TreasureClassType, TreasureClass> {
+    val properties = HashBasedTable.create<Difficulty, TreasureClassType, TreasureClass>()
+    properties.put(NORMAL, TreasureClassType.REGULAR, tc("Act 5 Cast A"))
+    properties.put(NORMAL, TreasureClassType.CHAMPION, tc("Act 5 Champ A"))
+    properties.put(NORMAL, TreasureClassType.UNIQUE, tc("Act 5 Unique A"))
 
-    properties.put(NIGHTMARE, REGULAR, tc("Act 5 (N) Cast A"))
-    properties.put(NIGHTMARE, CHAMPION, tc("Act 5 (N) Champ A"))
-    properties.put(NIGHTMARE, UNIQUE, tc("Act 5 (N) Unique A"))
+    properties.put(NIGHTMARE, TreasureClassType.REGULAR, tc("Act 5 (N) Cast A"))
+    properties.put(NIGHTMARE, TreasureClassType.CHAMPION, tc("Act 5 (N) Champ A"))
+    properties.put(NIGHTMARE, TreasureClassType.UNIQUE, tc("Act 5 (N) Unique A"))
 
-    properties.put(HELL, REGULAR, tc("Act 5 (H) Cast A"))
-    properties.put(HELL, CHAMPION, tc("Act 5 (H) Champ A"))
-    properties.put(HELL, UNIQUE, tc("Act 5 (H) Unique A"))
+    properties.put(HELL, TreasureClassType.REGULAR, tc("Act 5 (H) Cast A"))
+    properties.put(HELL, TreasureClassType.CHAMPION, tc("Act 5 (H) Champ A"))
+    properties.put(HELL, TreasureClassType.UNIQUE, tc("Act 5 (H) Unique A"))
     return properties
 }
 
-private fun getFetishShamanClassProperties(): HashBasedTable<Difficulty, MonsterType, TreasureClass> {
-    val properties = HashBasedTable.create<Difficulty, MonsterType, TreasureClass>()
-    properties.put(NORMAL, REGULAR, tc("Act 3 Cast A"))
-    properties.put(NORMAL, CHAMPION, tc("Act 3 Champ A"))
-    properties.put(NORMAL, UNIQUE, tc("Act 3 Unique A"))
+private fun getFetishShamanClassProperties(): HashBasedTable<Difficulty, TreasureClassType, TreasureClass> {
+    val properties = HashBasedTable.create<Difficulty, TreasureClassType, TreasureClass>()
+    properties.put(NORMAL, TreasureClassType.REGULAR, tc("Act 3 Cast A"))
+    properties.put(NORMAL, TreasureClassType.CHAMPION, tc("Act 3 Champ A"))
+    properties.put(NORMAL, TreasureClassType.UNIQUE, tc("Act 3 Unique A"))
 
-    properties.put(NIGHTMARE, REGULAR, tc("Act 3 (N) Cast A"))
-    properties.put(NIGHTMARE, CHAMPION, tc("Act 3 (N) Champ A"))
-    properties.put(NIGHTMARE, UNIQUE, tc("Act 3 (N) Unique A"))
+    properties.put(NIGHTMARE, TreasureClassType.REGULAR, tc("Act 3 (N) Cast A"))
+    properties.put(NIGHTMARE, TreasureClassType.CHAMPION, tc("Act 3 (N) Champ A"))
+    properties.put(NIGHTMARE, TreasureClassType.UNIQUE, tc("Act 3 (N) Unique A"))
 
-    properties.put(HELL, REGULAR, tc("Act 3 (H) Cast A"))
-    properties.put(HELL, CHAMPION, tc("Act 3 (H) Champ A"))
-    properties.put(HELL, UNIQUE, tc("Act 3 (H) Unique A"))
+    properties.put(HELL, TreasureClassType.REGULAR, tc("Act 3 (H) Cast A"))
+    properties.put(HELL, TreasureClassType.CHAMPION, tc("Act 3 (H) Champ A"))
+    properties.put(HELL, TreasureClassType.UNIQUE, tc("Act 3 (H) Unique A"))
     return properties
 }
 
-private fun getRadamentClassProperties(): HashBasedTable<Difficulty, MonsterType, TreasureClass> {
-    val properties = HashBasedTable.create<Difficulty, MonsterType, TreasureClass>()
-    properties.put(NORMAL, REGULAR, tc("Radament"))
-    properties.put(NORMAL, CHAMPION, tc("Radament"))
-    properties.put(NORMAL, UNIQUE, tc("Radament"))
+private fun getRadamentClassProperties(): HashBasedTable<Difficulty, TreasureClassType, TreasureClass> {
+    val properties = HashBasedTable.create<Difficulty, TreasureClassType, TreasureClass>()
+    properties.put(NORMAL, TreasureClassType.REGULAR, tc("Radament"))
+    properties.put(NORMAL, TreasureClassType.CHAMPION, tc("Radament"))
+    properties.put(NORMAL, TreasureClassType.UNIQUE, tc("Radament"))
 
-    properties.put(NIGHTMARE, REGULAR, tc("Radament (N)"))
-    properties.put(NIGHTMARE, CHAMPION, tc("Radament (N)"))
-    properties.put(NIGHTMARE, UNIQUE, tc("Radament (N)"))
+    properties.put(NIGHTMARE, TreasureClassType.REGULAR, tc("Radament (N)"))
+    properties.put(NIGHTMARE, TreasureClassType.CHAMPION, tc("Radament (N)"))
+    properties.put(NIGHTMARE, TreasureClassType.UNIQUE, tc("Radament (N)"))
 
-    properties.put(HELL, REGULAR, tc("Radament (H)"))
-    properties.put(HELL, CHAMPION, tc("Radament (H)"))
-    properties.put(HELL, UNIQUE, tc("Radament (H)"))
+    properties.put(HELL, TreasureClassType.REGULAR, tc("Radament (H)"))
+    properties.put(HELL, TreasureClassType.CHAMPION, tc("Radament (H)"))
+    properties.put(HELL, TreasureClassType.UNIQUE, tc("Radament (H)"))
     return properties
 }
 
@@ -172,10 +172,31 @@ val areasTestData = listOf(
 )
 
 val monstersTestData = setOf(
-    Monster(skeletonMonsterClass, area1Data, NORMAL, REGULAR),
-    Monster(fetishShamanMonsterClass, area1Data, NORMAL, REGULAR),
-    Monster(fetishShamanMonsterClass, area2Data, NORMAL, REGULAR),
-    Monster(fetishShamanMonsterClass, area2Data, HELL, CHAMPION)
+    Monster(skeletonMonsterClass.id, skeletonMonsterClass, area1Data, NORMAL, REGULAR, TreasureClassType.REGULAR),
+    Monster(
+        fetishShamanMonsterClass.id,
+        fetishShamanMonsterClass,
+        area1Data,
+        NORMAL,
+        REGULAR,
+        TreasureClassType.REGULAR
+    ),
+    Monster(
+        fetishShamanMonsterClass.id,
+        fetishShamanMonsterClass,
+        area2Data,
+        NORMAL,
+        REGULAR,
+        TreasureClassType.REGULAR
+    ),
+    Monster(
+        fetishShamanMonsterClass.id,
+        fetishShamanMonsterClass,
+        area2Data,
+        HELL,
+        CHAMPION,
+        TreasureClassType.CHAMPION
+    )
 )
 
 val stubTranslations = object : Translations {

@@ -6,13 +6,15 @@ import com.silospen.dropcalc.MonsterClassType.BOSS
 import com.silospen.dropcalc.MonsterType.*
 
 data class Monster(
+    val id: String,
     val monsterClass: MonsterClass,
     val area: Area,
     val difficulty: Difficulty,
-    val type: MonsterType
+    val type: MonsterType,
+    val treasureClassType: TreasureClassType //Perhaps passing the treasure class in directly would help the sueprunique case?
 ) {
     val level: Int = constructLevel()
-    val treasureClass: TreasureClass = monsterClass.monsterClassProperties.getValue(difficulty, type)
+    val treasureClass: TreasureClass = monsterClass.monsterClassProperties.getValue(difficulty, treasureClassType)
 
     private fun constructLevel(): Int {
         return (if (difficulty == NORMAL || monsterClass.monsterClassType == BOSS)
