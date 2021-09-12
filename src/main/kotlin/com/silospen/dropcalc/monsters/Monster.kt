@@ -12,6 +12,7 @@ data class Monster(
     val type: MonsterType
 ) {
     val level: Int = constructLevel()
+    val treasureClass: TreasureClass = monsterClass.monsterClassProperties.getValue(difficulty, type)
 
     private fun constructLevel(): Int {
         return (if (difficulty == NORMAL || monsterClass.monsterClassType == BOSS)
@@ -24,9 +25,5 @@ data class Monster(
         if (type == CHAMPION) return 2
         if (type == UNIQUE) return 3
         return 0
-    }
-
-    fun getTreasureClass(monsterType: MonsterType, difficulty: Difficulty): TreasureClass {
-        return monsterClass.monsterClassProperties.getValue(difficulty, monsterType)
     }
 }
