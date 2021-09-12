@@ -7,7 +7,7 @@ Act 1 H2H A	7	0	1					100	gld	21	Act 1 Equip A	16	Act 1 Junk	21	Act 1 Good	2				
 Act 1 H2H B	7	10	1					100	gld	5	Act 1 Equip A	5																				0
 Radament			5	900	900	900	1024	19	"gld,mul=1280"	11	Act 3 Equip B	19	Act 3 Junk	15	Act 3 Good	3																0
 Act 1 Equip C	1	0	1						weap3	7	armo3	7																				0
-Act 1 Equip D	1	0	1						weap3	7	armo3	7	armo6	8																		0
+Act 1 Equip D	1	0	3						weap3	7	armo3	7	armo6	8																		0
 Act 1 Citem A	11	0	1	800	800	800	1024	0	"gld,mul=1280"	60	Act 1 Equip C	37	Act 1 Good	3																		0
 Act 1 Champ A	13	0	-2					0	Act 1 Citem A	1	Act 1 Cpot A	2																				0
 Act 1 Champ B	13	0	-3					0	Act 1 Citem A	1	Act 1 Equip D	2																				0

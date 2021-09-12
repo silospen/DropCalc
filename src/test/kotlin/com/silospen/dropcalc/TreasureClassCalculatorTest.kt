@@ -103,8 +103,8 @@ class TreasureClassCalculatorTest {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", 4, NORMAL)
         val expected = mapOf(
             ItemClass(name = "\"gld,mul=1280\"") to BigFraction(60, 100),
-            ItemClass(name = "weap3") to BigFraction(2405, 3872),
-            ItemClass(name = "armo3") to BigFraction(2405, 3872),
+            ItemClass(name = "weap3") to BigFraction(832772357, 907039232),
+            ItemClass(name = "armo3") to BigFraction(832772357, 907039232),
             ItemClass(name = "rin") to BigFraction(3, 500),
             ItemClass(name = "amu") to BigFraction(3, 1000),
             ItemClass(name = "jew") to BigFraction(3, 2000),
@@ -112,7 +112,7 @@ class TreasureClassCalculatorTest {
             ItemClass(name = "cm2") to BigFraction(3, 2000),
             ItemClass(name = "cm1") to BigFraction(3, 2000),
             ItemClass(name = "Chipped Gem") to BigFraction(3, 200),
-            ItemClass(name = "armo6") to BigFraction(72, 121)
+            ItemClass(name = "armo6") to BigFraction(1653912, 1771561)
         )
         assertEquals(expected, actual)
     }

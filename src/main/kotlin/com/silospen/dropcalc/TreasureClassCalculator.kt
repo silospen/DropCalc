@@ -73,6 +73,13 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
     ): Map<ItemClass, BigFraction> {
         val result = calculatePathSum(Outcome(treasureClass, 1), BigFraction(1), 1, nPlayers, partySize)
         val picks = treasureClass.properties.picks
+        return applyPositivePicks(picks, result)
+    }
+
+    private fun applyPositivePicks(
+        picks: Int,
+        result: Map<ItemClass, BigFraction>
+    ): Map<ItemClass, BigFraction> {
         return when {
             picks == 1 -> result
             picks > 1 -> result.mapValues { calculateProbabilityForPicks(it.value, if (picks > 6) 6 else picks) }
@@ -91,8 +98,12 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         val results = mutableListOf<Map<ItemClass, BigFraction>>()
         var picksCounter = treasureClass.properties.picks //TODO: Use this!
         for (outcome in treasureClass.outcomes) {
-            results.add(calculatePathSum(outcome, BigFraction(1), outcome.probability, nPlayers, partySize)
-                .mapValues { calculateProbabilityForPicks(it.value, outcome.probability) })
+            val pathSumsForOutcome = calculatePathSum(outcome, BigFraction(1), outcome.probability, nPlayers, partySize)
+                .mapValues { calculateProbabilityForPicks(it.value, outcome.probability) }
+            val picks = if (outcome.outcomeType is TreasureClass) outcome.outcomeType.properties.picks else 1
+            results.add(
+                if (picks > 1) applyPositivePicks(picks, pathSumsForOutcome) else pathSumsForOutcome
+            )
         }
         val finalResult = mutableMapOf<ItemClass, BigFraction>()
         for (result in results) {
