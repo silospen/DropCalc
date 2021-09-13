@@ -12,6 +12,17 @@ class MonsterTest {
     @Test
     fun level() {
         assertEquals(
+            25,
+            Monster(
+                fetishShamanMonsterClass.id,
+                fetishShamanMonsterClass,
+                area1Data,
+                NORMAL,
+                MINION,
+                fetishShamanMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.REGULAR)
+            ).level
+        )
+        assertEquals(
             22,
             Monster(
                 fetishShamanMonsterClass.id,

@@ -13,12 +13,13 @@ class MonsterLibrary(monsters: Set<Monster>) {
             superUniqueMonsterConfigs: List<SuperUniqueMonsterConfig>,
             areasLibrary: AreasLibrary
         ): MonsterLibrary {
+            val monsterClassConfigsById = monsterClassConfigs.associateBy { it.id }
+            val superUniqueConfigsById = superUniqueMonsterConfigs.associateBy { it.id }
             val monstersFromClassConfigs = monsterClassConfigs.flatMap { monsterClass ->
                 monsterClass.monsterClassProperties.cellSet().flatMap {
                     createMonster(areasLibrary, monsterClass, it.rowKey!!, it.columnKey!!)
                 }
             }
-            val monsterClassConfigsById = monsterClassConfigs.associateBy { it.id }
             val monstersFromSuperUniqueMonsterConfigs = superUniqueMonsterConfigs.flatMap { superUniqueMonsterConfig ->
                 superUniqueMonsterConfig.treasureClasses.map { (difficulty, treasureClass) ->
                     Monster(
@@ -31,8 +32,29 @@ class MonsterLibrary(monsters: Set<Monster>) {
                     )
                 }
             }
+            val minions = (monstersFromSuperUniqueMonsterConfigs + monstersFromClassConfigs)
+                .filter {
+                    it.type == MonsterType.UNIQUE ||
+                            (it.type == MonsterType.SUPERUNIQUE && superUniqueConfigsById.getValue(it.id).hasMinions)
+                }
+                .flatMap { parentMonster ->
+                    parentMonster.monsterClass.minionIds.map { minionId ->
+                        Monster(
+                            "$minionId:${parentMonster.id}",
+                            parentMonster.monsterClass,
+                            parentMonster.area,
+                            parentMonster.difficulty,
+                            MonsterType.MINION,
+                            monsterClassConfigsById.getValue(minionId).monsterClassProperties.getValue(
+                                parentMonster.difficulty,
+                                TreasureClassType.REGULAR
+                            )
+                        )
+                    }
+                }
+
             return MonsterLibrary(
-                (monstersFromSuperUniqueMonsterConfigs + monstersFromClassConfigs).toSet()
+                (minions + monstersFromSuperUniqueMonsterConfigs + monstersFromClassConfigs).toSet()
             )
         }
 

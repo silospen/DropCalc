@@ -34,7 +34,7 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
                 put(HELL, levelH)
             },
             monsterClassProperties = parseMonsterClassProperties(line),
-            minionIds = parseMinions(line),
+            minionIds = parseMinions(id, line),
             isBoss = isBoss
         )
     }
@@ -85,10 +85,11 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
         }
     }
 
-    private fun parseMinions(line: List<String>): Set<String> {
+    private fun parseMinions(id: String, line: List<String>): Set<String> {
         val minion1Id: String = line[19]
         val minion2Id: String = line[20]
-        return sequenceOf(minion1Id, minion2Id).filter { it.isNotBlank() }.toSet()
+        return if (minion1Id.isBlank() && minion2Id.isBlank()) setOf(id)
+        else sequenceOf(minion1Id, minion2Id).filter { it.isNotBlank() }.toSet()
     }
 }
 

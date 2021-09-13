@@ -23,7 +23,7 @@ data class Monster(
     private fun getLevelAdjustment(): Int {
         if (type == BOSS) return 0
         if (type == CHAMPION) return 2
-        if (type == UNIQUE) return 3
+        if (type == UNIQUE || type == MINION) return 3
         return 0
     }
 

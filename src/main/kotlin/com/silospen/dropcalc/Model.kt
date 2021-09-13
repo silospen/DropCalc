@@ -50,7 +50,7 @@ data class MonsterClass(
     val id: String,
     val monsterClassProperties: Table<Difficulty, TreasureClassType, TreasureClass>,
     val monsterLevels: Map<Difficulty, Int>,
-    val minionIds: Set<String> = emptySet(),
+    val minionIds: Set<String>,
     val isBoss: Boolean = false
 )
 

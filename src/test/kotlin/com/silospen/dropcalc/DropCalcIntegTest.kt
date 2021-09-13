@@ -97,6 +97,16 @@ class DropCalcIntegTest {
     }
 
     @Test
+    fun minionTest() {
+        runAtomicTcTestWithRemoteExpectations("skeleton1:skeleton1", MonsterType.MINION, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("skeleton2:skeleton2", MonsterType.MINION, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("skeleton2:unraveler1", MonsterType.MINION, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("skeleton2:unraveler1", MonsterType.MINION, Difficulty.HELL, 5, 5)
+        runAtomicTcTestWithRemoteExpectations("snowyeti4:Frozenstein", MonsterType.MINION, Difficulty.HELL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("snowyeti4:Frozenstein", MonsterType.MINION, Difficulty.NIGHTMARE, 3, 3)
+    }
+
+    @Test
     fun superUniqueTest() {
         runAtomicTcTestWithRemoteExpectations("Bloodwitch the Wild", MonsterType.SUPERUNIQUE, Difficulty.NORMAL, 1, 1)
         runAtomicTcTestWithRemoteExpectations("Axe Dweller", MonsterType.SUPERUNIQUE, Difficulty.NORMAL, 1, 1)

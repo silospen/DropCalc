@@ -1,10 +1,12 @@
 package com.silospen.dropcalc.areas
 
-import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.HELL
 import com.silospen.dropcalc.Difficulty.NORMAL
-import com.silospen.dropcalc.MonsterType.CHAMPION
-import com.silospen.dropcalc.MonsterType.REGULAR
+import com.silospen.dropcalc.MonsterType.*
+import com.silospen.dropcalc.area1Data
+import com.silospen.dropcalc.area2Data
+import com.silospen.dropcalc.areasTestData
+import com.silospen.dropcalc.bonebreakAreaData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -14,10 +16,11 @@ class AreasLibraryTest {
         val actual = AreasLibrary.fromAreas(areasTestData)
         val areasByMonsterProperties = mapOf(
             Triple("skeleton1", NORMAL, REGULAR) to setOf(areasTestData[0]),
+            Triple("skeleton1", NORMAL, UNIQUE) to setOf(areasTestData[0]),
             Triple("fetishshaman2", NORMAL, REGULAR) to setOf(area1Data) + setOf(area2Data),
             Triple("fetishshaman2", HELL, CHAMPION) to setOf(areasTestData[1]),
-            Triple("Bonebreak", NORMAL, MonsterType.SUPERUNIQUE) to setOf(areasTestData[2]),
-            Triple("Bonebreak", HELL, MonsterType.SUPERUNIQUE) to setOf(areasTestData[2])
+            Triple("Bonebreak", NORMAL, SUPERUNIQUE) to setOf(areasTestData[2]),
+            Triple("Bonebreak", HELL, SUPERUNIQUE) to setOf(areasTestData[2])
         )
         val expected = AreasLibrary(
             mapOf("area-1" to area1Data, "area-2" to area2Data, "bonebreak's area" to bonebreakAreaData),

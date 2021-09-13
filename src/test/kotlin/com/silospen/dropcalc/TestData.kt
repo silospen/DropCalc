@@ -101,18 +101,21 @@ private val radamentClassProperties = getRadamentClassProperties()
 
 val skeletonMonsterClass = MonsterClass(
     "skeleton1",
+    minionIds = setOf("skeleton1"),
     monsterClassProperties = skeletonClassProperties,
     monsterLevels = levelsPerDifficulty(2, 37, 68)
 )
 val durielMonsterClass =
     MonsterClass(
         "duriel",
+        minionIds = setOf("duriel"),
         isBoss = true,
         monsterClassProperties = durielClassProperties,
         monsterLevels = levelsPerDifficulty(22, 55, 88)
     )
 val putridDefilerMonsterClass = MonsterClass(
     "putriddefiler2",
+    minionIds = setOf("putriddefiler2"),
     isBoss = true,
     monsterClassProperties = putridDefilerClassProperties,
     monsterLevels = levelsPerDifficulty(37, 62, 81)
@@ -142,7 +145,10 @@ val area1Data = Area(
     "area-1",
     "my-area-1",
     levelsPerDifficulty(normal = 5),
-    ImmutableTable.of(NORMAL, REGULAR, setOf("skeleton1", "fetishshaman2"))
+    ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
+        .put(NORMAL, REGULAR, setOf("skeleton1", "fetishshaman2"))
+        .put(NORMAL, UNIQUE, setOf("skeleton1"))
+        .build()
 )
 val area2Data = Area(
     "area-2",
@@ -184,6 +190,30 @@ val areasTestData = listOf(
 
 val monstersTestData = setOf(
     Monster(
+        "skeleton1:Bonebreak",
+        skeletonMonsterClass,
+        bonebreakAreaData,
+        NORMAL,
+        MINION,
+        skeletonMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.REGULAR)
+    ),
+    Monster(
+        "skeleton1:Bonebreak",
+        skeletonMonsterClass,
+        bonebreakAreaData,
+        HELL,
+        MINION,
+        skeletonMonsterClass.monsterClassProperties.getValue(HELL, TreasureClassType.REGULAR)
+    ),
+    Monster(
+        "skeleton1:skeleton1",
+        skeletonMonsterClass,
+        area1Data,
+        NORMAL,
+        MINION,
+        skeletonMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.REGULAR)
+    ),
+    Monster(
         "Bonebreak",
         skeletonMonsterClass,
         bonebreakAreaData,
@@ -206,6 +236,14 @@ val monstersTestData = setOf(
         NORMAL,
         REGULAR,
         skeletonMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.REGULAR)
+    ),
+    Monster(
+        skeletonMonsterClass.id,
+        skeletonMonsterClass,
+        area1Data,
+        NORMAL,
+        UNIQUE,
+        skeletonMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.UNIQUE)
     ),
     Monster(
         fetishShamanMonsterClass.id,
