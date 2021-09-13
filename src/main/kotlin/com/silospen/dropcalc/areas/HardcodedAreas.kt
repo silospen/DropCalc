@@ -1,11 +1,10 @@
 package com.silospen.dropcalc.areas
 
 import com.google.common.collect.ImmutableTable
-import com.google.common.collect.Table
 import com.silospen.dropcalc.MonsterType
 import com.silospen.dropcalc.MonsterType.BOSS
 
-private val hardcodedBossAreas = ImmutableTable.builder<String, MonsterType, Set<String>>()
+val hardcodedBossAreas = ImmutableTable.builder<String, MonsterType, Set<String>>()
     .put("Act 1 - Catacombs 4", BOSS, setOf("andariel"))
     .put("Act 2 - Duriel's Lair", BOSS, setOf("duriel"))
     .put("Act 2 - Sewer 1 C", BOSS, setOf("radament"))
@@ -90,8 +89,3 @@ val hardcodedSuperUniqueAreas = mapOf(
     "Baal Subject 4" to "Act 5 - Throne Room",
     "Baal Subject 5" to "Act 5 - Throne Room",
 )
-
-val hardcodedAreas: Table<String, MonsterType, Set<String>> =
-    ImmutableTable.builder<String, MonsterType, Set<String>>()
-        .putAll(hardcodedBossAreas)
-        .build()

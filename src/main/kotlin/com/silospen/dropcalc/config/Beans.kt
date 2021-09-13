@@ -2,7 +2,7 @@ package com.silospen.dropcalc.config
 
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.areas.AreasLibrary
-import com.silospen.dropcalc.areas.hardcodedAreas
+import com.silospen.dropcalc.areas.hardcodedBossAreas
 import com.silospen.dropcalc.areas.hardcodedSuperUniqueAreas
 import com.silospen.dropcalc.files.*
 import com.silospen.dropcalc.monsters.MonsterLibrary
@@ -38,7 +38,7 @@ class Beans {
     fun getAreas(translations: Translations): List<Area> {
         val areasFromLevelsTxt = readTsv(
             File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
-            LevelsLineParser(translations, hardcodedAreas)
+            LevelsLineParser(translations, hardcodedBossAreas)
         )
         return areasFromLevelsTxt
     }
