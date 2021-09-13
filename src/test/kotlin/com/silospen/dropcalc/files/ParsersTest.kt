@@ -16,8 +16,7 @@ import java.util.*
 class MonstatsLineParserTest {
     @Test
     fun monstatsParser() {
-        val mockTreasureClassCalculator: TreasureClassCalculator = mock()
-        whenever(mockTreasureClassCalculator.getTreasureClass(any())).thenAnswer { tc(it.getArgument(0)) }
+        val mockTreasureClassCalculator: TreasureClassCalculator = mockTreasureClassCalculator()
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\monstats.txt"),
             getResource("parsersTestData/monstats.txt"),
@@ -27,17 +26,49 @@ class MonstatsLineParserTest {
     }
 }
 
+private fun mockTreasureClassCalculator(): TreasureClassCalculator {
+    val mockTreasureClassCalculator: TreasureClassCalculator = mock()
+    whenever(mockTreasureClassCalculator.getTreasureClass(any())).thenAnswer { tc(it.getArgument(0)) }
+    return mockTreasureClassCalculator
+}
+
 class SuperUniqueLineParserTest {
     @Test
     fun superUniquesParser() {
+        val mockTreasureClassCalculator: TreasureClassCalculator = mockTreasureClassCalculator()
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SuperUniques.txt"),
             getResource("parsersTestData/superuniques.txt"),
-            SuperUniqueLineParser()
+            SuperUniqueLineParser(
+                mockTreasureClassCalculator, mapOf(
+                    "Corpsefire" to "Act 1 - Cave 1",
+                    "The Feature Creep" to "Act 4 - Lava 1",
+                )
+            )
         ).toSet()
         val expected = setOf(
-            SuperUniqueMonsterConfig("The Feature Creep", "hephasto", false),
-            SuperUniqueMonsterConfig("Corpsefire", "zombie1", true)
+            SuperUniqueMonsterConfig(
+                "The Feature Creep",
+                "Act 4 - Lava 1",
+                "hephasto",
+                false,
+                mapOf(
+                    NORMAL to tc("Haphesto"),
+                    NIGHTMARE to tc("Haphesto (N)"),
+                    HELL to tc("Haphesto (H)"),
+                )
+            ),
+            SuperUniqueMonsterConfig(
+                "Corpsefire",
+                "Act 1 - Cave 1",
+                "zombie1",
+                true,
+                mapOf(
+                    NORMAL to tc("Act 1 Super A"),
+                    NIGHTMARE to tc("Act 1 (N) Super A"),
+                    HELL to tc("Act 1 (H) Super A"),
+                )
+            ),
         )
         assertEquals(expected, actual)
     }
@@ -127,6 +158,12 @@ class LevelsLineParserTest {
         monsterClassIds.put(NIGHTMARE, UNIQUE, nmon + setOf("hardcoded-mon-1", "hardcoded-mon-2"))
         monsterClassIds.put(HELL, UNIQUE, nmon + setOf("hardcoded-mon-1", "hardcoded-mon-2"))
         val expected = setOf(
+            Area(
+                "Act 1 - Town",
+                "Rogue Encampment-name",
+                emptyMap(),
+                ImmutableTable.of()
+            ),
             Area(
                 "Act 5 - Throne Room",
                 "Throne of Destruction-name",

@@ -1,15 +1,10 @@
 package com.silospen.dropcalc.config
 
-import com.silospen.dropcalc.Area
-import com.silospen.dropcalc.MonsterClass
-import com.silospen.dropcalc.TreasureClassCalculator
-import com.silospen.dropcalc.TreasureClassConfig
+import com.silospen.dropcalc.*
 import com.silospen.dropcalc.areas.AreasLibrary
 import com.silospen.dropcalc.areas.hardcodedAreas
-import com.silospen.dropcalc.files.LevelsLineParser
-import com.silospen.dropcalc.files.MonstatsLineParser
-import com.silospen.dropcalc.files.TreasureClassesLineParser
-import com.silospen.dropcalc.files.readTsv
+import com.silospen.dropcalc.areas.hardcodedSuperUniqueAreas
+import com.silospen.dropcalc.files.*
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import com.silospen.dropcalc.translations.CompositeTranslations
 import com.silospen.dropcalc.translations.MapBasedTranslations
@@ -33,6 +28,13 @@ class Beans {
     )
 
     @Bean
+    fun getSuperUniqueMonsterConfigs(treasureClassCalculator: TreasureClassCalculator): List<SuperUniqueMonsterConfig> =
+        readTsv(
+            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SuperUniques.txt"),
+            SuperUniqueLineParser(treasureClassCalculator, hardcodedSuperUniqueAreas)
+        )
+
+    @Bean
     fun getAreas(translations: Translations): List<Area> {
         val areasFromLevelsTxt = readTsv(
             File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
@@ -47,8 +49,12 @@ class Beans {
     }
 
     @Bean
-    fun getMonsterLibrary(monsterClassConfigs: List<MonsterClass>, areasLibrary: AreasLibrary): MonsterLibrary {
-        return MonsterLibrary.fromConfig(monsterClassConfigs, areasLibrary)
+    fun getMonsterLibrary(
+        monsterClassConfigs: List<MonsterClass>,
+        superUniqueMonsterConfigs: List<SuperUniqueMonsterConfig>,
+        areasLibrary: AreasLibrary
+    ): MonsterLibrary {
+        return MonsterLibrary.fromConfig(monsterClassConfigs, superUniqueMonsterConfigs, areasLibrary)
     }
 
     @Bean

@@ -97,6 +97,31 @@ class DropCalcIntegTest {
     }
 
     @Test
+    fun superUniqueTest() {
+        runAtomicTcTestWithRemoteExpectations("Bloodwitch the Wild", MonsterType.SUPERUNIQUE, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("Axe Dweller", MonsterType.SUPERUNIQUE, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("Toorc Icefist", MonsterType.SUPERUNIQUE, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("Pindleskin", MonsterType.SUPERUNIQUE, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("Pindleskin", MonsterType.SUPERUNIQUE, Difficulty.NIGHTMARE, 1, 1)
+        runAtomicTcTestWithRemoteExpectations("Pindleskin", MonsterType.SUPERUNIQUE, Difficulty.HELL, 8, 8)
+        runAtomicTcTestWithRemoteExpectations("Baal Subject 3", MonsterType.SUPERUNIQUE, Difficulty.NORMAL, 1, 1)
+        runAtomicTcTestWithLocalExpectations(
+            "Nihlathak Boss",
+            MonsterType.SUPERUNIQUE,
+            Difficulty.NORMAL,
+            1,
+            1,
+            testDataGenerator.generateTcExpectationDataToFile(
+                "nihlathakboss",
+                MonsterType.BOSS,
+                Difficulty.NORMAL,
+                1,
+                1
+            )
+        )
+    }
+
+    @Test
     fun runLocalTests() = getResource("integExpectations/tcTests").listFiles()!!.forEach {
         val parts = it.name.removeSuffix(".tsv").split("_")
         runAtomicTcTestWithLocalExpectations(

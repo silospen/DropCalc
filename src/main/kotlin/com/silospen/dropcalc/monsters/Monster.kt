@@ -10,10 +10,9 @@ data class Monster(
     val area: Area,
     val difficulty: Difficulty,
     val type: MonsterType,
-    val treasureClassType: TreasureClassType //Perhaps passing the treasure class in directly would help the sueprunique case?
+    val treasureClass: TreasureClass
 ) {
     val level: Int = constructLevel()
-    val treasureClass: TreasureClass = monsterClass.monsterClassProperties.getValue(difficulty, treasureClassType)
 
     private fun constructLevel(): Int {
         return (if (difficulty == NORMAL || type == BOSS)
@@ -29,6 +28,6 @@ data class Monster(
     }
 
     override fun toString(): String {
-        return "Monster(id='$id', monsterClass=$monsterClass, area=$area, difficulty=$difficulty, type=$type, treasureClassType=$treasureClassType, level=$level, treasureClass=$treasureClass)"
+        return "Monster(id='$id', monsterClass=$monsterClass, area=$area, difficulty=$difficulty, type=$type, treasureClass=$treasureClass, level=$level)"
     }
 }

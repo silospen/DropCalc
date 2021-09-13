@@ -10,14 +10,29 @@ class MonsterLibrary(monsters: Set<Monster>) {
     companion object {
         fun fromConfig(
             monsterClassConfigs: List<MonsterClass>,
+            superUniqueMonsterConfigs: List<SuperUniqueMonsterConfig>,
             areasLibrary: AreasLibrary
         ): MonsterLibrary {
+            val monstersFromClassConfigs = monsterClassConfigs.flatMap { monsterClass ->
+                monsterClass.monsterClassProperties.cellSet().flatMap {
+                    createMonster(areasLibrary, monsterClass, it.rowKey!!, it.columnKey!!)
+                }
+            }
+            val monsterClassConfigsById = monsterClassConfigs.associateBy { it.id }
+            val monstersFromSuperUniqueMonsterConfigs = superUniqueMonsterConfigs.flatMap { superUniqueMonsterConfig ->
+                superUniqueMonsterConfig.treasureClasses.map { (difficulty, treasureClass) ->
+                    Monster(
+                        superUniqueMonsterConfig.id,
+                        monsterClassConfigsById.getValue(superUniqueMonsterConfig.monsterClassId),
+                        areasLibrary.getArea(superUniqueMonsterConfig.areaName),
+                        difficulty,
+                        MonsterType.SUPERUNIQUE,
+                        treasureClass
+                    )
+                }
+            }
             return MonsterLibrary(
-                monsterClassConfigs.flatMap { monsterClass ->
-                    monsterClass.monsterClassProperties.cellSet().flatMap {
-                        createMonster(areasLibrary, monsterClass, it.rowKey!!, it.columnKey!!)
-                    }
-                }.toSet()
+                (monstersFromSuperUniqueMonsterConfigs + monstersFromClassConfigs).toSet()
             )
         }
 
@@ -35,7 +50,7 @@ class MonsterLibrary(monsters: Set<Monster>) {
                         it,
                         difficulty,
                         monsterType,
-                        treasureClassType
+                        monsterClass.monsterClassProperties.getValue(difficulty, treasureClassType)
                     )
                 }
             }

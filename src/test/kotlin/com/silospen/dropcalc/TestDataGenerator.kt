@@ -47,7 +47,7 @@ class TestDataGenerator(private val client: HttpClient) {
             REGULAR -> "regMon"
             CHAMPION -> "champMon"
             UNIQUE -> "uniqMon"
-            QUEST -> "supUniqMon"
+            SUPERUNIQUE -> "supUniqMon"
             MINION -> "minMon"
             else -> throw RuntimeException("Unrecognized monsterType $monsterType")
         },
@@ -69,7 +69,7 @@ class TestDataGenerator(private val client: HttpClient) {
         partySize: Int
     ): String = runBlocking {
         val response: HttpResponse =
-            client.get("https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=$type&monID=$monId&diff=$diff&monClass=$monClass&nPlayers=$nPlayers&nGroup=$partySize&decMode=true&version=112")
+            client.get("https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=$type&monID=${monId.lowercase()}&diff=$diff&monClass=$monClass&nPlayers=$nPlayers&nGroup=$partySize&decMode=true&version=112")
         if (response.status != HttpStatusCode.OK) throw RuntimeException("Bad status code $response")
         response
             .readText()

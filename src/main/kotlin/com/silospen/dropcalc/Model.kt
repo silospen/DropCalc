@@ -54,7 +54,13 @@ data class MonsterClass(
     val isBoss: Boolean = false
 )
 
-data class SuperUniqueMonsterConfig(val id: String, val monsterClassId: String, val hasMinions: Boolean)
+data class SuperUniqueMonsterConfig(
+    val id: String,
+    val areaName: String,
+    val monsterClassId: String,
+    val hasMinions: Boolean,
+    val treasureClasses: Map<Difficulty, TreasureClass>
+)
 
 data class Area(
     val id: String,
@@ -73,9 +79,9 @@ enum class MonsterType {
     REGULAR,
     CHAMPION,
     UNIQUE,
-    QUEST,
     MINION,
-    BOSS
+    BOSS,
+    SUPERUNIQUE
 }
 
 enum class TreasureClassType(val validMonsterTypes: List<MonsterType>, val idSuffix: String) {

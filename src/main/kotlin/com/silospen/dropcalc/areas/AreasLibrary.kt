@@ -4,7 +4,10 @@ import com.silospen.dropcalc.Area
 import com.silospen.dropcalc.Difficulty
 import com.silospen.dropcalc.MonsterType
 
-class AreasLibrary(private val areasByMonsterProperties: Map<Triple<String, Difficulty, MonsterType>, Set<Area>>) {
+class AreasLibrary(
+    private val areasById: Map<String, Area>,
+    private val areasByMonsterProperties: Map<Triple<String, Difficulty, MonsterType>, Set<Area>>
+) {
     companion object {
         fun fromAreas(areas: List<Area>): AreasLibrary {
             val areasByMonsterProperties: Map<Triple<String, Difficulty, MonsterType>, Set<Area>> =
@@ -18,13 +21,15 @@ class AreasLibrary(private val areasByMonsterProperties: Map<Triple<String, Diff
                 }
                     .groupBy({ it.first }, { it.second })
                     .mapValues { it.value.toSet() }
-            return AreasLibrary(areasByMonsterProperties)
+            return AreasLibrary(areas.associateBy { it.id }, areasByMonsterProperties)
         }
     }
 
     fun getAreasForMonsterClassId(monsterClassId: String, difficulty: Difficulty, monsterType: MonsterType): Set<Area> {
         return areasByMonsterProperties.getOrDefault(Triple(monsterClassId, difficulty, monsterType), emptySet())
     }
+
+    fun getArea(areaId: String): Area = areasById.getValue(areaId)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

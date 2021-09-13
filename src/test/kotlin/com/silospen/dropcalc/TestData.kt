@@ -3,8 +3,7 @@ package com.silospen.dropcalc
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.Difficulty.*
-import com.silospen.dropcalc.MonsterType.CHAMPION
-import com.silospen.dropcalc.MonsterType.REGULAR
+import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.translations.Translations
 import java.util.*
@@ -155,6 +154,16 @@ val area2Data = Area(
         .build()
 )
 
+val bonebreakAreaData = Area(
+    "bonebreak's area",
+    "bonebreak's area name",
+    levelsPerDifficulty(normal = 22, hell = 55),
+    ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
+        .put(NORMAL, SUPERUNIQUE, setOf("Bonebreak"))
+        .put(HELL, SUPERUNIQUE, setOf("Bonebreak"))
+        .build()
+)
+
 fun levelsPerDifficulty(
     normal: Int? = null,
     nightmare: Int? = null,
@@ -169,18 +178,42 @@ fun levelsPerDifficulty(
 
 val areasTestData = listOf(
     area1Data,
-    area2Data
+    area2Data,
+    bonebreakAreaData
 )
 
 val monstersTestData = setOf(
-    Monster(skeletonMonsterClass.id, skeletonMonsterClass, area1Data, NORMAL, REGULAR, TreasureClassType.REGULAR),
+    Monster(
+        "Bonebreak",
+        skeletonMonsterClass,
+        bonebreakAreaData,
+        NORMAL,
+        SUPERUNIQUE,
+        tc("Bonebreak TC")
+    ),
+    Monster(
+        "Bonebreak",
+        skeletonMonsterClass,
+        bonebreakAreaData,
+        HELL,
+        SUPERUNIQUE,
+        tc("Bonebreak TC(H)")
+    ),
+    Monster(
+        skeletonMonsterClass.id,
+        skeletonMonsterClass,
+        area1Data,
+        NORMAL,
+        REGULAR,
+        skeletonMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.REGULAR)
+    ),
     Monster(
         fetishShamanMonsterClass.id,
         fetishShamanMonsterClass,
         area1Data,
         NORMAL,
         REGULAR,
-        TreasureClassType.REGULAR
+        fetishShamanMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.REGULAR)
     ),
     Monster(
         fetishShamanMonsterClass.id,
@@ -188,7 +221,7 @@ val monstersTestData = setOf(
         area2Data,
         NORMAL,
         REGULAR,
-        TreasureClassType.REGULAR
+        fetishShamanMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.REGULAR)
     ),
     Monster(
         fetishShamanMonsterClass.id,
@@ -196,7 +229,7 @@ val monstersTestData = setOf(
         area2Data,
         HELL,
         CHAMPION,
-        TreasureClassType.CHAMPION
+        fetishShamanMonsterClass.monsterClassProperties.getValue(HELL, TreasureClassType.CHAMPION)
     )
 )
 

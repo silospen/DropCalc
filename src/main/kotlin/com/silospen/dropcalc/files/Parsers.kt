@@ -6,6 +6,8 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.translations.Translations
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import java.util.*
 
 class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalculator) : LineParser<MonsterClass?> {
@@ -90,14 +92,39 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
     }
 }
 
-class SuperUniqueLineParser : LineParser<SuperUniqueMonsterConfig?> {
+class SuperUniqueLineParser(
+    private val treasureClassCalculator: TreasureClassCalculator,
+    private val areasBySuperUniqueId: Map<String, String>
+) :
+    LineParser<SuperUniqueMonsterConfig?> {
+
+    private val log: Log = LogFactory.getLog(SuperUniqueLineParser::class.java)
+
     override fun parseLine(line: List<String>): SuperUniqueMonsterConfig? {
         val id = line[0]
         val name = line[1]
         val monsterClass = line[2]
         val hasMinions = line[9].toIntOrNull()?.let { it > 0 } ?: false
-        if (name.isBlank() || monsterClass.isBlank()) return null
-        return SuperUniqueMonsterConfig(id, monsterClass, hasMinions)
+        val normalTc = line[17]
+        if (name.isBlank() || monsterClass.isBlank() || normalTc.isBlank()) return null
+        return SuperUniqueMonsterConfig(
+            id,
+            areasBySuperUniqueId.getValue(id),
+            monsterClass,
+            hasMinions,
+            EnumMap<Difficulty, TreasureClass>(Difficulty::class.java).apply {
+                tryAddTc(NORMAL, normalTc)
+                tryAddTc(NIGHTMARE, line[18])
+                tryAddTc(HELL, line[19])
+            })
+    }
+
+    private fun EnumMap<Difficulty, TreasureClass>.tryAddTc(difficulty: Difficulty, tc: String) {
+        try {
+            put(difficulty, treasureClassCalculator.getTreasureClass(tc))
+        } catch (e: Exception) {
+            log.error("Failed to add TC $tc", e)
+        }
     }
 }
 
@@ -157,15 +184,15 @@ class LevelsLineParser(
         val level = line[59].toIntOrNull()
         val levelN = line[60].toIntOrNull()
         val levelH = line[61].toIntOrNull()
-        if (level == null || levelN == null || levelH == null) return null
+        if (name.isBlank()) return null
         val monsterClassIds = parseMonsterClassIds(line, id)
         return Area(
             id,
             translations.getTranslation(name) ?: throw IllegalArgumentException("Missing translation for $name"),
             EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
-                put(NORMAL, level)
-                put(NIGHTMARE, levelN)
-                put(HELL, levelH)
+                level?.let { put(NORMAL, level) }
+                levelN?.let { put(NIGHTMARE, levelN) }
+                levelH?.let { put(HELL, levelH) }
             },
             monsterClassIds
         )

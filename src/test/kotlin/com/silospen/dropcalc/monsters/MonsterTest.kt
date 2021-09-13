@@ -19,7 +19,7 @@ class MonsterTest {
                 area1Data,
                 NORMAL,
                 REGULAR,
-                TreasureClassType.REGULAR
+                fetishShamanMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.REGULAR)
             ).level
         )
         assertEquals(
@@ -30,7 +30,7 @@ class MonsterTest {
                 area1Data,
                 NORMAL,
                 CHAMPION,
-                TreasureClassType.CHAMPION
+                fetishShamanMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.CHAMPION)
             ).level
         )
         assertEquals(
@@ -41,7 +41,7 @@ class MonsterTest {
                 area2Data,
                 HELL,
                 REGULAR,
-                TreasureClassType.REGULAR
+                fetishShamanMonsterClass.monsterClassProperties.getValue(HELL, TreasureClassType.REGULAR)
             ).level
         )
         assertEquals(
@@ -52,7 +52,7 @@ class MonsterTest {
                 area2Data,
                 HELL,
                 CHAMPION,
-                TreasureClassType.CHAMPION
+                fetishShamanMonsterClass.monsterClassProperties.getValue(HELL, TreasureClassType.CHAMPION)
             ).level
         )
         assertEquals(
@@ -65,7 +65,7 @@ class MonsterTest {
                     ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
                         .put(HELL, REGULAR, setOf("radament"))
                         .build()
-                ), HELL, BOSS, TreasureClassType.REGULAR
+                ), HELL, BOSS, fetishShamanMonsterClass.monsterClassProperties.getValue(HELL, TreasureClassType.REGULAR)
             ).level
         )
     }
