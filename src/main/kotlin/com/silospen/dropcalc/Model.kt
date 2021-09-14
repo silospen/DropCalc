@@ -75,13 +75,15 @@ data class Item( //Follow the same pattern as monsters and have this as the item
     val id: String,
     val name: String,
     val quality: ItemQuality,
-    val baseItem: BaseItem
+    val baseItem: BaseItem,
+    val level: Int
 )
 
 data class BaseItem(
     val id: String,
     val name: String,
-    val itemType: ItemType
+    val itemType: ItemType,
+    val level: Int
 )
 
 data class ItemType(

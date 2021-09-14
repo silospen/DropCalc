@@ -16,6 +16,7 @@ class BaseItemLineParser(
     private val namestrColumnIndex: Int,
     private val codeColumnIndex: Int,
     private val typeColumnIndex: Int,
+    private val levelColumnIndex: Int,
     itemTypes: List<ItemType>
 ) : LineParser<BaseItem?> {
 
@@ -26,7 +27,8 @@ class BaseItemLineParser(
         return BaseItem(
             line[codeColumnIndex],
             translations.getTranslation(line[namestrColumnIndex]),
-            itemTypesById.getValue(line[typeColumnIndex])
+            itemTypesById.getValue(line[typeColumnIndex]),
+            line[levelColumnIndex].toInt()
         )
     }
 
@@ -37,6 +39,7 @@ class BaseItemLineParser(
             namestrColumnIndex = 5,
             codeColumnIndex = 3,
             typeColumnIndex = 1,
+            levelColumnIndex = 27,
             itemTypes = itemTypes
         )
 
@@ -46,6 +49,7 @@ class BaseItemLineParser(
             namestrColumnIndex = 18,
             codeColumnIndex = 17,
             typeColumnIndex = 48,
+            levelColumnIndex = 13,
             itemTypes = itemTypes
         )
 
@@ -55,6 +59,7 @@ class BaseItemLineParser(
             namestrColumnIndex = 15,
             codeColumnIndex = 13,
             typeColumnIndex = 32,
+            levelColumnIndex = 5,
             itemTypes = itemTypes
         )
     }
@@ -78,7 +83,7 @@ class UniqueItemLineParser(private val translations: Translations, private val b
         val enabled = parseNumericBoolean(line[2])
         if (!enabled || level == 0) return null
         val id = line[0]
-        return Item(id, translations.getTranslation(id), ItemQuality.UNIQUE, baseItemsById.getValue(line[8]))
+        return Item(id, translations.getTranslation(id), ItemQuality.UNIQUE, baseItemsById.getValue(line[8]), level)
     }
 }
 
