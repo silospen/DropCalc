@@ -3,8 +3,8 @@ package com.silospen.dropcalc.monsters
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.areas.AreasLibrary
 
-class MonsterLibrary(monsters: Set<Monster>) {
-    private val monstersByMonsterClassIdDifficultyType =
+class MonsterLibrary(val monsters: Set<Monster>) {
+    private val monstersByIdDifficultyType =
         monsters.groupBy { Triple(it.id, it.difficulty, it.type) }.mapValues { it.value.toSet() }
 
     companion object {
@@ -24,6 +24,7 @@ class MonsterLibrary(monsters: Set<Monster>) {
                 superUniqueMonsterConfig.treasureClasses.map { (difficulty, treasureClass) ->
                     Monster(
                         superUniqueMonsterConfig.id,
+                        superUniqueMonsterConfig.name,
                         monsterClassConfigsById.getValue(superUniqueMonsterConfig.monsterClassId),
                         areasLibrary.getArea(superUniqueMonsterConfig.areaName),
                         difficulty,
@@ -39,13 +40,15 @@ class MonsterLibrary(monsters: Set<Monster>) {
                 }
                 .flatMap { parentMonster ->
                     parentMonster.monsterClass.minionIds.map { minionId ->
+                        val monsterClass = monsterClassConfigsById.getValue(minionId)
                         Monster(
                             "$minionId:${parentMonster.id}",
+                            "${monsterClass.name} (${parentMonster.name})",
                             parentMonster.monsterClass,
                             parentMonster.area,
                             parentMonster.difficulty,
                             MonsterType.MINION,
-                            monsterClassConfigsById.getValue(minionId).monsterClassProperties.getValue(
+                            monsterClass.monsterClassProperties.getValue(
                                 parentMonster.difficulty,
                                 TreasureClassType.REGULAR
                             )
@@ -67,7 +70,8 @@ class MonsterLibrary(monsters: Set<Monster>) {
             return treasureClassType.validMonsterTypes.flatMap { monsterType ->
                 areasLibrary.getAreasForMonsterClassId(monsterClass.id, difficulty, monsterType).map {
                     Monster(
-                        monsterClass.id + treasureClassType.idSuffix,
+                        "${monsterClass.id}${treasureClassType.idSuffix}",
+                        monsterClass.name + if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else "",
                         monsterClass,
                         it,
                         difficulty,
@@ -80,7 +84,7 @@ class MonsterLibrary(monsters: Set<Monster>) {
     }
 
     fun getMonsters(monsterClassId: String, difficulty: Difficulty, monsterType: MonsterType) =
-        monstersByMonsterClassIdDifficultyType.getOrDefault(Triple(monsterClassId, difficulty, monsterType), emptySet())
+        monstersByIdDifficultyType.getOrDefault(Triple(monsterClassId, difficulty, monsterType), emptySet())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -88,17 +92,19 @@ class MonsterLibrary(monsters: Set<Monster>) {
 
         other as MonsterLibrary
 
-        if (monstersByMonsterClassIdDifficultyType != other.monstersByMonsterClassIdDifficultyType) return false
+        if (monsters != other.monsters) return false
+        if (monstersByIdDifficultyType != other.monstersByIdDifficultyType) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        return monstersByMonsterClassIdDifficultyType.hashCode()
+        var result = monsters.hashCode()
+        result = 31 * result + monstersByIdDifficultyType.hashCode()
+        return result
     }
 
     override fun toString(): String {
-        return "MonsterLibrary(monstersByMonsterClassIdDifficultyType=$monstersByMonsterClassIdDifficultyType)"
+        return "MonsterLibrary(monsters=$monsters, monstersByIdDifficultyType=$monstersByIdDifficultyType)"
     }
-
 }

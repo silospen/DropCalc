@@ -1,5 +1,6 @@
-package com.silospen.dropcalc
+package com.silospen.dropcalc.resource
 
+import com.silospen.dropcalc.*
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.web.bind.annotation.GetMapping

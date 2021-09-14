@@ -3,6 +3,9 @@ package com.silospen.dropcalc
 import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
+import com.silospen.dropcalc.resource.ApiResource
+import com.silospen.dropcalc.resource.AtomicTcsResponse
+import com.silospen.dropcalc.resource.Probability
 import io.ktor.client.*
 import org.apache.commons.math3.util.Precision
 import org.junit.jupiter.api.Assertions.assertTrue

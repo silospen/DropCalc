@@ -15,6 +15,7 @@ class MonsterTest {
             25,
             Monster(
                 fetishShamanMonsterClass.id,
+                fetishShamanMonsterClass.name,
                 fetishShamanMonsterClass,
                 area1Data,
                 NORMAL,
@@ -26,6 +27,7 @@ class MonsterTest {
             22,
             Monster(
                 fetishShamanMonsterClass.id,
+                fetishShamanMonsterClass.name,
                 fetishShamanMonsterClass,
                 area1Data,
                 NORMAL,
@@ -37,6 +39,7 @@ class MonsterTest {
             24,
             Monster(
                 fetishShamanMonsterClass.id,
+                fetishShamanMonsterClass.name,
                 fetishShamanMonsterClass,
                 area1Data,
                 NORMAL,
@@ -48,6 +51,7 @@ class MonsterTest {
             83,
             Monster(
                 fetishShamanMonsterClass.id,
+                fetishShamanMonsterClass.name,
                 fetishShamanMonsterClass,
                 area2Data,
                 HELL,
@@ -59,6 +63,7 @@ class MonsterTest {
             85,
             Monster(
                 fetishShamanMonsterClass.id,
+                fetishShamanMonsterClass.name,
                 fetishShamanMonsterClass,
                 area2Data,
                 HELL,
@@ -69,6 +74,7 @@ class MonsterTest {
         assertEquals(
             83, Monster(
                 radamentMonsterClass.id,
+                radamentMonsterClass.name,
                 radamentMonsterClass, Area(
                     "area-radament",
                     "area-radament-name",

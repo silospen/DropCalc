@@ -101,6 +101,7 @@ private val radamentClassProperties = getRadamentClassProperties()
 
 val skeletonMonsterClass = MonsterClass(
     "skeleton1",
+    "Skeleton-name",
     minionIds = setOf("skeleton1"),
     monsterClassProperties = skeletonClassProperties,
     monsterLevels = levelsPerDifficulty(2, 37, 68)
@@ -108,6 +109,7 @@ val skeletonMonsterClass = MonsterClass(
 val durielMonsterClass =
     MonsterClass(
         "duriel",
+        "Duriel-name",
         minionIds = setOf("duriel"),
         isBoss = true,
         monsterClassProperties = durielClassProperties,
@@ -115,6 +117,7 @@ val durielMonsterClass =
     )
 val putridDefilerMonsterClass = MonsterClass(
     "putriddefiler2",
+    "Putrid Defiler2-name",
     minionIds = setOf("putriddefiler2"),
     isBoss = true,
     monsterClassProperties = putridDefilerClassProperties,
@@ -122,12 +125,14 @@ val putridDefilerMonsterClass = MonsterClass(
 )
 val fetishShamanMonsterClass = MonsterClass(
     "fetishshaman2",
+    "FetishShaman-name",
     minionIds = setOf("fetish2", "fetishblow2"),
     monsterClassProperties = fetishShamanClassProperties,
     monsterLevels = levelsPerDifficulty(22, 49, 80)
 )
 val radamentMonsterClass = MonsterClass(
     "radament",
+    "Radament-name",
     minionIds = setOf("skeleton4"),
     isBoss = true,
     monsterClassProperties = radamentClassProperties,
@@ -191,6 +196,7 @@ val areasTestData = listOf(
 val monstersTestData = setOf(
     Monster(
         "skeleton1:Bonebreak",
+        "Skeleton-name (Bonebreak-name)",
         skeletonMonsterClass,
         bonebreakAreaData,
         NORMAL,
@@ -199,6 +205,7 @@ val monstersTestData = setOf(
     ),
     Monster(
         "skeleton1:Bonebreak",
+        "Skeleton-name (Bonebreak-name)",
         skeletonMonsterClass,
         bonebreakAreaData,
         HELL,
@@ -207,6 +214,7 @@ val monstersTestData = setOf(
     ),
     Monster(
         "skeleton1:skeleton1",
+        "Skeleton-name (Skeleton-name)",
         skeletonMonsterClass,
         area1Data,
         NORMAL,
@@ -215,6 +223,7 @@ val monstersTestData = setOf(
     ),
     Monster(
         "Bonebreak",
+        "Bonebreak-name",
         skeletonMonsterClass,
         bonebreakAreaData,
         NORMAL,
@@ -223,6 +232,7 @@ val monstersTestData = setOf(
     ),
     Monster(
         "Bonebreak",
+        "Bonebreak-name",
         skeletonMonsterClass,
         bonebreakAreaData,
         HELL,
@@ -231,6 +241,7 @@ val monstersTestData = setOf(
     ),
     Monster(
         skeletonMonsterClass.id,
+        "Skeleton-name",
         skeletonMonsterClass,
         area1Data,
         NORMAL,
@@ -239,6 +250,7 @@ val monstersTestData = setOf(
     ),
     Monster(
         skeletonMonsterClass.id,
+        "Skeleton-name",
         skeletonMonsterClass,
         area1Data,
         NORMAL,
@@ -247,6 +259,7 @@ val monstersTestData = setOf(
     ),
     Monster(
         fetishShamanMonsterClass.id,
+        "FetishShaman-name",
         fetishShamanMonsterClass,
         area1Data,
         NORMAL,
@@ -255,6 +268,7 @@ val monstersTestData = setOf(
     ),
     Monster(
         fetishShamanMonsterClass.id,
+        "FetishShaman-name",
         fetishShamanMonsterClass,
         area2Data,
         NORMAL,
@@ -263,6 +277,7 @@ val monstersTestData = setOf(
     ),
     Monster(
         fetishShamanMonsterClass.id,
+        "FetishShaman-name",
         fetishShamanMonsterClass,
         area2Data,
         HELL,
@@ -272,7 +287,7 @@ val monstersTestData = setOf(
 )
 
 val stubTranslations = object : Translations {
-    override fun getTranslation(key: String): String {
+    override fun getTranslationOrNull(key: String): String {
         return "$key-name"
     }
 }

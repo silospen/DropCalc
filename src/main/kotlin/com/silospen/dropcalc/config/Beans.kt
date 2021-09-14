@@ -22,26 +22,29 @@ class Beans {
     )
 
     @Bean
-    fun getMonsterClassConfigs(treasureClassCalculator: TreasureClassCalculator): List<MonsterClass> = readTsv(
+    fun getMonsterClassConfigs(
+        treasureClassCalculator: TreasureClassCalculator,
+        translations: Translations
+    ): List<MonsterClass> = readTsv(
         File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\monstats.txt"),
-        MonstatsLineParser(treasureClassCalculator)
+        MonstatsLineParser(treasureClassCalculator, translations)
     )
 
     @Bean
-    fun getSuperUniqueMonsterConfigs(treasureClassCalculator: TreasureClassCalculator): List<SuperUniqueMonsterConfig> =
+    fun getSuperUniqueMonsterConfigs(
+        treasureClassCalculator: TreasureClassCalculator,
+        translations: Translations
+    ): List<SuperUniqueMonsterConfig> =
         readTsv(
             File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SuperUniques.txt"),
-            SuperUniqueLineParser(treasureClassCalculator, hardcodedSuperUniqueAreas)
+            SuperUniqueLineParser(treasureClassCalculator, hardcodedSuperUniqueAreas, translations)
         )
 
     @Bean
-    fun getAreas(translations: Translations): List<Area> {
-        val areasFromLevelsTxt = readTsv(
-            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
-            LevelsLineParser(translations, hardcodedBossAreas)
-        )
-        return areasFromLevelsTxt
-    }
+    fun getAreas(translations: Translations): List<Area> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
+        LevelsLineParser(translations, hardcodedBossAreas)
+    )
 
     @Bean
     fun getAreasLibrary(areas: List<Area>): AreasLibrary {

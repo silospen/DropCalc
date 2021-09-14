@@ -18,6 +18,7 @@ class MonsterLibraryTest {
             listOf(
                 SuperUniqueMonsterConfig(
                     "Bonebreak",
+                    "Bonebreak-name",
                     "bonebreak's area",
                     "skeleton1",
                     true,
@@ -55,6 +56,7 @@ class MonsterLibraryTest {
             setOf(
                 Monster(
                     "duriel",
+                    "Duriel-name",
                     durielMonsterClass,
                     durielArea,
                     NORMAL,
@@ -63,6 +65,7 @@ class MonsterLibraryTest {
                 ),
                 Monster(
                     "durielq",
+                    "Duriel-name (q)",
                     durielMonsterClass,
                     durielArea,
                     NORMAL,
@@ -71,6 +74,7 @@ class MonsterLibraryTest {
                 ),
                 Monster(
                     "duriel",
+                    "Duriel-name",
                     durielMonsterClass,
                     durielArea,
                     NIGHTMARE,
@@ -79,6 +83,7 @@ class MonsterLibraryTest {
                 ),
                 Monster(
                     "durielq",
+                    "Duriel-name (q)",
                     durielMonsterClass,
                     durielArea,
                     NIGHTMARE,
@@ -87,6 +92,7 @@ class MonsterLibraryTest {
                 ),
                 Monster(
                     "duriel",
+                    "Duriel-name",
                     durielMonsterClass,
                     durielArea,
                     HELL,
@@ -95,6 +101,7 @@ class MonsterLibraryTest {
                 ),
                 Monster(
                     "durielq",
+                    "Duriel-name (q)",
                     durielMonsterClass,
                     durielArea,
                     HELL,

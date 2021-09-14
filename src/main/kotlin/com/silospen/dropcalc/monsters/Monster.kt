@@ -6,6 +6,7 @@ import com.silospen.dropcalc.MonsterType.*
 
 data class Monster(
     val id: String,
+    val name: String,
     val monsterClass: MonsterClass,
     val area: Area,
     val difficulty: Difficulty,
@@ -25,9 +26,5 @@ data class Monster(
         if (type == CHAMPION) return 2
         if (type == UNIQUE || type == MINION) return 3
         return 0
-    }
-
-    override fun toString(): String {
-        return "Monster(id='$id', monsterClass=$monsterClass, area=$area, difficulty=$difficulty, type=$type, treasureClass=$treasureClass, level=$level)"
     }
 }

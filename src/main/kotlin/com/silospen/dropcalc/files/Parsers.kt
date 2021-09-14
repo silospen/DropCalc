@@ -10,7 +10,10 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import java.util.*
 
-class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalculator) : LineParser<MonsterClass?> {
+class MonstatsLineParser(
+    private val treasureClassCalculator: TreasureClassCalculator,
+    private val translations: Translations
+) : LineParser<MonsterClass?> {
     override fun parseLine(line: List<String>): MonsterClass? {
         val isEnabled: Boolean = parseNumericBoolean(line[12])
         val isKillable: Boolean = parseNumericBoolean(line[89])
@@ -21,6 +24,7 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
         if (!isValid) return null
 
         val id = line[0]
+        val name = translations.getTranslation(line[5])
         val isBoss: Boolean = parseNumericBoolean(line[87])
         val level: Int = line[31].toInt()
         val levelN: Int = line[32].toInt()
@@ -28,6 +32,7 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
 
         return MonsterClass(
             id = id,
+            name = name,
             monsterLevels = EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
                 put(NORMAL, level)
                 put(NIGHTMARE, levelN)
@@ -95,7 +100,8 @@ class MonstatsLineParser(private val treasureClassCalculator: TreasureClassCalcu
 
 class SuperUniqueLineParser(
     private val treasureClassCalculator: TreasureClassCalculator,
-    private val areasBySuperUniqueId: Map<String, String>
+    private val areasBySuperUniqueId: Map<String, String>,
+    private val translations: Translations
 ) :
     LineParser<SuperUniqueMonsterConfig?> {
 
@@ -110,6 +116,7 @@ class SuperUniqueLineParser(
         if (name.isBlank() || monsterClass.isBlank() || normalTc.isBlank()) return null
         return SuperUniqueMonsterConfig(
             id,
+            translations.getTranslation(name),
             areasBySuperUniqueId.getValue(id),
             monsterClass,
             hasMinions,
@@ -189,7 +196,7 @@ class LevelsLineParser(
         val monsterClassIds = parseMonsterClassIds(line, id)
         return Area(
             id,
-            translations.getTranslation(name) ?: throw IllegalArgumentException("Missing translation for $name"),
+            translations.getTranslation(name),
             EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
                 level?.let { put(NORMAL, level) }
                 levelN?.let { put(NIGHTMARE, levelN) }

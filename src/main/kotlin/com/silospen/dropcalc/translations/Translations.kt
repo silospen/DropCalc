@@ -5,12 +5,14 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder.LITTLE_ENDIAN
 
 interface Translations {
-    fun getTranslation(key: String): String?
+    fun getTranslationOrNull(key: String): String?
+    fun getTranslation(key: String): String =
+        getTranslationOrNull(key) ?: throw IllegalArgumentException("No translation for $key")
 }
 
 class CompositeTranslations(private vararg val translations: Translations) : Translations {
-    override fun getTranslation(key: String): String? =
-        translations.asSequence().firstNotNullOfOrNull { it.getTranslation(key) }
+    override fun getTranslationOrNull(key: String): String? =
+        translations.asSequence().firstNotNullOfOrNull { it.getTranslationOrNull(key) }
 }
 
 class MapBasedTranslations(private val translationData: Map<String, String>) : Translations {
@@ -49,7 +51,7 @@ class MapBasedTranslations(private val translationData: Map<String, String>) : T
         }
     }
 
-    override fun getTranslation(key: String) = translationData[key]
+    override fun getTranslationOrNull(key: String) = translationData[key]
 
 
     override fun toString(): String {
@@ -116,6 +118,7 @@ private data class TableFileHeader(
 
 private fun ByteBuffer.getUInt8(): Short = java.lang.Byte.toUnsignedInt(get()).toShort()
 private fun ByteBuffer.getUInt16(): Int = java.lang.Short.toUnsignedInt(short)
+
 @Suppress("RemoveRedundantQualifierName")
 private fun ByteBuffer.getUInt32(): Long = java.lang.Integer.toUnsignedLong(int)
 private fun ByteBuffer.getString(offset: Int, length: Int) =

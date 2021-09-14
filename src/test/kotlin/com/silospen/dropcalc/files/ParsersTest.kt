@@ -20,7 +20,7 @@ class MonstatsLineParserTest {
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\monstats.txt"),
             getResource("parsersTestData/monstats.txt"),
-            MonstatsLineParser(mockTreasureClassCalculator)
+            MonstatsLineParser(mockTreasureClassCalculator, stubTranslations)
         ).toSet()
         assertEquals(monsterClassTestData, actual)
     }
@@ -43,12 +43,14 @@ class SuperUniqueLineParserTest {
                 mockTreasureClassCalculator, mapOf(
                     "Corpsefire" to "Act 1 - Cave 1",
                     "The Feature Creep" to "Act 4 - Lava 1",
-                )
+                ),
+                stubTranslations
             )
         ).toSet()
         val expected = setOf(
             SuperUniqueMonsterConfig(
                 "The Feature Creep",
+                "The Feature Creep-name",
                 "Act 4 - Lava 1",
                 "hephasto",
                 false,
@@ -60,6 +62,7 @@ class SuperUniqueLineParserTest {
             ),
             SuperUniqueMonsterConfig(
                 "Corpsefire",
+                "Corpsefire-name",
                 "Act 1 - Cave 1",
                 "zombie1",
                 true,

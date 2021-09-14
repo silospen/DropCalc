@@ -13,7 +13,7 @@ class TranslationsTest {
             mapOf("ModStr4l" to "Slightly Increased Attack Speed", "ModStr4n" to "Greatly Increased Attack Speed")
         )
         assertEquals(expected, actual)
-        assertEquals(null, actual.getTranslation("missing-key"))
-        assertEquals("Greatly Increased Attack Speed", actual.getTranslation("ModStr4n"))
+        assertEquals(null, actual.getTranslationOrNull("missing-key"))
+        assertEquals("Greatly Increased Attack Speed", actual.getTranslationOrNull("ModStr4n"))
     }
 }
