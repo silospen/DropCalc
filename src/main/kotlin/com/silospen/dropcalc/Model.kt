@@ -20,7 +20,7 @@ data class TreasureClass(
     }
 }
 
-data class ItemClass(
+data class ItemTreasureClass(
     override val name: String
 //    override val probabilitySum: Int
 ) : OutcomeType
@@ -83,7 +83,8 @@ data class BaseItem(
     val id: String,
     val name: String,
     val itemType: ItemType,
-    val level: Int
+    val level: Int,
+//    val itemTreasureClass: ItemTreasureClass
 )
 
 data class ItemType(

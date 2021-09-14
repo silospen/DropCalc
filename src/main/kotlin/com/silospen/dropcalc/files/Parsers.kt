@@ -73,7 +73,10 @@ class ItemTypeParser : LineParser<ItemType?> {
     }
 }
 
-class UniqueItemLineParser(private val translations: Translations, private val baseItems: List<BaseItem>) :
+class UniqueItemLineParser(
+    private val translations: Translations,
+    baseItems: List<BaseItem>
+) :
     LineParser<Item?> {
 
     private val baseItemsById = baseItems.associateBy { it.id }

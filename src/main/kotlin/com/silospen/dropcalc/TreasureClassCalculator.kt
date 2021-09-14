@@ -3,7 +3,6 @@ package com.silospen.dropcalc
 import org.apache.commons.math3.fraction.BigFraction
 import org.apache.commons.math3.fraction.BigFraction.ONE
 import org.springframework.stereotype.Component
-import java.lang.IllegalArgumentException
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.floor
@@ -38,7 +37,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         return if (treasureClass != null) {
             Outcome(treasureClass, itemAndProbability.second)
         } else {
-            Outcome(ItemClass(itemAndProbability.first), itemAndProbability.second)
+            Outcome(ItemTreasureClass(itemAndProbability.first), itemAndProbability.second)
         }
     }
 
@@ -48,7 +47,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         difficulty: Difficulty,
         nPlayers: Int = 1,
         partySize: Int = 1
-    ): Map<ItemClass, BigFraction> =
+    ): Map<ItemTreasureClass, BigFraction> =
         getLeafOutcomes(getTreasureClass(treasureClassName), monsterLevel, difficulty, nPlayers, partySize)
 
     fun getLeafOutcomes(
@@ -57,7 +56,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         difficulty: Difficulty,
         nPlayers: Int = 1,
         partySize: Int = 1
-    ): Map<ItemClass, BigFraction> {
+    ): Map<ItemTreasureClass, BigFraction> {
         val possiblyUpgradedTreasureClass = changeTcBasedOnLevel(treasureClass, monsterLevel, difficulty)
         return if (possiblyUpgradedTreasureClass.properties.picks > 0) getLeafOutcomesForPositivePicks(
             possiblyUpgradedTreasureClass,
@@ -70,7 +69,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         treasureClass: TreasureClass,
         nPlayers: Int,
         partySize: Int
-    ): Map<ItemClass, BigFraction> {
+    ): Map<ItemTreasureClass, BigFraction> {
         val result = calculatePathSum(Outcome(treasureClass, 1), BigFraction(1), 1, nPlayers, partySize)
         val picks = treasureClass.properties.picks
         return applyPositivePicks(picks, result)
@@ -78,8 +77,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
 
     private fun applyPositivePicks(
         picks: Int,
-        result: Map<ItemClass, BigFraction>
-    ): Map<ItemClass, BigFraction> {
+        result: Map<ItemTreasureClass, BigFraction>
+    ): Map<ItemTreasureClass, BigFraction> {
         return when {
             picks == 1 -> result
             picks > 1 -> result.mapValues { calculateProbabilityForPicks(it.value, if (picks > 6) 6 else picks) }
@@ -94,8 +93,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         treasureClass: TreasureClass,
         nPlayers: Int,
         partySize: Int
-    ): Map<ItemClass, BigFraction> {
-        val results = mutableListOf<Map<ItemClass, BigFraction>>()
+    ): Map<ItemTreasureClass, BigFraction> {
+        val results = mutableListOf<Map<ItemTreasureClass, BigFraction>>()
         var picksCounter = treasureClass.properties.picks //TODO: Use this!
         for (outcome in treasureClass.outcomes) {
             val pathSumsForOutcome = calculatePathSum(outcome, BigFraction(1), outcome.probability, nPlayers, partySize)
@@ -105,7 +104,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
                 if (picks > 1) applyPositivePicks(picks, pathSumsForOutcome) else pathSumsForOutcome
             )
         }
-        val finalResult = mutableMapOf<ItemClass, BigFraction>()
+        val finalResult = mutableMapOf<ItemTreasureClass, BigFraction>()
         for (result in results) {
             for (entry in result) {
                 finalResult.merge(entry.key, entry.value) { old, new ->
@@ -139,8 +138,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         tcProbabilityDenominator: Int,
         nPlayers: Int,
         partySize: Int
-    ): Map<ItemClass, BigFraction> =
-        mutableMapOf<ItemClass, BigFraction>().apply {
+    ): Map<ItemTreasureClass, BigFraction> =
+        mutableMapOf<ItemTreasureClass, BigFraction>().apply {
             calculatePathSumRecurse(
                 outcome,
                 pathProbabilityAccumulator,
@@ -155,7 +154,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
         outcome: Outcome,
         pathProbabilityAccumulator: BigFraction,
         tcProbabilityDenominator: Int,
-        leafAccumulator: MutableMap<ItemClass, BigFraction>,
+        leafAccumulator: MutableMap<ItemTreasureClass, BigFraction>,
         nPlayers: Int,
         partySize: Int
     ) {
@@ -180,7 +179,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>) {
                     )
                 }
             }
-            is ItemClass -> {
+            is ItemTreasureClass -> {
                 leafAccumulator[outcomeType] =
                     selectionProbability.add(leafAccumulator.getOrDefault(outcomeType, BigFraction.ZERO))
             }
