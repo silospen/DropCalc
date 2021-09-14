@@ -48,6 +48,15 @@ class BaseItemLineParser(
             typeColumnIndex = 48,
             itemTypes = itemTypes
         )
+
+        fun forMiscTxt(translations: Translations, itemTypes: List<ItemType>) = BaseItemLineParser(
+            translations = translations,
+            spawnableColumnIndex = 8,
+            namestrColumnIndex = 15,
+            codeColumnIndex = 13,
+            typeColumnIndex = 32,
+            itemTypes = itemTypes
+        )
     }
 }
 
@@ -61,8 +70,15 @@ class ItemTypeParser : LineParser<ItemType?> {
 
 class UniqueItemLineParser(private val translations: Translations, private val baseItems: List<BaseItem>) :
     LineParser<Item?> {
+
+    private val baseItemsById = baseItems.associateBy { it.id }
+
     override fun parseLine(line: List<String>): Item? {
-        TODO("Not yet implemented")
+        val level = line[6].toIntOrNull() ?: 0
+        val enabled = parseNumericBoolean(line[2])
+        if (!enabled || level == 0) return null
+        val id = line[0]
+        return Item(id, translations.getTranslation(id), ItemQuality.UNIQUE, baseItemsById.getValue(line[8]))
     }
 }
 

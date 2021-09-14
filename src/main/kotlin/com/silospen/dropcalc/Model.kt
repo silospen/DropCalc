@@ -74,7 +74,8 @@ data class Area(
 data class Item( //Follow the same pattern as monsters and have this as the item type and then another item with the actual instance of an item?
     val id: String,
     val name: String,
-    val quality: ItemQuality
+    val quality: ItemQuality,
+    val baseItem: BaseItem
 )
 
 data class BaseItem(

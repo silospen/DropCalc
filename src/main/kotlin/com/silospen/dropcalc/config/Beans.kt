@@ -75,6 +75,9 @@ class Beans {
     ) + readTsv(
         File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\armor.txt"),
         BaseItemLineParser.forArmorTxt(translations, itemTypes)
+    ) + readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\misc.txt"),
+        BaseItemLineParser.forMiscTxt(translations, itemTypes)
     )
 
     @Bean
@@ -82,4 +85,14 @@ class Beans {
         File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\itemTypes.txt"),
         ItemTypeParser()
     )
+
+    @Bean
+    fun getItems(translations: Translations, baseItems: List<BaseItem>): List<Item> {
+        val uniqueItems = readTsv(
+            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\uniqueItems.txt"),
+            UniqueItemLineParser(translations, baseItems)
+        )
+        return uniqueItems
+    }
+
 }

@@ -13,6 +13,32 @@ import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.*
 
+class UniqueItemsLineParserTest {
+    @Test
+    fun uniqueItemsParser() {
+        val axeItemType = ItemType("axe", "Axe", false)
+        val haxBaseItem = BaseItem("hax", "hax-name", axeItemType)
+        val axeBaseItem = BaseItem("axe", "axe-name", axeItemType)
+        val jewelBaseItem = BaseItem("jew", "jew-name", ItemType("jew", "Jewel", false))
+        val actual = readTsv(
+            getResource("parsersTestData/uniqueItems.txt"),
+            UniqueItemLineParser(
+                stubTranslations, listOf(
+                    haxBaseItem,
+                    axeBaseItem,
+                    jewelBaseItem
+                )
+            )
+        )
+        val expected = listOf(
+            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem),
+            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem),
+            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem),
+        )
+        assertEquals(expected, actual)
+    }
+}
+
 class BaseItemLineParserTest {
     @Test
     fun weaponParser() {
@@ -45,6 +71,22 @@ class BaseItemLineParserTest {
         )
         assertEquals(
             listOf(BaseItem("cap", "cap-name", helmItemType)),
+            actual
+        )
+    }
+
+    @Test
+    fun miscParser() {
+        val elixirItemType = ItemType("elix", "Elixir", false)
+        val ringItemType = ItemType("ring", "Ring", false)
+        val actual = readTsv(
+            getResource("parsersTestData/misc.txt"),
+            BaseItemLineParser.forMiscTxt(
+                stubTranslations, listOf(elixirItemType, ringItemType)
+            )
+        )
+        assertEquals(
+            listOf(BaseItem("elx", "elx-name", elixirItemType), BaseItem("rin", "rin-name", ringItemType)),
             actual
         )
     }
