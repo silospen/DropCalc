@@ -78,7 +78,8 @@ class ItemTypeParser : LineParser<ItemType?> {
             id,
             line[0],
             itemClassification,
-            line[27].isNotBlank()
+            line[27].isNotBlank(),
+            line[24].toInt()
         )
     }
 }

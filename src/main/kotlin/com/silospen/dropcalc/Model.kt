@@ -91,7 +91,8 @@ data class ItemType(
     val id: String,
     val name: String,
     val itemClassification: ItemClassification,
-    val isClassSpecific: Boolean
+    val isClassSpecific: Boolean,
+    val rarity: Int
 )
 
 enum class ItemClassification(val itemClassificationIdentifier: String) {
