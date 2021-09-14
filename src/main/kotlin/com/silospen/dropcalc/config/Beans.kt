@@ -71,10 +71,10 @@ class Beans {
     @Bean
     fun getBaseItems(translations: Translations, itemTypes: List<ItemType>): List<BaseItem> = readTsv(
         File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\weapons.txt"),
-        BaseItemLineParser(translations, itemTypes)
+        BaseItemLineParser.forWeaponsTxt(translations, itemTypes)
     ) + readTsv(
         File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\armor.txt"),
-        BaseItemLineParser(translations, itemTypes)
+        BaseItemLineParser.forArmorTxt(translations, itemTypes)
     )
 
     @Bean

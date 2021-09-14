@@ -12,14 +12,42 @@ import java.util.*
 
 class BaseItemLineParser(
     private val translations: Translations,
+    private val spawnableColumnIndex: Int,
+    private val namestrColumnIndex: Int,
+    private val codeColumnIndex: Int,
+    private val typeColumnIndex: Int,
     itemTypes: List<ItemType>
 ) : LineParser<BaseItem?> {
 
     private val itemTypesById = itemTypes.associateBy { it.id }
 
     override fun parseLine(line: List<String>): BaseItem? {
-        if (!parseNumericBoolean(line[9])) return null
-        return BaseItem(line[3], translations.getTranslation(line[5]), itemTypesById.getValue(line[1]))
+        if (!parseNumericBoolean(line[spawnableColumnIndex])) return null
+        return BaseItem(
+            line[codeColumnIndex],
+            translations.getTranslation(line[namestrColumnIndex]),
+            itemTypesById.getValue(line[typeColumnIndex])
+        )
+    }
+
+    companion object {
+        fun forWeaponsTxt(translations: Translations, itemTypes: List<ItemType>) = BaseItemLineParser(
+            translations = translations,
+            spawnableColumnIndex = 9,
+            namestrColumnIndex = 5,
+            codeColumnIndex = 3,
+            typeColumnIndex = 1,
+            itemTypes = itemTypes
+        )
+
+        fun forArmorTxt(translations: Translations, itemTypes: List<ItemType>) = BaseItemLineParser(
+            translations = translations,
+            spawnableColumnIndex = 4,
+            namestrColumnIndex = 18,
+            codeColumnIndex = 17,
+            typeColumnIndex = 48,
+            itemTypes = itemTypes
+        )
     }
 }
 
@@ -31,7 +59,12 @@ class ItemTypeParser : LineParser<ItemType?> {
     }
 }
 
-//class UniqueItemLineParser(private val translations: Translations) : LineParser<Item?>
+class UniqueItemLineParser(private val translations: Translations, private val baseItems: List<BaseItem>) :
+    LineParser<Item?> {
+    override fun parseLine(line: List<String>): Item? {
+        TODO("Not yet implemented")
+    }
+}
 
 class MonstatsLineParser(
     private val treasureClassCalculator: TreasureClassCalculator,

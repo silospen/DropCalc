@@ -15,12 +15,12 @@ import java.util.*
 
 class BaseItemLineParserTest {
     @Test
-    fun baseItemParser() {
+    fun weaponParser() {
         val axeItemType = ItemType("axe", "Axe", false)
         val potionItemType = ItemType("tpot", "Potion", false)
         val actual = readTsv(
             getResource("parsersTestData/weapons.txt"),
-            BaseItemLineParser(
+            BaseItemLineParser.forWeaponsTxt(
                 stubTranslations, listOf(
                     axeItemType,
                     potionItemType,
@@ -30,6 +30,21 @@ class BaseItemLineParserTest {
         )
         assertEquals(
             listOf(BaseItem("hax", "hax-name", axeItemType), BaseItem("opl", "bopl-name", potionItemType)),
+            actual
+        )
+    }
+
+    @Test
+    fun armorParser() {
+        val helmItemType = ItemType("helm", "Helm", false)
+        val actual = readTsv(
+            getResource("parsersTestData/armor.txt"),
+            BaseItemLineParser.forArmorTxt(
+                stubTranslations, listOf(helmItemType)
+            )
+        )
+        assertEquals(
+            listOf(BaseItem("cap", "cap-name", helmItemType)),
             actual
         )
     }
