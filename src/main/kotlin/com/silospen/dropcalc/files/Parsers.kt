@@ -23,12 +23,14 @@ class BaseItemLineParser(
     private val itemTypesById = itemTypes.associateBy { it.id }
 
     override fun parseLine(line: List<String>): BaseItem? {
-        if (!parseNumericBoolean(line[spawnableColumnIndex])) return null
+        val type = line[typeColumnIndex]
+        if (!parseNumericBoolean(line[spawnableColumnIndex]) || type == "ques") return null
+        val level = line[levelColumnIndex].toInt()
         return BaseItem(
             line[codeColumnIndex],
             translations.getTranslation(line[namestrColumnIndex]),
-            itemTypesById.getValue(line[typeColumnIndex]),
-            line[levelColumnIndex].toInt()
+            itemTypesById.getValue(type),
+            level
         )
     }
 
@@ -68,8 +70,16 @@ class BaseItemLineParser(
 class ItemTypeParser : LineParser<ItemType?> {
     override fun parseLine(line: List<String>): ItemType? {
         val id = line[1]
-        if (id.isBlank()) return null
-        return ItemType(id, line[0], line[27].isNotBlank())
+        val storePage = line[35]
+        val equiv1 = line[2]
+        val itemClassification = itemClassificationsByIdentifier[storePage.takeIf { it.isNotBlank() } ?: equiv1]
+        if (id.isBlank() || itemClassification == null) return null
+        return ItemType(
+            id,
+            line[0],
+            itemClassification,
+            line[27].isNotBlank()
+        )
     }
 }
 

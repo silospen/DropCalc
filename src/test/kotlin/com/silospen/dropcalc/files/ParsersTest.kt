@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable
 import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
+import com.silospen.dropcalc.ItemClassification.*
 import com.silospen.dropcalc.MonsterType.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -16,10 +17,10 @@ import java.util.*
 class UniqueItemsLineParserTest {
     @Test
     fun uniqueItemsParser() {
-        val axeItemType = ItemType("axe", "Axe", false)
+        val axeItemType = ItemType("axe", "Axe", WEAPON, false)
         val haxBaseItem = BaseItem("hax", "hax-name", axeItemType, 1)
         val axeBaseItem = BaseItem("axe", "axe-name", axeItemType, 2)
-        val jewelBaseItem = BaseItem("jew", "jew-name", ItemType("jew", "Jewel", false), 3)
+        val jewelBaseItem = BaseItem("jew", "jew-name", ItemType("jew", "Jewel", ItemClassification.MISC, false), 3)
         val actual = readTsv(
             getResource("parsersTestData/uniqueItems.txt"),
             UniqueItemLineParser(
@@ -42,15 +43,15 @@ class UniqueItemsLineParserTest {
 class BaseItemLineParserTest {
     @Test
     fun weaponParser() {
-        val axeItemType = ItemType("axe", "Axe", false)
-        val potionItemType = ItemType("tpot", "Potion", false)
+        val axeItemType = ItemType("axe", "Axe", WEAPON, false)
+        val potionItemType = ItemType("tpot", "Potion", MISC, false)
         val actual = readTsv(
             getResource("parsersTestData/weapons.txt"),
             BaseItemLineParser.forWeaponsTxt(
                 stubTranslations, listOf(
                     axeItemType,
                     potionItemType,
-                    ItemType("knif", "Knife", false),
+                    ItemType("knif", "Knife", WEAPON, false),
                 )
             )
         )
@@ -62,7 +63,7 @@ class BaseItemLineParserTest {
 
     @Test
     fun armorParser() {
-        val helmItemType = ItemType("helm", "Helm", false)
+        val helmItemType = ItemType("helm", "Helm", ARMOR, false)
         val actual = readTsv(
             getResource("parsersTestData/armor.txt"),
             BaseItemLineParser.forArmorTxt(
@@ -77,8 +78,8 @@ class BaseItemLineParserTest {
 
     @Test
     fun miscParser() {
-        val elixirItemType = ItemType("elix", "Elixir", false)
-        val ringItemType = ItemType("ring", "Ring", false)
+        val elixirItemType = ItemType("elix", "Elixir", MISC, false)
+        val ringItemType = ItemType("ring", "Ring", MISC, false)
         val actual = readTsv(
             getResource("parsersTestData/misc.txt"),
             BaseItemLineParser.forMiscTxt(
@@ -102,10 +103,10 @@ class ItemTypeParserTest {
         )
         assertEquals(
             listOf(
-                ItemType("shie", "Shield", false),
-                ItemType("tors", "Armor", false),
-                ItemType("gold", "Gold", false),
-                ItemType("aspe", "Amazon Spear", true)
+                ItemType("shie", "Shield", ARMOR, false),
+                ItemType("tors", "Armor", ARMOR, false),
+                ItemType("gold", "Gold", MISC, false),
+                ItemType("aspe", "Amazon Spear", WEAPON, true)
             ), actual
         )
     }
