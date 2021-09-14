@@ -13,6 +13,17 @@ import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.*
 
+class WeaponsAndArmorLineParserTest {
+    @Test
+    fun weaponsAndArmorParser() {
+        val actual = readTsv(
+            getResource("parsersTestData/weapons.txt"),
+            WeaponsAndArmorLineParser(stubTranslations)
+        )
+        assertEquals(listOf(Item("hax", "hax-name"), Item("opl", "bopl-name")), actual)
+    }
+}
+
 class MonstatsLineParserTest {
     @Test
     fun monstatsParser() {

@@ -71,6 +71,11 @@ data class Area(
     val monsterClassIds: Table<Difficulty, MonsterType, Set<String>>
 )
 
+data class Item(
+    val id: String,
+    val name: String
+)
+
 enum class Difficulty {
     NORMAL,
     NIGHTMARE,

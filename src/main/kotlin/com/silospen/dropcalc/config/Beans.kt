@@ -67,4 +67,13 @@ class Beans {
             MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\expansionstring.tbl")),
             MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\string.tbl"))
         )
+
+    @Bean
+    fun getWeaponsAndArmor(translations: Translations): List<Item> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\weapons.txt"),
+        WeaponsAndArmorLineParser(translations)
+    ) + readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\armor.txt"),
+        WeaponsAndArmorLineParser(translations)
+    )
 }

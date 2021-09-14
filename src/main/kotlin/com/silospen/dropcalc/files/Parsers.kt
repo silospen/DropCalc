@@ -10,6 +10,13 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import java.util.*
 
+class WeaponsAndArmorLineParser(private val translations: Translations) : LineParser<Item?> {
+    override fun parseLine(line: List<String>): Item? {
+        if (!parseNumericBoolean(line[9])) return null
+        return Item(line[3], translations.getTranslation(line[5]))
+    }
+}
+
 class MonstatsLineParser(
     private val treasureClassCalculator: TreasureClassCalculator,
     private val translations: Translations
