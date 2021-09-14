@@ -71,10 +71,31 @@ data class Area(
     val monsterClassIds: Table<Difficulty, MonsterType, Set<String>>
 )
 
-data class Item(
+data class Item( //Follow the same pattern as monsters and have this as the item type and then another item with the actual instance of an item?
     val id: String,
-    val name: String
+    val name: String,
+    val quality: ItemQuality
 )
+
+data class BaseItem(
+    val id: String,
+    val name: String,
+    val itemType: ItemType
+)
+
+data class ItemType(
+    val id: String,
+    val name: String,
+    val isClassSpecific: Boolean
+)
+
+enum class ItemQuality {
+    WHITE,
+    MAGIC,
+    RARE,
+    SET,
+    UNIQUE
+}
 
 enum class Difficulty {
     NORMAL,

@@ -13,14 +13,44 @@ import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.*
 
-class WeaponsAndArmorLineParserTest {
+class BaseItemLineParserTest {
     @Test
-    fun weaponsAndArmorParser() {
+    fun baseItemParser() {
+        val axeItemType = ItemType("axe", "Axe", false)
+        val potionItemType = ItemType("tpot", "Potion", false)
         val actual = readTsv(
             getResource("parsersTestData/weapons.txt"),
-            WeaponsAndArmorLineParser(stubTranslations)
+            BaseItemLineParser(
+                stubTranslations, listOf(
+                    axeItemType,
+                    potionItemType,
+                    ItemType("knif", "Knife", false),
+                )
+            )
         )
-        assertEquals(listOf(Item("hax", "hax-name"), Item("opl", "bopl-name")), actual)
+        assertEquals(
+            listOf(BaseItem("hax", "hax-name", axeItemType), BaseItem("opl", "bopl-name", potionItemType)),
+            actual
+        )
+    }
+}
+
+class ItemTypeParserTest {
+
+    @Test
+    fun itemTypeParser() {
+        val actual = readTsv(
+            getResource("parsersTestData/itemTypes.txt"),
+            ItemTypeParser()
+        )
+        assertEquals(
+            listOf(
+                ItemType("shie", "Shield", false),
+                ItemType("tors", "Armor", false),
+                ItemType("gold", "Gold", false),
+                ItemType("aspe", "Amazon Spear", true)
+            ), actual
+        )
     }
 }
 

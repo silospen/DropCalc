@@ -35,6 +35,22 @@ class ApiResource(
             }
         }.sortedBy { it.tc }
     }
+
+//    https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?
+//    type=item&itemName=aegis&diff=A&monClass=regMon&nPlayers=1&nGroup=1&mf=0&quality=regItem&decMode=false&version=112
+
+    @GetMapping("/item")
+    fun getItemProbabilities(
+        @RequestParam("itemId", required = true) itemId: String,
+        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("difficulty", required = true) difficulty: Difficulty,
+        @RequestParam("players", required = true) nPlayers: Int,
+        @RequestParam("party", required = true) partySize: Int,
+        @RequestParam("magicFind", required = true) magicFind: Int,
+    ) {
+//        val item: Item = itemLibrary.getItem(itemId, itemQuality)
+    }
+
 }
 
 data class AtomicTcsResponse(val tc: String, val area: String, val prob: Probability)

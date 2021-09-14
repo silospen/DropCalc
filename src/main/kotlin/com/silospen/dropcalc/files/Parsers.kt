@@ -10,12 +10,28 @@ import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import java.util.*
 
-class WeaponsAndArmorLineParser(private val translations: Translations) : LineParser<Item?> {
-    override fun parseLine(line: List<String>): Item? {
+class BaseItemLineParser(
+    private val translations: Translations,
+    itemTypes: List<ItemType>
+) : LineParser<BaseItem?> {
+
+    private val itemTypesById = itemTypes.associateBy { it.id }
+
+    override fun parseLine(line: List<String>): BaseItem? {
         if (!parseNumericBoolean(line[9])) return null
-        return Item(line[3], translations.getTranslation(line[5]))
+        return BaseItem(line[3], translations.getTranslation(line[5]), itemTypesById.getValue(line[1]))
     }
 }
+
+class ItemTypeParser : LineParser<ItemType?> {
+    override fun parseLine(line: List<String>): ItemType? {
+        val id = line[1]
+        if (id.isBlank()) return null
+        return ItemType(id, line[0], line[27].isNotBlank())
+    }
+}
+
+//class UniqueItemLineParser(private val translations: Translations) : LineParser<Item?>
 
 class MonstatsLineParser(
     private val treasureClassCalculator: TreasureClassCalculator,
