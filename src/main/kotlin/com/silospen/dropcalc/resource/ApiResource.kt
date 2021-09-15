@@ -1,6 +1,8 @@
 package com.silospen.dropcalc.resource
 
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.TreasureClassOutcomeType.DEFINED
+import com.silospen.dropcalc.TreasureClassOutcomeType.VIRTUAL
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,20 +23,46 @@ class ApiResource(
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int
     ): List<AtomicTcsResponse> {
-        return monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
-            val treasureClass: TreasureClass = treasureClassCalculator.getTreasureClass(monster.treasureClass)
-            println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.name} - ${monster.level} - $treasureClass")
-            val leafOutcomes: Map<ItemTreasureClass, BigFraction> =
-                treasureClassCalculator.getLeafOutcomes(treasureClass, monster.level, difficulty, nPlayers, partySize)
-            leafOutcomes.map { leafOutcome ->
-                AtomicTcsResponse(
-                    leafOutcome.key.name,
-                    monster.area.name,
-                    Probability(leafOutcome.value)
-                )
-            }
-        }.sortedBy { it.tc }
+        return getOutcomes(monsterId, difficulty, monsterType, DEFINED, nPlayers, partySize)
     }
+
+    @GetMapping("/monster")
+    fun getMonster(
+        @RequestParam("monsterId", required = true) monsterId: String,
+        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+        @RequestParam("difficulty", required = true) difficulty: Difficulty,
+        @RequestParam("players", required = true) nPlayers: Int,
+        @RequestParam("party", required = true) partySize: Int
+    ): List<AtomicTcsResponse> {
+        return getOutcomes(monsterId, difficulty, monsterType, VIRTUAL, nPlayers, partySize)
+    }
+
+    private fun getOutcomes(
+        monsterId: String,
+        difficulty: Difficulty,
+        monsterType: MonsterType,
+        treasureClassOutcomeType: TreasureClassOutcomeType,
+        nPlayers: Int,
+        partySize: Int,
+    ) = monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
+        println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.name} - ${monster.level} - ${monster.treasureClass}")
+        val leafOutcomes: Map<ItemTreasureClass, BigFraction> =
+            treasureClassCalculator.getLeafOutcomes(
+                monster.treasureClass,
+                monster.level,
+                difficulty,
+                treasureClassOutcomeType,
+                nPlayers,
+                partySize
+            )
+        leafOutcomes.map { leafOutcome ->
+            AtomicTcsResponse(
+                leafOutcome.key.name,
+                monster.area.name,
+                Probability(leafOutcome.value)
+            )
+        }
+    }.sortedBy { it.tc }
 
 //    https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?
 //    type=item&itemName=aegis&diff=A&monClass=regMon&nPlayers=1&nGroup=1&mf=0&quality=regItem&decMode=false&version=112

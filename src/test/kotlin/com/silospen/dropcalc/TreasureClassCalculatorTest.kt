@@ -1,6 +1,7 @@
 package com.silospen.dropcalc
 
 import com.silospen.dropcalc.Difficulty.*
+import com.silospen.dropcalc.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.files.TreasureClassesLineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
@@ -19,7 +20,7 @@ class TreasureClassCalculatorTest {
 
     @Test
     fun getLeafOutcomes() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL)
+        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED)
         val expected = mapOf(
             ItemTreasureClass(name = "gld") to BigFraction(21, 160),
             ItemTreasureClass(name = "weap3") to BigFraction(1, 20),
@@ -38,7 +39,7 @@ class TreasureClassCalculatorTest {
 
     @Test
     fun getLeafOutcomes_withTcUpgraded() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 50, HELL)
+        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 50, HELL, DEFINED)
         val expected = mapOf(
             ItemTreasureClass(name = "gld") to BigFraction(5, 110),
             ItemTreasureClass(name = "weap3") to BigFraction(5, 110).multiply(BigFraction(7, 14)),
@@ -49,7 +50,7 @@ class TreasureClassCalculatorTest {
 
     @Test
     fun getLeafOutcomes_withPartyAndPlayersSet() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, 3, 3)
+        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED, 3, 3)
         val expected = mapOf(
             ItemTreasureClass(name = "gld") to BigFraction(21, 79),
             ItemTreasureClass(name = "weap3") to BigFraction(8, 79),
@@ -68,7 +69,7 @@ class TreasureClassCalculatorTest {
 
     @Test
     fun getLeafOutcomes_withPicks() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Radament", 50, NORMAL)
+        val actual = treasureClassCalculator.getLeafOutcomes("Radament", 50, NORMAL, DEFINED)
         val expected = mapOf(
             ItemTreasureClass(name = "\"gld,mul=1280\"") to BigFraction(799393331, 1350125107),
             ItemTreasureClass(name = "Act 3 Equip B") to BigFraction(1095321139, 1350125107),
@@ -80,7 +81,7 @@ class TreasureClassCalculatorTest {
 
     @Test
     fun getLeafOutcomes_withNegativePicks() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", 4, NORMAL)
+        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", 4, NORMAL, DEFINED)
         val expected = mapOf(
             ItemTreasureClass(name = "\"gld,mul=1280\"") to BigFraction(60, 100),
             ItemTreasureClass(name = "weap3") to BigFraction(37, 200),
@@ -99,7 +100,7 @@ class TreasureClassCalculatorTest {
 
     @Test
     fun getLeafOutcomes_withNegativePicks_unevenPickDistribution() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", 4, NORMAL)
+        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", 4, NORMAL, DEFINED)
         val expected = mapOf(
             ItemTreasureClass(name = "\"gld,mul=1280\"") to BigFraction(60, 100),
             ItemTreasureClass(name = "weap3") to BigFraction(832772357, 907039232),
