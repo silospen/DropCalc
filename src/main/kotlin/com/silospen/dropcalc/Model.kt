@@ -8,22 +8,30 @@ data class TreasureClassConfig(
     val items: Set<Pair<String, Int>>
 )
 
-data class TreasureClass(
-    override val name: String,
-    val probabilityDenominator: Int,
-    val properties: TreasureClassProperties,
+interface TreasureClass : OutcomeType {
+    val probabilityDenominator: Int
+    val properties: TreasureClassProperties
     val outcomes: Set<Outcome>
+}
 
-) : OutcomeType {
+data class DefinedTreasureClass(
+    override val name: String,
+    override val probabilityDenominator: Int,
+    override val properties: TreasureClassProperties,
+    override val outcomes: Set<Outcome>
+) : TreasureClass {
     override fun toString(): String {
-        return "TreasureClass(name='$name', probabilityDenominator=$probabilityDenominator, properties=$properties)"
+        return "DefinedTreasureClass(name='$name', probabilityDenominator=$probabilityDenominator, properties=$properties)"
     }
 }
 
-data class ItemTreasureClass(
-    override val name: String
-//    override val probabilitySum: Int
-) : OutcomeType
+data class VirtualTreasureClass(
+    override val name: String,
+    override val probabilityDenominator: Int = 1,
+    override val outcomes: Set<Outcome> = emptySet()
+) : TreasureClass {
+    override val properties: TreasureClassProperties = TreasureClassProperties(picks = 1)
+}
 
 data class TreasureClassProperties(
     val group: Int? = null,
