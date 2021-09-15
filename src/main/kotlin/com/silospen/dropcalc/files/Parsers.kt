@@ -262,7 +262,7 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
         generateSequence(9) { it + 2 }
             .take(10)
             .mapNotNull {
-                val item = line[it]
+                val item = parsePossibleCsv(line[it])
                 val prob = line[it + 1]
                 if (item.isBlank()) {
                     null
@@ -271,6 +271,13 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
                 }
             }
             .toSet()
+
+    private fun parsePossibleCsv(s: String): String {
+        if (s.startsWith("\"") && s.endsWith("\"")) {
+            return s.split(",")[0].removePrefix("\"")
+        }
+        return s
+    }
 }
 
 class LevelsLineParser(

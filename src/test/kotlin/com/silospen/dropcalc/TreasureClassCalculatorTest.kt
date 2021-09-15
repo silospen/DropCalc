@@ -71,7 +71,7 @@ class TreasureClassCalculatorTest {
     fun getLeafOutcomes_withPicks() {
         val actual = treasureClassCalculator.getLeafOutcomes("Radament", 50, NORMAL, DEFINED)
         val expected = mapOf(
-            VirtualTreasureClass(name = "\"gld,mul=1280\"") to BigFraction(799393331, 1350125107),
+            VirtualTreasureClass(name = "gld") to BigFraction(799393331, 1350125107),
             VirtualTreasureClass(name = "Act 3 Equip B") to BigFraction(1095321139, 1350125107),
             VirtualTreasureClass(name = "Act 3 Junk") to BigFraction(969921075, 1350125107),
             VirtualTreasureClass(name = "Act 3 Good") to BigFraction(276383283, 1350125107)
@@ -83,7 +83,7 @@ class TreasureClassCalculatorTest {
     fun getLeafOutcomes_withNegativePicks() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", 4, NORMAL, DEFINED)
         val expected = mapOf(
-            VirtualTreasureClass(name = "\"gld,mul=1280\"") to BigFraction(60, 100),
+            VirtualTreasureClass(name = "gld") to BigFraction(60, 100),
             VirtualTreasureClass(name = "weap3") to BigFraction(37, 200),
             VirtualTreasureClass(name = "armo3") to BigFraction(37, 200),
             VirtualTreasureClass(name = "rin") to BigFraction(3, 500),
@@ -102,7 +102,7 @@ class TreasureClassCalculatorTest {
     fun getLeafOutcomes_withNegativePicks_unevenPickDistribution() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", 4, NORMAL, DEFINED)
         val expected = mapOf(
-            VirtualTreasureClass(name = "\"gld,mul=1280\"") to BigFraction(60, 100),
+            VirtualTreasureClass(name = "gld") to BigFraction(60, 100),
             VirtualTreasureClass(name = "weap3") to BigFraction(832772357, 907039232),
             VirtualTreasureClass(name = "armo3") to BigFraction(832772357, 907039232),
             VirtualTreasureClass(name = "rin") to BigFraction(3, 500),

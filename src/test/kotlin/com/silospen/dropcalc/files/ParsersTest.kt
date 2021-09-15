@@ -221,7 +221,7 @@ class TreasureClassesLineParserTest {
                 "Summoner",
                 TreasureClassProperties(picks = 5, unique = 900, set = 900, rare = 972, magic = 1024, noDrop = 19),
                 setOf(
-                    "\"gld,mul=1280\"" to 9,
+                    "gld" to 9,
                     "Act 2 Equip C" to 15,
                     "Act 3 Junk" to 5,
                     "Act 2 Good" to 3,
