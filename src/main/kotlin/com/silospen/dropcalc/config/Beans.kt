@@ -22,22 +22,16 @@ class Beans {
     )
 
     @Bean
-    fun getMonsterClassConfigs(
-        treasureClassCalculator: TreasureClassCalculator,
-        translations: Translations
-    ): List<MonsterClass> = readTsv(
+    fun getMonsterClassConfigs(translations: Translations): List<MonsterClass> = readTsv(
         File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\monstats.txt"),
-        MonstatsLineParser(treasureClassCalculator, translations)
+        MonstatsLineParser(translations)
     )
 
     @Bean
-    fun getSuperUniqueMonsterConfigs(
-        treasureClassCalculator: TreasureClassCalculator,
-        translations: Translations
-    ): List<SuperUniqueMonsterConfig> =
+    fun getSuperUniqueMonsterConfigs(translations: Translations): List<SuperUniqueMonsterConfig> =
         readTsv(
             File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SuperUniques.txt"),
-            SuperUniqueLineParser(treasureClassCalculator, hardcodedSuperUniqueAreas, translations)
+            SuperUniqueLineParser(hardcodedSuperUniqueAreas, translations)
         )
 
     @Bean

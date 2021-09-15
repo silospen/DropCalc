@@ -6,8 +6,6 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.translations.Translations
-import org.apache.commons.logging.Log
-import org.apache.commons.logging.LogFactory
 import java.util.*
 
 class BaseItemLineParser(
@@ -102,7 +100,6 @@ class UniqueItemLineParser(
 }
 
 class MonstatsLineParser(
-    private val treasureClassCalculator: TreasureClassCalculator,
     private val translations: Translations
 ) : LineParser<MonsterClass?> {
     override fun parseLine(line: List<String>): MonsterClass? {
@@ -129,15 +126,15 @@ class MonstatsLineParser(
                 put(NIGHTMARE, levelN)
                 put(HELL, levelH)
             },
-            monsterClassProperties = parseMonsterClassProperties(line),
+            monsterClassTreasureClasses = parseMonsterClassTreasureClasses(line),
             minionIds = parseMinions(id, line),
             isBoss = isBoss
         )
     }
 
-    private fun parseMonsterClassProperties(
+    private fun parseMonsterClassTreasureClasses(
         line: List<String>
-    ): HashBasedTable<Difficulty, TreasureClassType, TreasureClass> {
+    ): HashBasedTable<Difficulty, TreasureClassType, String> {
         val treasureClass1: String = line[236]
         val treasureClass2: String = line[237]
         val treasureClass3: String = line[238]
@@ -150,7 +147,7 @@ class MonstatsLineParser(
         val treasureClass2H: String = line[245]
         val treasureClass3H: String = line[246]
         val treasureClass4H: String = line[247]
-        val monsterClassProperties = HashBasedTable.create<Difficulty, TreasureClassType, TreasureClass>()
+        val monsterClassProperties = HashBasedTable.create<Difficulty, TreasureClassType, String>()
         addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.REGULAR, treasureClass1)
         addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.CHAMPION, treasureClass2)
         addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.UNIQUE, treasureClass3)
@@ -167,7 +164,7 @@ class MonstatsLineParser(
     }
 
     private fun addIfNotBlank(
-        monsterClassProperties: HashBasedTable<Difficulty, TreasureClassType, TreasureClass>,
+        monsterClassProperties: HashBasedTable<Difficulty, TreasureClassType, String>,
         difficulty: Difficulty,
         treasureClassType: TreasureClassType,
         treasureClassName: String
@@ -176,7 +173,7 @@ class MonstatsLineParser(
             monsterClassProperties.put(
                 difficulty,
                 treasureClassType,
-                treasureClassCalculator.getTreasureClass(treasureClassName)
+                treasureClassName
             )
         }
     }
@@ -190,13 +187,10 @@ class MonstatsLineParser(
 }
 
 class SuperUniqueLineParser(
-    private val treasureClassCalculator: TreasureClassCalculator,
     private val areasBySuperUniqueId: Map<String, String>,
     private val translations: Translations
 ) :
     LineParser<SuperUniqueMonsterConfig?> {
-
-    private val log: Log = LogFactory.getLog(SuperUniqueLineParser::class.java)
 
     override fun parseLine(line: List<String>): SuperUniqueMonsterConfig? {
         val id = line[0]
@@ -211,19 +205,11 @@ class SuperUniqueLineParser(
             areasBySuperUniqueId.getValue(id),
             monsterClass,
             hasMinions,
-            EnumMap<Difficulty, TreasureClass>(Difficulty::class.java).apply {
-                tryAddTc(NORMAL, normalTc)
-                tryAddTc(NIGHTMARE, line[18])
-                tryAddTc(HELL, line[19])
+            EnumMap<Difficulty, String>(Difficulty::class.java).apply {
+                put(NORMAL, normalTc)
+                put(NIGHTMARE, line[18])
+                put(HELL, line[19])
             })
-    }
-
-    private fun EnumMap<Difficulty, TreasureClass>.tryAddTc(difficulty: Difficulty, tc: String) {
-        try {
-            put(difficulty, treasureClassCalculator.getTreasureClass(tc))
-        } catch (e: Exception) {
-            log.error("Failed to add TC $tc", e)
-        }
     }
 }
 

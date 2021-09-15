@@ -49,7 +49,7 @@ sealed interface OutcomeType {
 data class MonsterClass(
     val id: String,
     val name: String,
-    val monsterClassProperties: Table<Difficulty, TreasureClassType, TreasureClass>,
+    val monsterClassTreasureClasses: Table<Difficulty, TreasureClassType, String>,
     val monsterLevels: Map<Difficulty, Int>,
     val minionIds: Set<String>,
     val isBoss: Boolean = false
@@ -61,7 +61,7 @@ data class SuperUniqueMonsterConfig(
     val areaName: String,
     val monsterClassId: String,
     val hasMinions: Boolean,
-    val treasureClasses: Map<Difficulty, TreasureClass>
+    val treasureClasses: Map<Difficulty, String>
 )
 
 data class Area(

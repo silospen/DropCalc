@@ -22,7 +22,7 @@ class MonsterLibraryTest {
                     "bonebreak's area",
                     "skeleton1",
                     true,
-                    mapOf(NORMAL to tc("Bonebreak TC"), HELL to tc("Bonebreak TC(H)"))
+                    mapOf(NORMAL to "Bonebreak TC", HELL to "Bonebreak TC(H)")
                 )
             ),
             areasLibrary
@@ -61,7 +61,7 @@ class MonsterLibraryTest {
                     durielArea,
                     NORMAL,
                     BOSS,
-                    durielMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.REGULAR)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR)
                 ),
                 Monster(
                     "durielq",
@@ -70,7 +70,7 @@ class MonsterLibraryTest {
                     durielArea,
                     NORMAL,
                     BOSS,
-                    durielMonsterClass.monsterClassProperties.getValue(NORMAL, TreasureClassType.QUEST)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.QUEST)
                 ),
                 Monster(
                     "duriel",
@@ -79,7 +79,7 @@ class MonsterLibraryTest {
                     durielArea,
                     NIGHTMARE,
                     BOSS,
-                    durielMonsterClass.monsterClassProperties.getValue(NIGHTMARE, TreasureClassType.REGULAR)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.REGULAR)
                 ),
                 Monster(
                     "durielq",
@@ -88,7 +88,7 @@ class MonsterLibraryTest {
                     durielArea,
                     NIGHTMARE,
                     BOSS,
-                    durielMonsterClass.monsterClassProperties.getValue(NIGHTMARE, TreasureClassType.QUEST)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.QUEST)
                 ),
                 Monster(
                     "duriel",
@@ -97,7 +97,7 @@ class MonsterLibraryTest {
                     durielArea,
                     HELL,
                     BOSS,
-                    durielMonsterClass.monsterClassProperties.getValue(HELL, TreasureClassType.REGULAR)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.REGULAR)
                 ),
                 Monster(
                     "durielq",
@@ -106,7 +106,7 @@ class MonsterLibraryTest {
                     durielArea,
                     HELL,
                     BOSS,
-                    durielMonsterClass.monsterClassProperties.getValue(HELL, TreasureClassType.QUEST)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.QUEST)
                 ),
             )
         )

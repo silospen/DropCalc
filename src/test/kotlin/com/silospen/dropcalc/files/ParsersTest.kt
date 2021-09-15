@@ -8,9 +8,6 @@ import com.silospen.dropcalc.ItemClassification.*
 import com.silospen.dropcalc.MonsterType.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import java.io.File
 import java.util.*
 
@@ -20,7 +17,7 @@ class UniqueItemsLineParserTest {
         val axeItemType = ItemType("axe", "Axe", WEAPON, false, 3)
         val haxBaseItem = BaseItem("hax", "hax-name", axeItemType, 1)
         val axeBaseItem = BaseItem("axe", "axe-name", axeItemType, 2)
-        val jewelBaseItem = BaseItem("jew", "jew-name", ItemType("jew", "Jewel", ItemClassification.MISC, false, 3), 3)
+        val jewelBaseItem = BaseItem("jew", "jew-name", ItemType("jew", "Jewel", MISC, false, 3), 3)
         val actual = readTsv(
             getResource("parsersTestData/uniqueItems.txt"),
             UniqueItemLineParser(
@@ -115,35 +112,26 @@ class ItemTypeParserTest {
 class MonstatsLineParserTest {
     @Test
     fun monstatsParser() {
-        val mockTreasureClassCalculator: TreasureClassCalculator = mockTreasureClassCalculator()
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\monstats.txt"),
             getResource("parsersTestData/monstats.txt"),
-            MonstatsLineParser(mockTreasureClassCalculator, stubTranslations)
+            MonstatsLineParser(stubTranslations)
         ).toSet()
         assertEquals(monsterClassTestData, actual)
     }
 }
 
-private fun mockTreasureClassCalculator(): TreasureClassCalculator {
-    val mockTreasureClassCalculator: TreasureClassCalculator = mock()
-    whenever(mockTreasureClassCalculator.getTreasureClass(any())).thenAnswer { tc(it.getArgument(0)) }
-    return mockTreasureClassCalculator
-}
-
 class SuperUniqueLineParserTest {
     @Test
     fun superUniquesParser() {
-        val mockTreasureClassCalculator: TreasureClassCalculator = mockTreasureClassCalculator()
         val actual = readTsv(
 //            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SuperUniques.txt"),
             getResource("parsersTestData/superuniques.txt"),
             SuperUniqueLineParser(
-                mockTreasureClassCalculator, mapOf(
+                mapOf(
                     "Corpsefire" to "Act 1 - Cave 1",
                     "The Feature Creep" to "Act 4 - Lava 1",
-                ),
-                stubTranslations
+                ), stubTranslations
             )
         ).toSet()
         val expected = setOf(
@@ -154,9 +142,9 @@ class SuperUniqueLineParserTest {
                 "hephasto",
                 false,
                 mapOf(
-                    NORMAL to tc("Haphesto"),
-                    NIGHTMARE to tc("Haphesto (N)"),
-                    HELL to tc("Haphesto (H)"),
+                    NORMAL to "Haphesto",
+                    NIGHTMARE to "Haphesto (N)",
+                    HELL to "Haphesto (H)",
                 )
             ),
             SuperUniqueMonsterConfig(
@@ -166,9 +154,9 @@ class SuperUniqueLineParserTest {
                 "zombie1",
                 true,
                 mapOf(
-                    NORMAL to tc("Act 1 Super A"),
-                    NIGHTMARE to tc("Act 1 (N) Super A"),
-                    HELL to tc("Act 1 (H) Super A"),
+                    NORMAL to "Act 1 Super A",
+                    NIGHTMARE to "Act 1 (N) Super A",
+                    HELL to "Act 1 (H) Super A",
                 )
             ),
         )

@@ -1,7 +1,10 @@
 package com.silospen.dropcalc.monsters
 
-import com.silospen.dropcalc.*
+import com.silospen.dropcalc.Area
+import com.silospen.dropcalc.Difficulty
 import com.silospen.dropcalc.Difficulty.NORMAL
+import com.silospen.dropcalc.MonsterClass
+import com.silospen.dropcalc.MonsterType
 import com.silospen.dropcalc.MonsterType.*
 
 data class Monster(
@@ -11,7 +14,7 @@ data class Monster(
     val area: Area,
     val difficulty: Difficulty,
     val type: MonsterType,
-    val treasureClass: TreasureClass
+    val treasureClass: String
 ) {
     val level: Int = constructLevel()
 

@@ -19,7 +19,7 @@ class MetadataResourceTest {
                         area1Data,
                         Difficulty.NORMAL,
                         MonsterType.SUPERUNIQUE,
-                        tc("foo")
+                        "foo"
                     ),
                     Monster(
                         "1",
@@ -28,7 +28,7 @@ class MetadataResourceTest {
                         area2Data,
                         Difficulty.NORMAL,
                         MonsterType.SUPERUNIQUE,
-                        tc("foo")
+                        "foo"
                     ),
                     Monster(
                         "2",
@@ -37,7 +37,7 @@ class MetadataResourceTest {
                         area2Data,
                         Difficulty.NORMAL,
                         MonsterType.SUPERUNIQUE,
-                        tc("foo")
+                        "foo"
                     ),
                     Monster(
                         "1",
@@ -46,7 +46,7 @@ class MetadataResourceTest {
                         area2Data,
                         Difficulty.NORMAL,
                         MonsterType.BOSS,
-                        tc("foo")
+                        "foo"
                     )
                 )
             )

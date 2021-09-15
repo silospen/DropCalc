@@ -16,7 +16,7 @@ class MonsterLibrary(val monsters: Set<Monster>) {
             val monsterClassConfigsById = monsterClassConfigs.associateBy { it.id }
             val superUniqueConfigsById = superUniqueMonsterConfigs.associateBy { it.id }
             val monstersFromClassConfigs = monsterClassConfigs.flatMap { monsterClass ->
-                monsterClass.monsterClassProperties.cellSet().flatMap {
+                monsterClass.monsterClassTreasureClasses.cellSet().flatMap {
                     createMonster(areasLibrary, monsterClass, it.rowKey!!, it.columnKey!!)
                 }
             }
@@ -48,7 +48,7 @@ class MonsterLibrary(val monsters: Set<Monster>) {
                             parentMonster.area,
                             parentMonster.difficulty,
                             MonsterType.MINION,
-                            monsterClass.monsterClassProperties.getValue(
+                            monsterClass.monsterClassTreasureClasses.getValue(
                                 parentMonster.difficulty,
                                 TreasureClassType.REGULAR
                             )
@@ -76,7 +76,7 @@ class MonsterLibrary(val monsters: Set<Monster>) {
                         it,
                         difficulty,
                         monsterType,
-                        monsterClass.monsterClassProperties.getValue(difficulty, treasureClassType)
+                        monsterClass.monsterClassTreasureClasses.getValue(difficulty, treasureClassType)
                     )
                 }
             }
