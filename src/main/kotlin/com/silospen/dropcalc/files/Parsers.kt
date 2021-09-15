@@ -5,6 +5,7 @@ import com.google.common.collect.Table
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.*
+import com.silospen.dropcalc.items.ItemTypeCodeLibrary
 import com.silospen.dropcalc.items.SingleItemTypeCodeEntry
 import com.silospen.dropcalc.translations.Translations
 import java.util.*
@@ -25,11 +26,14 @@ class BaseItemLineParser(
         val type = line[typeColumnIndex]
         if (!parseNumericBoolean(line[spawnableColumnIndex]) || type == "ques") return null
         val level = line[levelColumnIndex].toInt()
+        val itemType = itemTypesById.getValue(type)
+        val tcLevel = level + (3 - level % 3) % 3
         return BaseItem(
             line[codeColumnIndex],
             translations.getTranslation(line[namestrColumnIndex]),
-            itemTypesById.getValue(type),
-            level
+            itemType,
+            level,
+            itemType.itemTypeCodes.map { it + tcLevel }.toSet()
         )
     }
 
@@ -66,7 +70,7 @@ class BaseItemLineParser(
     }
 }
 
-class ItemTypeParser : LineParser<ItemType?> {
+class ItemTypeParser(private val itemTypeCodeLibrary: ItemTypeCodeLibrary) : LineParser<ItemType?> {
     override fun parseLine(line: List<String>): ItemType? {
         val id = line[1]
         val storePage = line[35]
@@ -78,7 +82,8 @@ class ItemTypeParser : LineParser<ItemType?> {
             line[0],
             itemClassification,
             line[27].isNotBlank(),
-            line[24].toInt()
+            line[24].toInt(),
+            itemTypeCodeLibrary.getAllParentCodes(id) + id
         )
     }
 }
@@ -96,8 +101,7 @@ class ItemTypeCodesParser : LineParser<SingleItemTypeCodeEntry?> {
 class UniqueItemLineParser(
     private val translations: Translations,
     baseItems: List<BaseItem>
-) :
-    LineParser<Item?> {
+) : LineParser<Item?> {
 
     private val baseItemsById = baseItems.associateBy { it.id }
 

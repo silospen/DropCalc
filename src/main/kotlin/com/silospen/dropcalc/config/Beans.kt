@@ -77,9 +77,9 @@ class Beans {
     )
 
     @Bean
-    fun getItemTypes(): List<ItemType> = readTsv(
+    fun getItemTypes(itemTypeCodeLibrary: ItemTypeCodeLibrary): List<ItemType> = readTsv(
         File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\itemTypes.txt"),
-        ItemTypeParser()
+        ItemTypeParser(itemTypeCodeLibrary)
     )
 
     @Bean

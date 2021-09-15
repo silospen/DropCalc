@@ -84,7 +84,7 @@ data class BaseItem(
     val name: String,
     val itemType: ItemType,
     val level: Int,
-//    val itemTreasureClass: ItemTreasureClass
+    val treasureClasses: Set<String>
 )
 
 data class ItemType(
@@ -92,7 +92,8 @@ data class ItemType(
     val name: String,
     val itemClassification: ItemClassification,
     val isClassSpecific: Boolean,
-    val rarity: Int
+    val rarity: Int,
+    val itemTypeCodes: Set<String>
 )
 
 enum class ItemClassification(val itemClassificationIdentifier: String) {
