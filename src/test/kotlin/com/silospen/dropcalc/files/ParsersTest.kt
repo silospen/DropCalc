@@ -6,6 +6,7 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.ItemClassification.*
 import com.silospen.dropcalc.MonsterType.*
+import com.silospen.dropcalc.items.SingleItemTypeCodeEntry
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -104,6 +105,24 @@ class ItemTypeParserTest {
                 ItemType("tors", "Armor", ARMOR, false, 3),
                 ItemType("gold", "Gold", MISC, false, 3),
                 ItemType("aspe", "Amazon Spear", WEAPON, true, 1)
+            ), actual
+        )
+    }
+}
+
+class ItemTypeCodesParserTest {
+    @Test
+    fun itemTypeCodesParser() {
+        val actual = readTsv(
+            getResource("parsersTestData/itemTypes.txt"),
+            ItemTypeCodesParser()
+        )
+        assertEquals(
+            listOf(
+                SingleItemTypeCodeEntry("shie", setOf("shld")),
+                SingleItemTypeCodeEntry("tors", setOf("armo")),
+                SingleItemTypeCodeEntry("gold", setOf("misc")),
+                SingleItemTypeCodeEntry("aspe", setOf("spea", "amaz"))
             ), actual
         )
     }

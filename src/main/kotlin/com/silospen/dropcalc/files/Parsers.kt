@@ -5,6 +5,7 @@ import com.google.common.collect.Table
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.*
+import com.silospen.dropcalc.items.SingleItemTypeCodeEntry
 import com.silospen.dropcalc.translations.Translations
 import java.util.*
 
@@ -79,6 +80,16 @@ class ItemTypeParser : LineParser<ItemType?> {
             line[27].isNotBlank(),
             line[24].toInt()
         )
+    }
+}
+
+class ItemTypeCodesParser : LineParser<SingleItemTypeCodeEntry?> {
+    override fun parseLine(line: List<String>): SingleItemTypeCodeEntry? {
+        val id = line[1]
+        val equiv1 = line[2]
+        val equiv2 = line[3]
+        if (id.isBlank()) return null
+        return SingleItemTypeCodeEntry(id, sequenceOf(equiv1, equiv2).filter { it.isNotBlank() }.toSet())
     }
 }
 

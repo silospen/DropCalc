@@ -5,6 +5,8 @@ import com.silospen.dropcalc.areas.AreasLibrary
 import com.silospen.dropcalc.areas.hardcodedBossAreas
 import com.silospen.dropcalc.areas.hardcodedSuperUniqueAreas
 import com.silospen.dropcalc.files.*
+import com.silospen.dropcalc.items.ItemTypeCodeLibrary
+import com.silospen.dropcalc.items.SingleItemTypeCodeEntry
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import com.silospen.dropcalc.translations.CompositeTranslations
 import com.silospen.dropcalc.translations.MapBasedTranslations
@@ -79,6 +81,16 @@ class Beans {
         File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\itemTypes.txt"),
         ItemTypeParser()
     )
+
+    @Bean
+    fun getItemTypeCodes(): List<SingleItemTypeCodeEntry> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\itemTypes.txt"),
+        ItemTypeCodesParser()
+    )
+
+    @Bean
+    fun getItemTypeCodeLibrary(itemTypeCodes: List<SingleItemTypeCodeEntry>) =
+        ItemTypeCodeLibrary.fromIncompleteLineages(itemTypeCodes)
 
     @Bean
     fun getItems(translations: Translations, baseItems: List<BaseItem>): List<Item> {
