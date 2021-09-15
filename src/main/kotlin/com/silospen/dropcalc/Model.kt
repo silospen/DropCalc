@@ -89,11 +89,11 @@ data class Item( //Follow the same pattern as monsters and have this as the item
 
 data class BaseItem(
     val id: String,
-    val name: String,
+    override val name: String,
     val itemType: ItemType,
     val level: Int,
     val treasureClasses: Set<String>
-)
+) : OutcomeType
 
 data class ItemType(
     val id: String,

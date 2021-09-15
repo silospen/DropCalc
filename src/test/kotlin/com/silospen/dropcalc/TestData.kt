@@ -284,6 +284,35 @@ val monstersTestData = setOf(
     )
 )
 
+val armor1 = BaseItem(
+    "item1",
+    "Fancy Armor",
+    ItemType("arm", "Armor", ItemClassification.ARMOR, false, 2, setOf("armo")),
+    2,
+    setOf("armo3")
+)
+val weapon1 = BaseItem(
+    "item2",
+    "Fancy Weapon",
+    ItemType("wep", "Weapon", ItemClassification.WEAPON, false, 4, setOf("weap", "mele")),
+    3,
+    setOf("weap3", "mele3")
+)
+val weapon2 = BaseItem(
+    "item3",
+    "Another Fancy Weapon",
+    ItemType("wep", "Weapon", ItemClassification.WEAPON, false, 2, setOf("weap")),
+    3,
+    setOf("weap3")
+)
+val ring = BaseItem(
+    "rin",
+    "Fancy Ring",
+    ItemType("rin", "Ring", ItemClassification.MISC, false, 5, setOf("misc")),
+    2,
+    setOf("misc3")
+)
+
 val stubTranslations = object : Translations {
     override fun getTranslationOrNull(key: String): String {
         return "$key-name"

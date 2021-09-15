@@ -11,65 +11,102 @@ import java.io.File
 
 class TestDataGenerator(private val client: HttpClient) {
 
+    fun generateMonsterExpectationDataToFile(
+        monsterId: String,
+        monsterType: MonsterType,
+        difficulty: Difficulty,
+        nPlayers: Int,
+        partySize: Int,
+        quality: ItemQuality
+    ) = generateExpectationDataToFile {
+        generateMonsterExpectationData(
+            monsterId,
+            monsterType,
+            difficulty,
+            nPlayers,
+            partySize,
+            quality
+        )
+    }
+
     fun generateTcExpectationDataToFile(
         monsterId: String,
         monsterType: MonsterType,
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int
-    ): File {
+    ) = generateExpectationDataToFile {
+        generateTcExpectationData(
+            monsterId,
+            monsterType,
+            difficulty,
+            nPlayers,
+            partySize
+        )
+    }
+
+    private fun generateExpectationDataToFile(expectationDataSource: () -> String): File {
         val tempFile = File.createTempFile("dropcalcIntegTest", null)
         tempFile.deleteOnExit()
-        tempFile.writeText(
-            generateTcExpectationData(
-                monsterId,
-                monsterType,
-                difficulty,
-                nPlayers,
-                partySize
-            )
-        )
+        tempFile.writeText(expectationDataSource())
         return tempFile
     }
 
 
-    fun generateTcExpectationData(
+    private fun generateTcExpectationData(
         monsterId: String,
         monsterType: MonsterType,
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
     ): String = callSilospenDropCalcAndParseResponse(
-        "attc",
-        monsterId,
-        when (monsterType) {
-            BOSS -> "bossMon"
-            REGULAR -> "regMon"
-            CHAMPION -> "champMon"
-            UNIQUE -> "uniqMon"
-            SUPERUNIQUE -> "supUniqMon"
-            MINION -> "minMon"
-            else -> throw RuntimeException("Unrecognized monsterType $monsterType")
-        },
-        when (difficulty) {
-            NORMAL -> "N"
-            NIGHTMARE -> "NM"
-            HELL -> "H"
-        },
-        nPlayers,
-        partySize
+        "https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=attc&monID=${monsterId.lowercase()}&diff=${
+            toDifficulty(
+                difficulty
+            )
+        }&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&decMode=true&version=112"
     )
 
-    private fun callSilospenDropCalcAndParseResponse(
-        type: String,
-        monId: String,
-        monClass: String,
-        diff: String,
+    private fun generateMonsterExpectationData(
+        monsterId: String,
+        monsterType: MonsterType,
+        difficulty: Difficulty,
         nPlayers: Int,
-        partySize: Int
-    ): String = runBlocking {
+        partySize: Int,
+        quality: ItemQuality
+    ): String = callSilospenDropCalcAndParseResponse(
+        "https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=mon&monID=${monsterId.lowercase()}&diff=${
+            toDifficulty(
+                difficulty
+            )
+        }&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&quality=${toQuality(quality)}&mf=0&decMode=true&version=112"
+    )
+
+    private fun toQuality(quality: ItemQuality): String =
+        when (quality) {
+            ItemQuality.WHITE -> "regItem"
+            else -> throw RuntimeException()
+        }
+
+    private fun toDifficulty(difficulty: Difficulty) = when (difficulty) {
+        NORMAL -> "N"
+        NIGHTMARE -> "NM"
+        HELL -> "H"
+    }
+
+    private fun toMonsterType(monsterType: MonsterType) = when (monsterType) {
+        BOSS -> "bossMon"
+        REGULAR -> "regMon"
+        CHAMPION -> "champMon"
+        UNIQUE -> "uniqMon"
+        SUPERUNIQUE -> "supUniqMon"
+        MINION -> "minMon"
+        else -> throw RuntimeException("Unrecognized monsterType $monsterType")
+    }
+
+    private fun callSilospenDropCalcAndParseResponse(url: String): String = runBlocking {
         val response: HttpResponse =
-            client.get("https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=$type&monID=${monId.lowercase()}&diff=$diff&monClass=$monClass&nPlayers=$nPlayers&nGroup=$partySize&decMode=true&version=112")
+            client.get(url)
         if (response.status != HttpStatusCode.OK) throw RuntimeException("Bad status code $response")
         response
             .readText()

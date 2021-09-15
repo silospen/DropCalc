@@ -46,7 +46,7 @@ class ApiResource(
         partySize: Int,
     ) = monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
         println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.name} - ${monster.level} - ${monster.treasureClass}")
-        val leafOutcomes: Map<TreasureClass, BigFraction> =
+        val leafOutcomes: Map<OutcomeType, BigFraction> =
             treasureClassCalculator.getLeafOutcomes(
                 monster.treasureClass,
                 monster.level,
