@@ -12,6 +12,40 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.util.*
 
+class ItemRatioLineParserTest {
+    @Test
+    fun itemRatioParser() {
+        val actual = readTsv(
+            getResource("parsersTestData/itemratio.txt"),
+            ItemRatioLineParser()
+        )
+        println()
+        val expected = listOf(
+            ItemRatio(
+                isUber = true,
+                isClassSpecific = false,
+                mapOf(
+                    ItemQuality.UNIQUE to ItemQualityModifiers(400, 1, 6400),
+                    ItemQuality.RARE to ItemQualityModifiers(100, 2, 3200),
+                    ItemQuality.SET to ItemQualityModifiers(160, 2, 5600),
+                    ItemQuality.MAGIC to ItemQualityModifiers(34, 3, 192)
+                )
+            ),
+            ItemRatio(
+                isUber = false,
+                isClassSpecific = true,
+                mapOf(
+                    ItemQuality.UNIQUE to ItemQualityModifiers(240, 3, 6400),
+                    ItemQuality.RARE to ItemQualityModifiers(80, 3, 3200),
+                    ItemQuality.SET to ItemQualityModifiers(120, 3, 5600),
+                    ItemQuality.MAGIC to ItemQualityModifiers(17, 6, 192)
+                )
+            )
+        )
+        assertEquals(expected, actual)
+    }
+}
+
 class UniqueItemsLineParserTest {
     @Test
     fun uniqueItemsParser() {

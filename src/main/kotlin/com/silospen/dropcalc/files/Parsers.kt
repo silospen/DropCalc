@@ -4,11 +4,33 @@ import com.google.common.collect.HashBasedTable
 import com.google.common.collect.Table
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
+import com.silospen.dropcalc.ItemQuality.*
 import com.silospen.dropcalc.MonsterType.*
+import com.silospen.dropcalc.MonsterType.UNIQUE
 import com.silospen.dropcalc.items.ItemTypeCodeLibrary
 import com.silospen.dropcalc.items.SingleItemTypeCodeEntry
 import com.silospen.dropcalc.translations.Translations
 import java.util.*
+
+class ItemRatioLineParser : LineParser<ItemRatio?> {
+    override fun parseLine(line: List<String>): ItemRatio? {
+        val version = line[1].toInt()
+        if (version != 1) return null
+        val isUber = parseNumericBoolean(line[2])
+        val isClassSpecific = parseNumericBoolean(line[3])
+        return ItemRatio(isUber, isClassSpecific, parseItemQualityModifiers(line))
+    }
+
+    private fun parseItemQualityModifiers(line: List<String>) =
+        sequenceOf(ItemQuality.UNIQUE, RARE, SET, MAGIC)
+            .mapIndexed { index, quality ->
+                val ratio = line[4 + (3 * index)].toInt()
+                val divisor = line[5 + (3 * index)].toInt()
+                val min = line[6 + (3 * index)].toInt()
+                quality to ItemQualityModifiers(ratio, divisor, min)
+            }.toMap()
+}
+
 
 class BaseItemLineParser(
     private val translations: Translations,

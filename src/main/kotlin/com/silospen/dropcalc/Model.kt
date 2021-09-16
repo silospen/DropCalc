@@ -103,6 +103,18 @@ data class ItemType(
     val itemTypeCodes: Set<String>
 )
 
+data class ItemQualityModifiers(
+    val ratio: Int,
+    val divisor: Int,
+    val min: Int,
+)
+
+data class ItemRatio(
+    val isUber: Boolean,
+    val isClassSpecific: Boolean,
+    val modifiers: Map<ItemQuality, ItemQualityModifiers>
+)
+
 enum class ItemQuality {
     WHITE,
     MAGIC,

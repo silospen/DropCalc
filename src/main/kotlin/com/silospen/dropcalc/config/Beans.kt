@@ -89,6 +89,12 @@ class Beans {
     )
 
     @Bean
+    fun getItemRatio(): List<ItemRatio> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\itemratio.txt"),
+        ItemRatioLineParser()
+    )
+
+    @Bean
     fun getItemTypeCodeLibrary(itemTypeCodes: List<SingleItemTypeCodeEntry>) =
         ItemTypeCodeLibrary.fromIncompleteLineages(itemTypeCodes)
 
