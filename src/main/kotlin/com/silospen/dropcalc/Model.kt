@@ -98,19 +98,10 @@ data class BaseItem(
 data class ItemType(
     val id: String,
     val name: String,
-    val itemClassification: ItemClassification,
     val isClassSpecific: Boolean,
     val rarity: Int,
     val itemTypeCodes: Set<String>
 )
-
-enum class ItemClassification(val itemClassificationIdentifier: String) {
-    WEAPON("weap"),
-    ARMOR("armo"),
-    MISC("misc")
-}
-
-val itemClassificationsByIdentifier = ItemClassification.values().associateBy { it.itemClassificationIdentifier }
 
 enum class ItemQuality {
     WHITE,

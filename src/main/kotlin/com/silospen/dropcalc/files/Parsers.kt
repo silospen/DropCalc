@@ -73,14 +73,10 @@ class BaseItemLineParser(
 class ItemTypeParser(private val itemTypeCodeLibrary: ItemTypeCodeLibrary) : LineParser<ItemType?> {
     override fun parseLine(line: List<String>): ItemType? {
         val id = line[1]
-        val storePage = line[35]
-        val equiv1 = line[2]
-        val itemClassification = itemClassificationsByIdentifier[storePage.takeIf { it.isNotBlank() } ?: equiv1]
-        if (id.isBlank() || itemClassification == null) return null
+        if (id.isBlank()) return null
         return ItemType(
             id,
             line[0],
-            itemClassification,
             line[27].isNotBlank(),
             line[24].toInt(),
             itemTypeCodeLibrary.getAllParentCodes(id) + id
