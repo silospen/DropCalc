@@ -4,6 +4,7 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.TreasureClassOutcomeType.VIRTUAL
 import com.silospen.dropcalc.monsters.MonsterLibrary
+import com.silospen.dropcalc.treasureclasses.TreasureClassPathOutcome
 import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -46,7 +47,7 @@ class ApiResource(
         partySize: Int,
     ) = monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
         println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.name} - ${monster.level} - ${monster.treasureClass}")
-        val leafOutcomes: Map<OutcomeType, BigFraction> =
+        val leafOutcomes: Map<OutcomeType, TreasureClassPathOutcome> =
             treasureClassCalculator.getLeafOutcomes(
                 monster.treasureClass,
                 monster.level,
@@ -59,7 +60,7 @@ class ApiResource(
             AtomicTcsResponse(
                 leafOutcome.key.name,
                 monster.area.name,
-                Probability(leafOutcome.value)
+                Probability(leafOutcome.value.probability)
             )
         }
     }.sortedBy { it.tc }

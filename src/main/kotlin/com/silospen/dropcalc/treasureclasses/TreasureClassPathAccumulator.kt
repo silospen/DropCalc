@@ -1,21 +1,33 @@
 package com.silospen.dropcalc.treasureclasses
 
+import com.silospen.dropcalc.ItemQualityRatios
 import com.silospen.dropcalc.OutcomeType
 import org.apache.commons.math3.fraction.BigFraction
 
-class TreasureClassPathAccumulator(private val accumulator: MutableMap<OutcomeType, BigFraction>) {
+class TreasureClassPathAccumulator(private val accumulator: MutableMap<OutcomeType, TreasureClassPathOutcome>) {
     constructor() : this(mutableMapOf())
 
-    fun accumulateProbability(probability: BigFraction, outcomeType: OutcomeType) {
-        accumulator[outcomeType] =
-            probability.add(accumulator.getOrDefault(outcomeType, BigFraction.ZERO))
+    fun accumulateProbability(
+        probability: BigFraction,
+        itemQualityRatios: ItemQualityRatios,
+        outcomeType: OutcomeType
+    ) {
+        val old = accumulator[outcomeType]
+        val newProbability = probability.add(old?.probability ?: BigFraction.ZERO)
+        val newItemQualityRatios = (old?.itemQualityRatios ?: ItemQualityRatios.EMPTY).merge(itemQualityRatios)
+        accumulator[outcomeType] = TreasureClassPathOutcome(newProbability, newItemQualityRatios)
     }
 
     fun merge(other: TreasureClassPathAccumulator): TreasureClassPathAccumulator {
         val merged = accumulator.toMutableMap()
         for (entry in other.accumulator) {
             merged.merge(entry.key, entry.value) { old, new ->
-                BigFraction.ONE.subtract(old.subtract(1).negate().multiply(BigFraction.ONE.subtract(new)))
+                TreasureClassPathOutcome(
+                    BigFraction.ONE.subtract(
+                        old.probability.subtract(1).negate().multiply(BigFraction.ONE.subtract(new.probability))
+                    ),
+                    old.itemQualityRatios.merge(new.itemQualityRatios)
+                )
             }
         }
         return TreasureClassPathAccumulator(merged)
@@ -25,16 +37,18 @@ class TreasureClassPathAccumulator(private val accumulator: MutableMap<OutcomeTy
         return when {
             picks == 1 -> this
             picks > 1 -> TreasureClassPathAccumulator(accumulator.mapValuesTo(mutableMapOf()) {
-                calculateProbabilityForPicks(
-                    it.value,
-                    if (picks > 6) 6 else picks
+                TreasureClassPathOutcome(
+                    calculateProbabilityForPicks(
+                        it.value.probability,
+                        if (picks > 6) 6 else picks
+                    ), it.value.itemQualityRatios
                 )
             })
             else -> throw IllegalArgumentException("Unexpected picks: $picks")
         }
     }
 
-    fun getOutcomes(): Map<OutcomeType, BigFraction> = accumulator
+    fun getOutcomes(): Map<OutcomeType, TreasureClassPathOutcome> = accumulator
 
     private fun calculateProbabilityForPicks(baseProb: BigFraction, picks: Int) =
         BigFraction.ONE.subtract(BigFraction.ONE.subtract(baseProb).pow(picks))
@@ -58,3 +72,8 @@ class TreasureClassPathAccumulator(private val accumulator: MutableMap<OutcomeTy
         return "TreasureClassPathAccumulator(accumulator=$accumulator)"
     }
 }
+
+data class TreasureClassPathOutcome(
+    val probability: BigFraction,
+    val itemQualityRatios: ItemQualityRatios
+)

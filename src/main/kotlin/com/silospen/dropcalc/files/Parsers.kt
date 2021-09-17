@@ -253,10 +253,10 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
         val group = line[1].toIntOrNull()
         val level = line[2].toIntOrNull()
         val picks = line[3].toInt()
-        val unique = line[4].toIntOrNull()
-        val set = line[5].toIntOrNull()
-        val rare = line[6].toIntOrNull()
-        val magic = line[7].toIntOrNull()
+        val unique = line[4].toIntOrNull() ?: 0
+        val set = line[5].toIntOrNull() ?: 0
+        val rare = line[6].toIntOrNull() ?: 0
+        val magic = line[7].toIntOrNull() ?: 0
         val noDrop = line[8].toIntOrNull()
 
         val outcomes = parseOutcomes(line)

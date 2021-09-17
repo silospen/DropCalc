@@ -1,6 +1,5 @@
 package com.silospen.dropcalc
 
-import com.silospen.dropcalc.ItemQuality.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -8,8 +7,7 @@ class ItemQualityRatiosTest {
     @Test
     fun construct() {
         val itemQualityRatios = ItemQualityRatios(1, 2, 3, 4)
-        assertEquals(ItemQualityRatios(mapOf(UNIQUE to 1, SET to 2, RARE to 3, MAGIC to 4)), itemQualityRatios)
-        assertEquals(mapOf(UNIQUE to 1, SET to 2, RARE to 3, MAGIC to 4), itemQualityRatios.values)
+        assertEquals(ItemQualityRatios(1, 2, 3, 4), itemQualityRatios)
     }
 
     @Test

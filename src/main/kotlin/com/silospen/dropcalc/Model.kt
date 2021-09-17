@@ -115,32 +115,21 @@ data class ItemRatio(
 )
 
 data class ItemQualityRatios(
-    val values: Map<ItemQuality, Int>
+    private val unique: Int,
+    private val set: Int,
+    private val rare: Int,
+    private val magic: Int
 ) {
-    constructor(unique: Int?, set: Int?, rare: Int?, magic: Int?) : this(mutableMapOf<ItemQuality, Int>().apply {
-        unique?.let { put(ItemQuality.UNIQUE, unique) }
-        set?.let { put(ItemQuality.SET, set) }
-        rare?.let { put(ItemQuality.RARE, rare) }
-        magic?.let { put(ItemQuality.MAGIC, magic) }
-    })
 
-    fun merge(other: ItemQualityRatios): ItemQualityRatios = ItemQualityRatios(mergeItemQualityRatios(other))
-
-    private fun mergeItemQualityRatios(other: ItemQualityRatios) = mapOf(
-        mergeItemQualityRatio(other, ItemQuality.UNIQUE),
-        mergeItemQualityRatio(other, ItemQuality.SET),
-        mergeItemQualityRatio(other, ItemQuality.RARE),
-        mergeItemQualityRatio(other, ItemQuality.MAGIC),
+    fun merge(other: ItemQualityRatios): ItemQualityRatios = ItemQualityRatios(
+        max(unique, other.unique),
+        max(set, other.set),
+        max(rare, other.rare),
+        max(magic, other.magic),
     )
 
-    private fun mergeItemQualityRatio(other: ItemQualityRatios, itemQuality: ItemQuality) =
-        itemQuality to max(
-            values[itemQuality] ?: 0,
-            other.values[itemQuality] ?: 0
-        )
-
     companion object {
-        val EMPTY = ItemQualityRatios(emptyMap())
+        val EMPTY = ItemQualityRatios(0, 0, 0, 0)
     }
 }
 
