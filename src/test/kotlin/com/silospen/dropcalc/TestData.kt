@@ -288,6 +288,7 @@ val armor1 = BaseItem(
     "item1",
     "Fancy Armor",
     ItemType("arm", "Armor", false, 2, setOf("armo")),
+    ItemVersion.NORMAL,
     2,
     setOf("armo3")
 )
@@ -295,6 +296,7 @@ val weapon1 = BaseItem(
     "item2",
     "Fancy Weapon",
     ItemType("wep", "Weapon", false, 4, setOf("weap", "mele")),
+    ItemVersion.NORMAL,
     3,
     setOf("weap3", "mele3")
 )
@@ -302,6 +304,7 @@ val weapon2 = BaseItem(
     "item3",
     "Another Fancy Weapon",
     ItemType("wep", "Weapon", false, 2, setOf("weap")),
+    ItemVersion.ELITE,
     3,
     setOf("weap3")
 )
@@ -309,6 +312,7 @@ val ring = BaseItem(
     "rin",
     "Fancy Ring",
     ItemType("rin", "Ring", false, 5, setOf("misc")),
+    ItemVersion.NORMAL,
     2,
     setOf("misc3")
 )

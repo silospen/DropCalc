@@ -34,11 +34,15 @@ class ItemRatioLineParser : LineParser<ItemRatio?> {
 
 class BaseItemLineParser(
     private val translations: Translations,
+    private val hardcodedItemVersion: ItemVersion? = null,
     private val spawnableColumnIndex: Int,
     private val namestrColumnIndex: Int,
     private val codeColumnIndex: Int,
     private val typeColumnIndex: Int,
     private val levelColumnIndex: Int,
+    private val normcodeColumnIndex: Int,
+    private val ubercodeColumnIndex: Int,
+    private val ultracodeColumnIndex: Int,
     itemTypes: List<ItemType>
 ) : LineParser<BaseItem?> {
 
@@ -50,13 +54,27 @@ class BaseItemLineParser(
         val level = line[levelColumnIndex].toInt()
         val itemType = itemTypesById.getValue(type)
         val tcLevel = level + (3 - level % 3) % 3
+        val id = line[codeColumnIndex]
         return BaseItem(
-            line[codeColumnIndex],
+            id,
             translations.getTranslation(line[namestrColumnIndex]),
             itemType,
+            hardcodedItemVersion ?: getItemVersion(
+                line,
+                line[normcodeColumnIndex] == id,
+                line[ubercodeColumnIndex] == id,
+                line[ultracodeColumnIndex] == id,
+            ),
             level,
             itemType.itemTypeCodes.map { it + tcLevel }.toSet()
         )
+    }
+
+    private fun getItemVersion(line: List<String>, isNorm: Boolean, isUber: Boolean, isUltra: Boolean): ItemVersion {
+        if (isNorm) return ItemVersion.NORMAL
+        if (isUber) return ItemVersion.EXCEPTIONAL
+        if (isUltra) return ItemVersion.ELITE
+        throw IllegalArgumentException("Failed to get item version for $line")
     }
 
     companion object {
@@ -67,7 +85,10 @@ class BaseItemLineParser(
             codeColumnIndex = 3,
             typeColumnIndex = 1,
             levelColumnIndex = 27,
-            itemTypes = itemTypes
+            itemTypes = itemTypes,
+            normcodeColumnIndex = 34,
+            ubercodeColumnIndex = 35,
+            ultracodeColumnIndex = 36,
         )
 
         fun forArmorTxt(translations: Translations, itemTypes: List<ItemType>) = BaseItemLineParser(
@@ -77,17 +98,24 @@ class BaseItemLineParser(
             codeColumnIndex = 17,
             typeColumnIndex = 48,
             levelColumnIndex = 13,
-            itemTypes = itemTypes
+            itemTypes = itemTypes,
+            normcodeColumnIndex = 23,
+            ubercodeColumnIndex = 24,
+            ultracodeColumnIndex = 25,
         )
 
         fun forMiscTxt(translations: Translations, itemTypes: List<ItemType>) = BaseItemLineParser(
             translations = translations,
+            hardcodedItemVersion = ItemVersion.NORMAL,
             spawnableColumnIndex = 8,
             namestrColumnIndex = 15,
             codeColumnIndex = 13,
             typeColumnIndex = 32,
             levelColumnIndex = 5,
-            itemTypes = itemTypes
+            itemTypes = itemTypes,
+            normcodeColumnIndex = -1, //TODO This is horrible
+            ubercodeColumnIndex = -1,
+            ultracodeColumnIndex = -1,
         )
     }
 }
@@ -128,7 +156,15 @@ class UniqueItemLineParser(
         val enabled = parseNumericBoolean(line[2])
         if (!enabled || level == 0) return null
         val id = line[0]
-        return Item(id, translations.getTranslation(id), ItemQuality.UNIQUE, baseItemsById.getValue(line[8]), level)
+        val rarity = line[4].toInt()
+        return Item(
+            id,
+            translations.getTranslation(id),
+            ItemQuality.UNIQUE,
+            baseItemsById.getValue(line[8]),
+            level,
+            rarity
+        )
     }
 }
 

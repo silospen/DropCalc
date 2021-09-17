@@ -51,13 +51,14 @@ class UniqueItemsLineParserTest {
     @Test
     fun uniqueItemsParser() {
         val axeItemType = ItemType("axe", "Axe", false, 3, setOf("weap"))
-        val haxBaseItem = BaseItem("hax", "hax-name", axeItemType, 1, setOf("weap3"))
-        val axeBaseItem = BaseItem("axe", "axe-name", axeItemType, 2, setOf("weap3"))
+        val haxBaseItem = BaseItem("hax", "hax-name", axeItemType, ItemVersion.NORMAL, 1, setOf("weap3"))
+        val axeBaseItem = BaseItem("axe", "axe-name", axeItemType, ItemVersion.NORMAL, 2, setOf("weap3"))
         val jewelBaseItem =
             BaseItem(
                 "jew",
                 "jew-name",
                 ItemType("jew", "Jewel", false, 3, setOf("misc", "jewl")),
+                ItemVersion.NORMAL,
                 3,
                 setOf("misc3", "jewl3")
             )
@@ -72,9 +73,9 @@ class UniqueItemsLineParserTest {
             )
         )
         val expected = listOf(
-            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7),
-            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12),
-            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85),
+            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1),
+            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1),
+            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1),
         )
         assertEquals(expected, actual)
     }
@@ -97,8 +98,8 @@ class BaseItemLineParserTest {
         )
         assertEquals(
             listOf(
-                BaseItem("hax", "hax-name", axeItemType, 3, setOf("weap3")),
-                BaseItem("opl", "bopl-name", potionItemType, 4, setOf("misc6"))
+                BaseItem("hax", "hax-name", axeItemType, ItemVersion.NORMAL, 3, setOf("weap3")),
+                BaseItem("opl", "bopl-name", potionItemType, ItemVersion.NORMAL, 4, setOf("misc6"))
             ),
             actual
         )
@@ -114,7 +115,7 @@ class BaseItemLineParserTest {
             )
         )
         assertEquals(
-            listOf(BaseItem("cap", "cap-name", helmItemType, 1, setOf("armo3"))),
+            listOf(BaseItem("cap", "cap-name", helmItemType, ItemVersion.NORMAL, 1, setOf("armo3"))),
             actual
         )
     }
@@ -131,8 +132,8 @@ class BaseItemLineParserTest {
         )
         assertEquals(
             listOf(
-                BaseItem("elx", "elx-name", elixirItemType, 21, setOf("misc21")),
-                BaseItem("rin", "rin-name", ringItemType, 1, setOf("misc3"))
+                BaseItem("elx", "elx-name", elixirItemType, ItemVersion.NORMAL, 21, setOf("misc21")),
+                BaseItem("rin", "rin-name", ringItemType, ItemVersion.NORMAL, 1, setOf("misc3"))
             ),
             actual
         )

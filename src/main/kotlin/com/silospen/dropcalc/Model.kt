@@ -83,13 +83,15 @@ data class Item( //Follow the same pattern as monsters and have this as the item
     val name: String,
     val quality: ItemQuality,
     val baseItem: BaseItem,
-    val level: Int
+    val level: Int,
+    val rarity: Int
 )
 
 data class BaseItem(
     val id: String,
     override val name: String,
     val itemType: ItemType,
+    val itemVersion: ItemVersion,
     val level: Int,
     val treasureClasses: Set<String>
 ) : OutcomeType
@@ -139,6 +141,12 @@ enum class ItemQuality {
     RARE,
     SET,
     UNIQUE
+}
+
+enum class ItemVersion {
+    NORMAL,
+    EXCEPTIONAL,
+    ELITE,
 }
 
 enum class Difficulty {
