@@ -264,13 +264,15 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
         return TreasureClassConfig(
             name,
             TreasureClassProperties(
+                picks,
+                ItemQualityRatios(
+                    unique,
+                    set,
+                    rare,
+                    magic,
+                ),
                 group,
                 level,
-                picks,
-                unique,
-                set,
-                rare,
-                magic,
                 noDrop,
             ), outcomes
         )

@@ -4,6 +4,7 @@ import com.google.common.collect.HashBasedTable
 import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
+import com.silospen.dropcalc.ItemQualityRatios.Companion.EMPTY
 import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.items.ItemTypeCodeLibrary
 import com.silospen.dropcalc.items.ItemTypeCodeWithParents
@@ -232,12 +233,12 @@ class TreasureClassesLineParserTest {
         val expected = setOf(
             TreasureClassConfig(
                 "Act 3 Junk",
-                TreasureClassProperties(picks = 1),
+                TreasureClassProperties(picks = 1, EMPTY),
                 setOf("Act 2 Junk" to 2, "Potion 3" to 8, "Misc 1" to 4, "Ammo" to 4),
             ),
             TreasureClassConfig(
                 "Act 5 (N) Melee B",
-                TreasureClassProperties(group = 2, level = 60, picks = 1),
+                TreasureClassProperties(group = 2, level = 60, picks = 1, itemQualityRatios = EMPTY),
                 setOf(
                     "weap51" to 2,
                     "armo51" to 1,
@@ -252,7 +253,11 @@ class TreasureClassesLineParserTest {
             ),
             TreasureClassConfig(
                 "Summoner",
-                TreasureClassProperties(picks = 5, unique = 900, set = 900, rare = 972, magic = 1024, noDrop = 19),
+                TreasureClassProperties(
+                    picks = 5,
+                    itemQualityRatios = ItemQualityRatios(900, 900, 972, 1024),
+                    noDrop = 19
+                ),
                 setOf(
                     "gld" to 9,
                     "Act 2 Equip C" to 15,

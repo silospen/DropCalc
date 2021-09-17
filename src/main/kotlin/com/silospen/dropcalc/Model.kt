@@ -1,6 +1,8 @@
 package com.silospen.dropcalc
 
 import com.google.common.collect.Table
+import com.silospen.dropcalc.ItemQualityRatios.Companion.EMPTY
+import kotlin.math.max
 
 data class TreasureClassConfig(
     val name: String,
@@ -30,17 +32,14 @@ data class VirtualTreasureClass(
     override val probabilityDenominator: Int = 1,
     override val outcomes: Set<Outcome> = emptySet()
 ) : TreasureClass {
-    override val properties: TreasureClassProperties = TreasureClassProperties(picks = 1)
+    override val properties: TreasureClassProperties = TreasureClassProperties(1, EMPTY)
 }
 
 data class TreasureClassProperties(
+    val picks: Int,
+    val itemQualityRatios: ItemQualityRatios,
     val group: Int? = null,
     val level: Int? = null,
-    val picks: Int,
-    val unique: Int? = null,
-    val set: Int? = null,
-    val rare: Int? = null,
-    val magic: Int? = null,
     val noDrop: Int? = null
 )
 
@@ -114,6 +113,36 @@ data class ItemRatio(
     val isClassSpecific: Boolean,
     val modifiers: Map<ItemQuality, ItemQualityModifiers>
 )
+
+data class ItemQualityRatios(
+    val values: Map<ItemQuality, Int>
+) {
+    constructor(unique: Int?, set: Int?, rare: Int?, magic: Int?) : this(mutableMapOf<ItemQuality, Int>().apply {
+        unique?.let { put(ItemQuality.UNIQUE, unique) }
+        set?.let { put(ItemQuality.SET, set) }
+        rare?.let { put(ItemQuality.RARE, rare) }
+        magic?.let { put(ItemQuality.MAGIC, magic) }
+    })
+
+    fun merge(other: ItemQualityRatios): ItemQualityRatios = ItemQualityRatios(mergeItemQualityRatios(other))
+
+    private fun mergeItemQualityRatios(other: ItemQualityRatios) = mapOf(
+        mergeItemQualityRatio(other, ItemQuality.UNIQUE),
+        mergeItemQualityRatio(other, ItemQuality.SET),
+        mergeItemQualityRatio(other, ItemQuality.RARE),
+        mergeItemQualityRatio(other, ItemQuality.MAGIC),
+    )
+
+    private fun mergeItemQualityRatio(other: ItemQualityRatios, itemQuality: ItemQuality) =
+        itemQuality to max(
+            values[itemQuality] ?: 0,
+            other.values[itemQuality] ?: 0
+        )
+
+    companion object {
+        val EMPTY = ItemQualityRatios(emptyMap())
+    }
+}
 
 enum class ItemQuality {
     WHITE,
