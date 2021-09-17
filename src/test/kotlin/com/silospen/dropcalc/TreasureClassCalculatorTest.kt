@@ -7,6 +7,7 @@ import com.silospen.dropcalc.files.TreasureClassesLineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.items.ItemLibrary
+import com.silospen.dropcalc.treasureclasses.TreasureClassPathAccumulator
 import org.apache.commons.math3.fraction.BigFraction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -26,18 +27,20 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED)
-        val expected = mapOf(
-            itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(21, 160),
-            itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(1, 20),
-            itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(1, 20),
-            itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Junk") to BigFraction(21, 160),
-            itemLibrary.getOrConstructVirtualTreasureClass("rin") to BigFraction(1, 400),
-            itemLibrary.getOrConstructVirtualTreasureClass("amu") to BigFraction(1, 800),
-            itemLibrary.getOrConstructVirtualTreasureClass("jew") to BigFraction(1, 1600),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm3") to BigFraction(1, 1600),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm2") to BigFraction(1, 1600),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm1") to BigFraction(1, 1600),
-            itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to BigFraction(1, 160)
+        val expected = TreasureClassPathAccumulator(
+            mutableMapOf(
+                itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(21, 160),
+                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(1, 20),
+                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(1, 20),
+                itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Junk") to BigFraction(21, 160),
+                itemLibrary.getOrConstructVirtualTreasureClass("rin") to BigFraction(1, 400),
+                itemLibrary.getOrConstructVirtualTreasureClass("amu") to BigFraction(1, 800),
+                itemLibrary.getOrConstructVirtualTreasureClass("jew") to BigFraction(1, 1600),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm3") to BigFraction(1, 1600),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm2") to BigFraction(1, 1600),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm1") to BigFraction(1, 1600),
+                itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to BigFraction(1, 160)
+            )
         )
         assertEquals(expected, actual)
     }
@@ -45,11 +48,13 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_forVirtualTcs() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, VIRTUAL)
-        val expected = mapOf(
-            weapon1 to BigFraction(1, 30),
-            weapon2 to BigFraction(1, 60),
-            armor1 to BigFraction(1, 20),
-            ring to BigFraction(1, 400)
+        val expected = TreasureClassPathAccumulator(
+            mutableMapOf(
+                weapon1 to BigFraction(1, 30),
+                weapon2 to BigFraction(1, 60),
+                armor1 to BigFraction(1, 20),
+                ring to BigFraction(1, 400)
+            )
         )
         assertEquals(expected, actual)
     }
@@ -57,10 +62,22 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_withTcUpgraded() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 50, HELL, DEFINED)
-        val expected = mapOf(
-            itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(5, 110),
-            itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(5, 110).multiply(BigFraction(7, 14)),
-            itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(5, 110).multiply(BigFraction(7, 14)),
+        val expected = TreasureClassPathAccumulator(
+            mutableMapOf(
+                itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(5, 110),
+                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(5, 110).multiply(
+                    BigFraction(
+                        7,
+                        14
+                    )
+                ),
+                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(5, 110).multiply(
+                    BigFraction(
+                        7,
+                        14
+                    )
+                ),
+            )
         )
         assertEquals(expected, actual)
     }
@@ -68,18 +85,20 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_withPartyAndPlayersSet() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED, 3, 3)
-        val expected = mapOf(
-            itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(21, 79),
-            itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(8, 79),
-            itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(8, 79),
-            itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Junk") to BigFraction(21, 79),
-            itemLibrary.getOrConstructVirtualTreasureClass("rin") to BigFraction(2, 395),
-            itemLibrary.getOrConstructVirtualTreasureClass("amu") to BigFraction(1, 395),
-            itemLibrary.getOrConstructVirtualTreasureClass("jew") to BigFraction(1, 790),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm3") to BigFraction(1, 790),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm2") to BigFraction(1, 790),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm1") to BigFraction(1, 790),
-            itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to BigFraction(1, 79)
+        val expected = TreasureClassPathAccumulator(
+            mutableMapOf(
+                itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(21, 79),
+                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(8, 79),
+                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(8, 79),
+                itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Junk") to BigFraction(21, 79),
+                itemLibrary.getOrConstructVirtualTreasureClass("rin") to BigFraction(2, 395),
+                itemLibrary.getOrConstructVirtualTreasureClass("amu") to BigFraction(1, 395),
+                itemLibrary.getOrConstructVirtualTreasureClass("jew") to BigFraction(1, 790),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm3") to BigFraction(1, 790),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm2") to BigFraction(1, 790),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm1") to BigFraction(1, 790),
+                itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to BigFraction(1, 79)
+            )
         )
         assertEquals(expected, actual)
     }
@@ -87,11 +106,13 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_withPicks() {
         val actual = treasureClassCalculator.getLeafOutcomes("Radament", 50, NORMAL, DEFINED)
-        val expected = mapOf(
-            itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(799393331, 1350125107),
-            itemLibrary.getOrConstructVirtualTreasureClass("Act 3 Equip B") to BigFraction(1095321139, 1350125107),
-            itemLibrary.getOrConstructVirtualTreasureClass("Act 3 Junk") to BigFraction(969921075, 1350125107),
-            itemLibrary.getOrConstructVirtualTreasureClass("Act 3 Good") to BigFraction(276383283, 1350125107)
+        val expected = TreasureClassPathAccumulator(
+            mutableMapOf(
+                itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(799393331, 1350125107),
+                itemLibrary.getOrConstructVirtualTreasureClass("Act 3 Equip B") to BigFraction(1095321139, 1350125107),
+                itemLibrary.getOrConstructVirtualTreasureClass("Act 3 Junk") to BigFraction(969921075, 1350125107),
+                itemLibrary.getOrConstructVirtualTreasureClass("Act 3 Good") to BigFraction(276383283, 1350125107)
+            )
         )
         assertEquals(expected, actual)
     }
@@ -99,18 +120,20 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_withNegativePicks() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", 4, NORMAL, DEFINED)
-        val expected = mapOf(
-            itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(60, 100),
-            itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(37, 200),
-            itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(37, 200),
-            itemLibrary.getOrConstructVirtualTreasureClass("rin") to BigFraction(3, 500),
-            itemLibrary.getOrConstructVirtualTreasureClass("amu") to BigFraction(3, 1000),
-            itemLibrary.getOrConstructVirtualTreasureClass("jew") to BigFraction(3, 2000),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm3") to BigFraction(3, 2000),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm2") to BigFraction(3, 2000),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm1") to BigFraction(3, 2000),
-            itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to BigFraction(3, 200),
-            itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Cpot A") to BigFraction(1)
+        val expected = TreasureClassPathAccumulator(
+            mutableMapOf(
+                itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(60, 100),
+                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(37, 200),
+                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(37, 200),
+                itemLibrary.getOrConstructVirtualTreasureClass("rin") to BigFraction(3, 500),
+                itemLibrary.getOrConstructVirtualTreasureClass("amu") to BigFraction(3, 1000),
+                itemLibrary.getOrConstructVirtualTreasureClass("jew") to BigFraction(3, 2000),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm3") to BigFraction(3, 2000),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm2") to BigFraction(3, 2000),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm1") to BigFraction(3, 2000),
+                itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to BigFraction(3, 200),
+                itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Cpot A") to BigFraction(1)
+            )
         )
         assertEquals(expected, actual)
     }
@@ -118,18 +141,20 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_withNegativePicks_unevenPickDistribution() {
         val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", 4, NORMAL, DEFINED)
-        val expected = mapOf(
-            itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(60, 100),
-            itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(832772357, 907039232),
-            itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(832772357, 907039232),
-            itemLibrary.getOrConstructVirtualTreasureClass("rin") to BigFraction(3, 500),
-            itemLibrary.getOrConstructVirtualTreasureClass("amu") to BigFraction(3, 1000),
-            itemLibrary.getOrConstructVirtualTreasureClass("jew") to BigFraction(3, 2000),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm3") to BigFraction(3, 2000),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm2") to BigFraction(3, 2000),
-            itemLibrary.getOrConstructVirtualTreasureClass("cm1") to BigFraction(3, 2000),
-            itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to BigFraction(3, 200),
-            itemLibrary.getOrConstructVirtualTreasureClass("armo6") to BigFraction(1653912, 1771561)
+        val expected = TreasureClassPathAccumulator(
+            mutableMapOf(
+                itemLibrary.getOrConstructVirtualTreasureClass("gld") to BigFraction(60, 100),
+                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to BigFraction(832772357, 907039232),
+                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to BigFraction(832772357, 907039232),
+                itemLibrary.getOrConstructVirtualTreasureClass("rin") to BigFraction(3, 500),
+                itemLibrary.getOrConstructVirtualTreasureClass("amu") to BigFraction(3, 1000),
+                itemLibrary.getOrConstructVirtualTreasureClass("jew") to BigFraction(3, 2000),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm3") to BigFraction(3, 2000),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm2") to BigFraction(3, 2000),
+                itemLibrary.getOrConstructVirtualTreasureClass("cm1") to BigFraction(3, 2000),
+                itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to BigFraction(3, 200),
+                itemLibrary.getOrConstructVirtualTreasureClass("armo6") to BigFraction(1653912, 1771561)
+            )
         )
         assertEquals(expected, actual)
     }

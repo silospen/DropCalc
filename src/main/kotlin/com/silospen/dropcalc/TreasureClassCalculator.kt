@@ -3,8 +3,8 @@ package com.silospen.dropcalc
 import com.silospen.dropcalc.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.TreasureClassOutcomeType.VIRTUAL
 import com.silospen.dropcalc.items.ItemLibrary
+import com.silospen.dropcalc.treasureclasses.TreasureClassPathAccumulator
 import org.apache.commons.math3.fraction.BigFraction
-import org.apache.commons.math3.fraction.BigFraction.ONE
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -51,7 +51,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int = 1,
         partySize: Int = 1
-    ): Map<OutcomeType, BigFraction> {
+    ): TreasureClassPathAccumulator {
         val possiblyUpgradedTreasureClass =
             changeTcBasedOnLevel(getTreasureClass(treasureClassName), monsterLevel, difficulty)
         return if (possiblyUpgradedTreasureClass.properties.picks > 0) getLeafOutcomesForPositivePicks(
@@ -72,65 +72,36 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
         partySize: Int
-    ): Map<OutcomeType, BigFraction> {
-        val result = calculatePathSum(
-            Outcome(treasureClass, 1),
-            BigFraction(1),
-            1,
-            treasureClassOutcomeType,
-            nPlayers,
-            partySize
-        )
-        val picks = treasureClass.properties.picks
-        return applyPositivePicks(picks, result)
-    }
-
-    private fun applyPositivePicks(
-        picks: Int,
-        result: Map<OutcomeType, BigFraction>
-    ): Map<OutcomeType, BigFraction> {
-        return when {
-            picks == 1 -> result
-            picks > 1 -> result.mapValues { calculateProbabilityForPicks(it.value, if (picks > 6) 6 else picks) }
-            else -> throw IllegalArgumentException("Unexpected picks: $picks")
-        }
-    }
-
-    private fun calculateProbabilityForPicks(baseProb: BigFraction, picks: Int) =
-        ONE.subtract(ONE.subtract(baseProb).pow(picks))
+    ) = calculatePathSum(
+        Outcome(treasureClass, 1),
+        BigFraction(1),
+        1,
+        treasureClassOutcomeType,
+        nPlayers,
+        partySize
+    ).applyPicks(treasureClass.properties.picks)
 
     private fun getLeafOutcomesForNegativePicks(
         treasureClass: TreasureClass,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
         partySize: Int
-    ): Map<OutcomeType, BigFraction> {
-        val results = mutableListOf<Map<OutcomeType, BigFraction>>()
-        var picksCounter = treasureClass.properties.picks //TODO: Use this!
-        for (outcome in treasureClass.outcomes) {
-            val pathSumsForOutcome = calculatePathSum(
-                outcome,
-                BigFraction(1),
-                outcome.probability,
-                treasureClassOutcomeType,
-                nPlayers,
-                partySize
-            ).mapValues { calculateProbabilityForPicks(it.value, outcome.probability) }
-            val picks = if (outcome.outcomeType is TreasureClass) outcome.outcomeType.properties.picks else 1
-            results.add(
-                if (picks > 1) applyPositivePicks(picks, pathSumsForOutcome) else pathSumsForOutcome
-            )
-        }
-        val finalResult = mutableMapOf<OutcomeType, BigFraction>()
-        for (result in results) {
-            for (entry in result) {
-                finalResult.merge(entry.key, entry.value) { old, new ->
-                    ONE.subtract(old.subtract(1).negate().multiply(ONE.subtract(new)))
-                }
-            }
-        }
-        return finalResult
-    }
+    ): TreasureClassPathAccumulator =
+//        var picksCounter = treasureClass.properties.picks //TODO: Use this!
+        treasureClass.outcomes
+            .asSequence()
+            .map { outcome ->
+                calculatePathSum(
+                    outcome,
+                    BigFraction(1),
+                    outcome.probability,
+                    treasureClassOutcomeType,
+                    nPlayers,
+                    partySize
+                )
+                    .applyPicks(outcome.probability)
+                    .applyPicks(if (outcome.outcomeType is TreasureClass) outcome.outcomeType.properties.picks else 1)
+            }.reduce { acc, value -> acc.merge(value) }
 
     fun changeTcBasedOnLevel(
         baseTreasureClass: TreasureClass,
@@ -156,8 +127,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
         partySize: Int
-    ): Map<OutcomeType, BigFraction> =
-        mutableMapOf<OutcomeType, BigFraction>().apply {
+    ): TreasureClassPathAccumulator =
+        TreasureClassPathAccumulator().apply {
             calculatePathSumRecurse(
                 outcome,
                 pathProbabilityAccumulator,
@@ -173,7 +144,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         outcome: Outcome,
         pathProbabilityAccumulator: BigFraction,
         tcProbabilityDenominator: Int,
-        leafAccumulator: MutableMap<OutcomeType, BigFraction>,
+        leafAccumulator: TreasureClassPathAccumulator,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
         partySize: Int
@@ -182,8 +153,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         val selectionProbability = outcomeChance.multiply(pathProbabilityAccumulator)
         val outcomeType = outcome.outcomeType
         if ((outcomeType is VirtualTreasureClass && treasureClassOutcomeType == DEFINED) || (outcomeType is BaseItem && treasureClassOutcomeType == VIRTUAL)) {
-            leafAccumulator[outcomeType] =
-                selectionProbability.add(leafAccumulator.getOrDefault(outcomeType, BigFraction.ZERO))
+            leafAccumulator.accumulateProbability(selectionProbability, outcomeType)
         } else if (outcomeType is TreasureClass) {
             val denominatorWithNoDrop = calculateDenominatorWithNoDrop(
                 outcomeType.probabilityDenominator,

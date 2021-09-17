@@ -54,7 +54,7 @@ class ApiResource(
                 treasureClassOutcomeType,
                 nPlayers,
                 partySize
-            )
+            ).getOutcomes()
         leafOutcomes.map { leafOutcome ->
             AtomicTcsResponse(
                 leafOutcome.key.name,
