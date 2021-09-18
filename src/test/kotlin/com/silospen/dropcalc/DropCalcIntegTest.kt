@@ -164,16 +164,16 @@ class DropCalcIntegTest {
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
-        quality: ItemQuality
+        itemQuality: ItemQuality
     ) = runMonsterTestWithLocalExpectations(
-        monsterId, monsterType, difficulty, nPlayers, partySize,
+        monsterId, monsterType, difficulty, nPlayers, partySize, itemQuality,
         testDataGenerator.generateMonsterExpectationDataToFile(
             monsterId,
             monsterType,
             difficulty,
             nPlayers,
             partySize,
-            quality
+            itemQuality
         )
     )
 
@@ -183,11 +183,12 @@ class DropCalcIntegTest {
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
+        itemQuality: ItemQuality,
         file: File
     ) = runTestWithLocalExpectations(
         monsterId, monsterType, difficulty, nPlayers, partySize, file,
         tcExpectationDataLineParser,
-        { apiResource.getMonster(monsterId, monsterType, difficulty, nPlayers, partySize) },
+        { apiResource.getMonster(monsterId, monsterType, difficulty, nPlayers, partySize, itemQuality) },
         this::runAtomicTcAsserts,
     )
 

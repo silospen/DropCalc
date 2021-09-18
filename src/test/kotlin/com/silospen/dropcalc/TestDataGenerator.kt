@@ -85,6 +85,7 @@ class TestDataGenerator(private val client: HttpClient) {
     private fun toQuality(quality: ItemQuality): String =
         when (quality) {
             ItemQuality.WHITE -> "regItem"
+            ItemQuality.UNIQUE -> "uniqItem"
             else -> throw RuntimeException()
         }
 

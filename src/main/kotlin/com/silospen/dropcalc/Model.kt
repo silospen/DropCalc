@@ -1,6 +1,7 @@
 package com.silospen.dropcalc
 
 import com.google.common.collect.Table
+import com.silospen.dropcalc.ItemQuality.*
 import com.silospen.dropcalc.ItemQualityRatios.Companion.EMPTY
 import kotlin.math.max
 
@@ -129,6 +130,15 @@ data class ItemQualityRatios(
         max(rare, other.rare),
         max(magic, other.magic),
     )
+
+    fun get(itemQuality: ItemQuality) =
+        when (itemQuality) {
+            UNIQUE -> unique
+            SET -> set
+            RARE -> rare
+            MAGIC -> magic
+            WHITE -> 0
+        }
 
     companion object {
         val EMPTY = ItemQualityRatios(0, 0, 0, 0)

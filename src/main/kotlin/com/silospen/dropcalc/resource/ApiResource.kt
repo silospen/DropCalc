@@ -33,7 +33,8 @@ class ApiResource(
         @RequestParam("monsterType", required = true) monsterType: MonsterType,
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("players", required = true) nPlayers: Int,
-        @RequestParam("party", required = true) partySize: Int
+        @RequestParam("party", required = true) partySize: Int,
+        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
     ): List<AtomicTcsResponse> {
         return getOutcomes(monsterId, difficulty, monsterType, VIRTUAL, nPlayers, partySize)
     }
