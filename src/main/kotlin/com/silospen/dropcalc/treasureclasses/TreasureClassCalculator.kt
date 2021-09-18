@@ -1,9 +1,9 @@
-package com.silospen.dropcalc
+package com.silospen.dropcalc.treasureclasses
 
-import com.silospen.dropcalc.TreasureClassOutcomeType.DEFINED
-import com.silospen.dropcalc.TreasureClassOutcomeType.VIRTUAL
+import com.silospen.dropcalc.*
 import com.silospen.dropcalc.items.ItemLibrary
-import com.silospen.dropcalc.treasureclasses.TreasureClassPathAccumulator
+import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
+import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
 import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.stereotype.Component
 import java.math.BigDecimal

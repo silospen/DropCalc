@@ -1,15 +1,14 @@
-package com.silospen.dropcalc
+package com.silospen.dropcalc.treasureclasses
 
+import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.ItemQualityRatios.Companion.EMPTY
-import com.silospen.dropcalc.TreasureClassOutcomeType.DEFINED
-import com.silospen.dropcalc.TreasureClassOutcomeType.VIRTUAL
 import com.silospen.dropcalc.files.TreasureClassesLineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.items.ItemLibrary
-import com.silospen.dropcalc.treasureclasses.TreasureClassPathAccumulator
-import com.silospen.dropcalc.treasureclasses.TreasureClassPathOutcome
+import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
+import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
 import org.apache.commons.math3.fraction.BigFraction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

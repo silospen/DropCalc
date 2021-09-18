@@ -1,9 +1,14 @@
 package com.silospen.dropcalc.resource
 
-import com.silospen.dropcalc.*
-import com.silospen.dropcalc.TreasureClassOutcomeType.DEFINED
-import com.silospen.dropcalc.TreasureClassOutcomeType.VIRTUAL
+import com.silospen.dropcalc.Difficulty
+import com.silospen.dropcalc.ItemQuality
+import com.silospen.dropcalc.MonsterType
+import com.silospen.dropcalc.OutcomeType
 import com.silospen.dropcalc.monsters.MonsterLibrary
+import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
+import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType
+import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
+import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
 import com.silospen.dropcalc.treasureclasses.TreasureClassPathOutcome
 import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.web.bind.annotation.GetMapping
