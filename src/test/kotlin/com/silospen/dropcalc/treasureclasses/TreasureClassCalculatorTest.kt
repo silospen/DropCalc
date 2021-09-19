@@ -27,312 +27,187 @@ class TreasureClassCalculatorTest {
 
     @Test
     fun getLeafOutcomes() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED)
-        val expected = TreasureClassPathAccumulator(
-            mutableMapOf(
-                itemLibrary.getOrConstructVirtualTreasureClass("gld") to TreasureClassPathOutcome(
-                    BigFraction(21, 160),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to TreasureClassPathOutcome(
-                    BigFraction(1, 20),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to TreasureClassPathOutcome(
-                    BigFraction(1, 20),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Junk") to TreasureClassPathOutcome(
-                    BigFraction(
-                        21,
-                        160
-                    ), EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("rin") to TreasureClassPathOutcome(
-                    BigFraction(1, 400),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("amu") to TreasureClassPathOutcome(
-                    BigFraction(1, 800),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("jew") to TreasureClassPathOutcome(
-                    BigFraction(1, 1600),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm3") to TreasureClassPathOutcome(
-                    BigFraction(1, 1600),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm2") to TreasureClassPathOutcome(
-                    BigFraction(1, 1600),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm1") to TreasureClassPathOutcome(
-                    BigFraction(1, 1600),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to TreasureClassPathOutcome(
-                    BigFraction(
-                        1,
-                        160
-                    ), EMPTY
-                )
-            )
+        val expectations = listOf(
+            expectation("gld", TreasureClassPathOutcome(BigFraction(21, 160), EMPTY)),
+            expectation("weap3", TreasureClassPathOutcome(BigFraction(1, 20), EMPTY)),
+            expectation("armo3", TreasureClassPathOutcome(BigFraction(1, 20), EMPTY)),
+            expectation("Act 1 Junk", TreasureClassPathOutcome(BigFraction(21, 160), EMPTY)),
+            expectation("rin", TreasureClassPathOutcome(BigFraction(1, 400), EMPTY)),
+            expectation("amu", TreasureClassPathOutcome(BigFraction(1, 800), EMPTY)),
+            expectation("jew", TreasureClassPathOutcome(BigFraction(1, 1600), EMPTY)),
+            expectation("cm3", TreasureClassPathOutcome(BigFraction(1, 1600), EMPTY)),
+            expectation("cm2", TreasureClassPathOutcome(BigFraction(1, 1600), EMPTY)),
+            expectation("cm1", TreasureClassPathOutcome(BigFraction(1, 1600), EMPTY)),
+            expectation("Chipped Gem", TreasureClassPathOutcome(BigFraction(1, 160), EMPTY)),
         )
-        assertEquals(expected, actual)
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED))
     }
 
     @Test
     fun getLeafOutcomes_forVirtualTcs() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, VIRTUAL)
-        val expected = TreasureClassPathAccumulator(
-            mutableMapOf(
-                weapon1 to TreasureClassPathOutcome(BigFraction(1, 30), EMPTY),
-                weapon2 to TreasureClassPathOutcome(BigFraction(1, 60), EMPTY),
-                armor1 to TreasureClassPathOutcome(BigFraction(1, 20), EMPTY),
-                ring to TreasureClassPathOutcome(BigFraction(1, 400), EMPTY)
-            )
+        val expectations = listOf(
+            TcExpectation(weapon1, TreasureClassPathOutcome(BigFraction(1, 30), EMPTY)),
+            TcExpectation(weapon2, TreasureClassPathOutcome(BigFraction(1, 60), EMPTY)),
+            TcExpectation(armor1, TreasureClassPathOutcome(BigFraction(1, 20), EMPTY)),
+            TcExpectation(ring, TreasureClassPathOutcome(BigFraction(1, 400), EMPTY)),
         )
-        assertEquals(expected, actual)
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, VIRTUAL))
     }
 
     @Test
     fun getLeafOutcomes_withTcUpgraded() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 50, HELL, DEFINED)
         val expectedProbabilities = BigFraction(5, 110).multiply(BigFraction(7, 14))
-        val expected = TreasureClassPathAccumulator(
-            mutableMapOf(
-                itemLibrary.getOrConstructVirtualTreasureClass("gld") to TreasureClassPathOutcome(
-                    BigFraction(5, 110),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to TreasureClassPathOutcome(
-                    expectedProbabilities,
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to TreasureClassPathOutcome(
-                    expectedProbabilities,
-                    EMPTY
-                ),
-            )
+        val expectations = listOf(
+            expectation("gld", TreasureClassPathOutcome(BigFraction(5, 110), EMPTY)),
+            expectation("weap3", TreasureClassPathOutcome(expectedProbabilities, EMPTY)),
+            expectation("armo3", TreasureClassPathOutcome(expectedProbabilities, EMPTY)),
         )
-        assertEquals(expected, actual)
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 50, HELL, DEFINED))
     }
 
     @Test
     fun getLeafOutcomes_withPartyAndPlayersSet() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED, 3, 3)
-        val expected = TreasureClassPathAccumulator(
-            mutableMapOf(
-                itemLibrary.getOrConstructVirtualTreasureClass("gld") to TreasureClassPathOutcome(
-                    BigFraction(21, 79),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to TreasureClassPathOutcome(
-                    BigFraction(8, 79),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to TreasureClassPathOutcome(
-                    BigFraction(8, 79),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Junk") to TreasureClassPathOutcome(
-                    BigFraction(
-                        21,
-                        79
-                    ), EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("rin") to TreasureClassPathOutcome(
-                    BigFraction(2, 395),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("amu") to TreasureClassPathOutcome(
-                    BigFraction(1, 395),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("jew") to TreasureClassPathOutcome(
-                    BigFraction(1, 790),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm3") to TreasureClassPathOutcome(
-                    BigFraction(1, 790),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm2") to TreasureClassPathOutcome(
-                    BigFraction(1, 790),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm1") to TreasureClassPathOutcome(
-                    BigFraction(1, 790),
-                    EMPTY
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to TreasureClassPathOutcome(
-                    BigFraction(
-                        1,
-                        79
-                    ), EMPTY
-                )
-            )
+        val expectations = listOf(
+            expectation("gld", TreasureClassPathOutcome(BigFraction(21, 79), EMPTY)),
+            expectation("weap3", TreasureClassPathOutcome(BigFraction(8, 79), EMPTY)),
+            expectation("armo3", TreasureClassPathOutcome(BigFraction(8, 79), EMPTY)),
+            expectation("Act 1 Junk", TreasureClassPathOutcome(BigFraction(21, 79), EMPTY)),
+            expectation("rin", TreasureClassPathOutcome(BigFraction(2, 395), EMPTY)),
+            expectation("amu", TreasureClassPathOutcome(BigFraction(1, 395), EMPTY)),
+            expectation("jew", TreasureClassPathOutcome(BigFraction(1, 790), EMPTY)),
+            expectation("cm3", TreasureClassPathOutcome(BigFraction(1, 790), EMPTY)),
+            expectation("cm2", TreasureClassPathOutcome(BigFraction(1, 790), EMPTY)),
+            expectation("cm1", TreasureClassPathOutcome(BigFraction(1, 790), EMPTY)),
+            expectation("Chipped Gem", TreasureClassPathOutcome(BigFraction(1, 79), EMPTY)),
         )
-        assertEquals(expected, actual)
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED, 3, 3))
     }
 
     @Test
     fun getLeafOutcomes_withPicks() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Radament", 50, NORMAL, DEFINED)
         val radamentItemQualityRatios = ItemQualityRatios(900, 900, 900, 1024)
-        val expected = TreasureClassPathAccumulator(
-            mutableMapOf(
-                itemLibrary.getOrConstructVirtualTreasureClass("gld") to TreasureClassPathOutcome(
-                    BigFraction(
-                        799393331,
-                        1350125107
-                    ), radamentItemQualityRatios
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Act 3 Equip B") to TreasureClassPathOutcome(
-                    BigFraction(
-                        1095321139,
-                        1350125107
-                    ), radamentItemQualityRatios
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Act 3 Junk") to TreasureClassPathOutcome(
-                    BigFraction(
-                        969921075,
-                        1350125107
-                    ), radamentItemQualityRatios
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Act 3 Good") to TreasureClassPathOutcome(
-                    BigFraction(
-                        276383283,
-                        1350125107
-                    ), radamentItemQualityRatios
-                )
-            )
+        val expectations = listOf(
+            expectation(
+                "gld",
+                TreasureClassPathOutcome(BigFraction(799393331, 1350125107), radamentItemQualityRatios)
+            ),
+            expectation(
+                "Act 3 Equip B",
+                TreasureClassPathOutcome(BigFraction(1095321139, 1350125107), radamentItemQualityRatios)
+            ),
+            expectation(
+                "Act 3 Junk",
+                TreasureClassPathOutcome(BigFraction(969921075, 1350125107), radamentItemQualityRatios)
+            ),
+            expectation(
+                "Act 3 Good",
+                TreasureClassPathOutcome(BigFraction(276383283, 1350125107), radamentItemQualityRatios)
+            ),
         )
-        assertEquals(expected, actual)
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Radament", 50, NORMAL, DEFINED))
     }
 
     @Test
     fun getLeafOutcomes_withNegativePicks() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", 4, NORMAL, DEFINED)
-        val expected = TreasureClassPathAccumulator(
-            mutableMapOf(
-                itemLibrary.getOrConstructVirtualTreasureClass("gld") to TreasureClassPathOutcome(
-                    BigFraction(60, 100),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to TreasureClassPathOutcome(
-                    BigFraction(
-                        37,
-                        200
-                    ), ItemQualityRatios(800, 1000, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to TreasureClassPathOutcome(
-                    BigFraction(
-                        37,
-                        200
-                    ), ItemQualityRatios(800, 1000, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("rin") to TreasureClassPathOutcome(
-                    BigFraction(3, 500),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("amu") to TreasureClassPathOutcome(
-                    BigFraction(3, 1000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("jew") to TreasureClassPathOutcome(
-                    BigFraction(3, 2000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm3") to TreasureClassPathOutcome(
-                    BigFraction(3, 2000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm2") to TreasureClassPathOutcome(
-                    BigFraction(3, 2000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm1") to TreasureClassPathOutcome(
-                    BigFraction(3, 2000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to TreasureClassPathOutcome(
-                    BigFraction(
-                        3,
-                        200
-                    ), ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Cpot A") to TreasureClassPathOutcome(
-                    BigFraction(1),
-                    EMPTY
-                )
-            )
+        val topLevelQualityRatios = ItemQualityRatios(800, 800, 800, 1024)
+        val subLevelQualityRatios = ItemQualityRatios(800, 1000, 800, 1024)
+        val expectations = listOf(
+            expectation(
+                "gld",
+                TreasureClassPathOutcome(BigFraction(60, 100), topLevelQualityRatios)
+            ),
+            expectation(
+                "weap3",
+                TreasureClassPathOutcome(BigFraction(37, 200), subLevelQualityRatios)
+            ),
+            expectation(
+                "armo3",
+                TreasureClassPathOutcome(BigFraction(37, 200), subLevelQualityRatios)
+            ),
+            expectation(
+                "rin",
+                TreasureClassPathOutcome(BigFraction(3, 500), topLevelQualityRatios)
+            ),
+            expectation(
+                "amu",
+                TreasureClassPathOutcome(BigFraction(3, 1000), topLevelQualityRatios)
+            ),
+            expectation(
+                "jew",
+                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios)
+            ),
+            expectation(
+                "cm3",
+                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios)
+            ),
+            expectation(
+                "cm2",
+                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios)
+            ),
+            expectation(
+                "cm1",
+                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios)
+            ),
+            expectation(
+                "Chipped Gem",
+                TreasureClassPathOutcome(BigFraction(3, 200), topLevelQualityRatios)
+            ),
+            expectation("Act 1 Cpot A", TreasureClassPathOutcome(BigFraction(1), EMPTY)),
         )
-        assertEquals(expected, actual)
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", 4, NORMAL, DEFINED))
     }
 
     @Test
     fun getLeafOutcomes_withNegativePicks_unevenPickDistribution() {
-        val actual = treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", 4, NORMAL, DEFINED)
-        val expected = TreasureClassPathAccumulator(
-            mutableMapOf(
-                itemLibrary.getOrConstructVirtualTreasureClass("gld") to TreasureClassPathOutcome(
-                    BigFraction(60, 100),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("weap3") to TreasureClassPathOutcome(
-                    BigFraction(
-                        832772357,
-                        907039232
-                    ), ItemQualityRatios(800, 1000, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("armo3") to TreasureClassPathOutcome(
-                    BigFraction(
-                        832772357,
-                        907039232
-                    ), ItemQualityRatios(800, 1000, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("rin") to TreasureClassPathOutcome(
-                    BigFraction(3, 500),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("amu") to TreasureClassPathOutcome(
-                    BigFraction(3, 1000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("jew") to TreasureClassPathOutcome(
-                    BigFraction(3, 2000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm3") to TreasureClassPathOutcome(
-                    BigFraction(3, 2000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm2") to TreasureClassPathOutcome(
-                    BigFraction(3, 2000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("cm1") to TreasureClassPathOutcome(
-                    BigFraction(3, 2000),
-                    ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("Chipped Gem") to TreasureClassPathOutcome(
-                    BigFraction(
-                        3,
-                        200
-                    ), ItemQualityRatios(800, 800, 800, 1024)
-                ),
-                itemLibrary.getOrConstructVirtualTreasureClass("armo6") to TreasureClassPathOutcome(
-                    BigFraction(
-                        1653912,
-                        1771561
-                    ), EMPTY
-                )
-            )
+        val topLevelQualityRatios = ItemQualityRatios(800, 800, 800, 1024)
+        val subLevelQualityRatios = ItemQualityRatios(800, 1000, 800, 1024)
+        val expectations = listOf(
+            expectation(
+                "gld",
+                TreasureClassPathOutcome(BigFraction(60, 100), topLevelQualityRatios)
+            ),
+            expectation(
+                "weap3",
+                TreasureClassPathOutcome(BigFraction(832772357, 907039232), subLevelQualityRatios)
+            ),
+            expectation(
+                "armo3",
+                TreasureClassPathOutcome(BigFraction(832772357, 907039232), subLevelQualityRatios)
+            ),
+            expectation(
+                "rin",
+                TreasureClassPathOutcome(BigFraction(3, 500), topLevelQualityRatios)
+            ),
+            expectation(
+                "amu",
+                TreasureClassPathOutcome(BigFraction(3, 1000), topLevelQualityRatios)
+            ),
+            expectation(
+                "jew",
+                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios)
+            ),
+            expectation(
+                "cm3",
+                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios)
+            ),
+            expectation(
+                "cm2",
+                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios)
+            ),
+            expectation(
+                "cm1",
+                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios)
+            ),
+            expectation(
+                "Chipped Gem",
+                TreasureClassPathOutcome(BigFraction(3, 200), topLevelQualityRatios)
+            ),//1-((1-(1-((1-(8/22))*(1-(8/22)))))^3)
+            expectation(
+                "armo6",
+                TreasureClassPathOutcome(BigFraction(1653912, 1771561), EMPTY)
+            ),
         )
-        assertEquals(expected, actual)
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", 4, NORMAL, DEFINED))
     }
 
 
@@ -361,4 +236,27 @@ class TreasureClassCalculatorTest {
         assertEquals(levelTwoTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 15, NORMAL))
         assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 1, HELL))
     }
+
+    private fun runExpectations(
+        expectations: List<TcExpectation>,
+        accumulator: TreasureClassPathAccumulator
+    ) {
+        val actual = accumulator.getOutcomes().map {
+            TcExpectation(it.key, it.value)
+        }
+        assertEquals(expectations.sortedBy { it.outcomeType.name }, actual.sortedBy { it.outcomeType.name })
+    }
+
+    private fun expectation(
+        tcName: String,
+        outcome: TreasureClassPathOutcome
+    ) = TcExpectation(
+        itemLibrary.getOrConstructVirtualTreasureClass(tcName),
+        outcome
+    )
 }
+
+private data class TcExpectation(
+    val outcomeType: OutcomeType,
+    val outcome: TreasureClassPathOutcome
+)
