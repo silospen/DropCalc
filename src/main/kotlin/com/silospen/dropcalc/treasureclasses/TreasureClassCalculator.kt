@@ -51,14 +51,15 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int = 1,
         partySize: Int = 1
-    ): TreasureClassPathAccumulator {
+    ): TreasureClassPaths {
         val possiblyUpgradedTreasureClass =
             changeTcBasedOnLevel(getTreasureClass(treasureClassName), monsterLevel, difficulty)
         return if (possiblyUpgradedTreasureClass.properties.picks > 0) getLeafOutcomesForPositivePicks(
             possiblyUpgradedTreasureClass,
             treasureClassOutcomeType,
             nPlayers,
-            partySize
+            partySize,
+            possiblyUpgradedTreasureClass.properties.picks
         ) else getLeafOutcomesForNegativePicks(
             possiblyUpgradedTreasureClass,
             treasureClassOutcomeType,
@@ -71,44 +72,50 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         treasureClass: TreasureClass,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
-        partySize: Int
-    ) = calculatePathSum(
-        Outcome(treasureClass, 1),
-        BigFraction(1),
-        treasureClass.properties.itemQualityRatios,
-        1,
-        treasureClassOutcomeType,
-        nPlayers,
-        partySize
-    ).applyPicks(treasureClass.properties.picks)
+        partySize: Int,
+        picks: Int
+    ) = TreasureClassPaths.forSinglePath(
+        calculatePathSum(
+            Outcome(treasureClass, 1),
+            BigFraction(1),
+            treasureClass.properties.itemQualityRatios,
+            1,
+            treasureClassOutcomeType,
+            nPlayers,
+            partySize,
+            picks,
+            1
+        )
+    )
 
     private fun getLeafOutcomesForNegativePicks(
         treasureClass: TreasureClass,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
         partySize: Int
-    ): TreasureClassPathAccumulator =
+    ): TreasureClassPaths =
 //        var picksCounter = treasureClass.properties.picks //TODO: Use this!
-        treasureClass.outcomes
-            .asSequence()
-            .map { outcome ->
-                val (picks, itemQualityRatios) = if (outcome.outcomeType is TreasureClass) {
-                    outcome.outcomeType.properties.picks to outcome.outcomeType.properties.itemQualityRatios
-                } else {
-                    1 to ItemQualityRatios.EMPTY
+        TreasureClassPaths.forMultiplePaths(
+            treasureClass.outcomes
+                .map { outcome ->
+                    val (picks, itemQualityRatios) = if (outcome.outcomeType is TreasureClass) {
+                        outcome.outcomeType.properties.picks to outcome.outcomeType.properties.itemQualityRatios
+                    } else {
+                        1 to ItemQualityRatios.EMPTY
+                    }
+                    calculatePathSum(
+                        outcome,
+                        BigFraction(1),
+                        treasureClass.properties.itemQualityRatios.merge(itemQualityRatios),
+                        outcome.probability,
+                        treasureClassOutcomeType,
+                        nPlayers,
+                        partySize,
+                        picks,
+                        outcome.probability
+                    )
                 }
-                calculatePathSum(
-                    outcome,
-                    BigFraction(1),
-                    treasureClass.properties.itemQualityRatios.merge(itemQualityRatios),
-                    outcome.probability,
-                    treasureClassOutcomeType,
-                    nPlayers,
-                    partySize
-                )
-                    .applyPicks(outcome.probability)
-                    .applyPicks(picks)
-            }.reduce { acc, value -> acc.merge(value) }
+        )
 
     fun changeTcBasedOnLevel(
         baseTreasureClass: TreasureClass,
@@ -134,9 +141,11 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         tcProbabilityDenominator: Int,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
-        partySize: Int
-    ): TreasureClassPathAccumulator =
-        TreasureClassPathAccumulator().apply {
+        partySize: Int,
+        picks: Int,
+        drops: Int
+    ): Map<OutcomeType, TreasureClassPathOutcome> =
+        TreasureClassPathAccumulator(picks, drops).apply {
             calculatePathSumRecurse(
                 outcome,
                 pathProbabilityAccumulator,
@@ -147,7 +156,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
                 nPlayers,
                 partySize
             )
-        }
+        }.getOutcomes()
 
     private fun calculatePathSumRecurse(
         outcome: Outcome,

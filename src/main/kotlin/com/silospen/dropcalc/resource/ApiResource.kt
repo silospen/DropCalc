@@ -3,13 +3,12 @@ package com.silospen.dropcalc.resource
 import com.silospen.dropcalc.Difficulty
 import com.silospen.dropcalc.ItemQuality
 import com.silospen.dropcalc.MonsterType
-import com.silospen.dropcalc.OutcomeType
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
-import com.silospen.dropcalc.treasureclasses.TreasureClassPathOutcome
+import com.silospen.dropcalc.treasureclasses.TreasureClassPaths
 import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -53,7 +52,7 @@ class ApiResource(
         partySize: Int,
     ) = monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
         println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.name} - ${monster.level} - ${monster.treasureClass}")
-        val leafOutcomes: Map<OutcomeType, TreasureClassPathOutcome> =
+        val treasureClassPaths: TreasureClassPaths =
             treasureClassCalculator.getLeafOutcomes(
                 monster.treasureClass,
                 monster.level,
@@ -61,12 +60,12 @@ class ApiResource(
                 treasureClassOutcomeType,
                 nPlayers,
                 partySize
-            ).getOutcomes()
-        leafOutcomes.map { leafOutcome ->
+            )
+        treasureClassPaths.map { outcomeType ->
             AtomicTcsResponse(
-                leafOutcome.key.name,
+                outcomeType.name,
                 monster.area.name,
-                Probability(leafOutcome.value.probability)
+                Probability(treasureClassPaths.getFinalProbability(outcomeType))
             )
         }
     }.sortedBy { it.tc }
