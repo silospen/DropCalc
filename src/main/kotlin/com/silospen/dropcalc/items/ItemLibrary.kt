@@ -1,14 +1,15 @@
 package com.silospen.dropcalc.items
 
-import com.silospen.dropcalc.BaseItem
-import com.silospen.dropcalc.Outcome
-import com.silospen.dropcalc.VirtualTreasureClass
+import com.silospen.dropcalc.*
+import com.silospen.dropcalc.monsters.Monster
+import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.stereotype.Component
 
 @Component
-class ItemLibrary(private val baseItems: List<BaseItem>) {
+class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios: List<ItemRatio>, items: List<Item>) {
     private val itemTreasureClassesByName = generateVirtualTreasureClasses().associateBy { it.name }
     private val baseItemsById = baseItems.associateBy { it.id }
+    val itemsByQualityAndBaseId = items.groupBy { it.quality to it.baseItem.id }
 
     private fun generateVirtualTreasureClasses() =
         baseItems.flatMap { item -> item.treasureClasses.map { it to item } }
@@ -28,5 +29,28 @@ class ItemLibrary(private val baseItems: List<BaseItem>) {
         if (virtualTreasureClass != null) return virtualTreasureClass
         val outcomes = baseItemsById[name]?.let { setOf(Outcome(it, 1)) } ?: emptySet()
         return VirtualTreasureClass(name, outcomes = outcomes)
+    }
+
+    private fun getItemQualityModifiers(baseItem: BaseItem, itemQuality: ItemQuality): ItemQualityModifiers {
+        val isUber = baseItem.itemVersion != ItemVersion.NORMAL
+        return itemRatios
+            .first { it.isUber == isUber && it.isClassSpecific == baseItem.itemType.isClassSpecific }
+            .modifiers.getValue(itemQuality)
+    }
+
+    fun getProbQuality(
+        itemQuality: ItemQuality,
+        monster: Monster,
+        baseItem: BaseItem,
+        itemQualityRatios: ItemQualityRatios
+    ): BigFraction {
+        val (ratio, divisor, min) = getItemQualityModifiers(baseItem, itemQuality)
+        val chance = ratio - ((monster.level - baseItem.level) / divisor)
+        val mulChance = chance * 128
+        val effectiveMf = 0
+        val chanceWithMf = (mulChance * 100) / (100 + effectiveMf)
+        val chanceAfterMin = if (min > chanceWithMf) min else chanceWithMf
+        val chanceAfterFactor = chanceAfterMin - (chanceAfterMin * itemQualityRatios.get(itemQuality) / 1024)
+        return BigFraction(128, chanceAfterFactor)
     }
 }

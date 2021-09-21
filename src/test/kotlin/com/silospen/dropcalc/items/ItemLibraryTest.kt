@@ -1,13 +1,14 @@
 package com.silospen.dropcalc.items
 
 import com.silospen.dropcalc.*
+import org.apache.commons.math3.fraction.BigFraction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class ItemLibraryTest {
     @Test
-    fun test() {
-        val itemLibrary = ItemLibrary(listOf(armor1, weapon1, weapon2, ring))
+    fun getOrConstructVirtualTreasureClass() {
+        val itemLibrary = ItemLibrary(listOf(armor1, weapon1, weapon2, ring), emptyList(), emptyList())
         assertEquals(
             VirtualTreasureClass("armo3", 2, setOf(Outcome(armor1, 2))),
             itemLibrary.getOrConstructVirtualTreasureClass("armo3")
@@ -28,5 +29,27 @@ class ItemLibraryTest {
             VirtualTreasureClass("a-random-not-listed-item", 1, emptySet()),
             itemLibrary.getOrConstructVirtualTreasureClass("a-random-not-listed-item")
         )
+    }
+
+    @Test
+    fun getProbQuality_unique() {
+        val itemLibrary = ItemLibrary(
+            listOf(armor1, weapon1, weapon2, ring),
+            listOf(
+                ItemRatio(
+                    isUber = false,
+                    isClassSpecific = false,
+                    modifiers = mapOf(ItemQuality.UNIQUE to ItemQualityModifiers(1, 2, 10))
+                )
+            ),
+            emptyList()
+        )
+        val probQuality = itemLibrary.getProbQuality(
+            ItemQuality.UNIQUE,
+            skeletonMonster,
+            armor1,
+            ItemQualityRatios(100, 200, 300, 400)
+        )
+        assertEquals(BigFraction(32, 29), probQuality)
     }
 }

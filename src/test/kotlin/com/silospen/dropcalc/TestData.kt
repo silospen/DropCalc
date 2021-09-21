@@ -191,6 +191,15 @@ val areasTestData = listOf(
     bonebreakAreaData
 )
 
+val skeletonMonster = Monster(
+    skeletonMonsterClass.id,
+    "Skeleton-name",
+    skeletonMonsterClass,
+    area1Data,
+    NORMAL,
+    REGULAR,
+    skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR)
+)
 val monstersTestData = setOf(
     Monster(
         "skeleton1:Bonebreak",
@@ -237,15 +246,7 @@ val monstersTestData = setOf(
         SUPERUNIQUE,
         "Bonebreak TC(H)"
     ),
-    Monster(
-        skeletonMonsterClass.id,
-        "Skeleton-name",
-        skeletonMonsterClass,
-        area1Data,
-        NORMAL,
-        REGULAR,
-        skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR)
-    ),
+    skeletonMonster,
     Monster(
         skeletonMonsterClass.id,
         "Skeleton-name",

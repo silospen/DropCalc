@@ -1,8 +1,9 @@
 package com.silospen.dropcalc.resource
 
-import com.silospen.dropcalc.Difficulty
-import com.silospen.dropcalc.ItemQuality
-import com.silospen.dropcalc.MonsterType
+import com.silospen.dropcalc.*
+import com.silospen.dropcalc.ItemQuality.WHITE
+import com.silospen.dropcalc.items.ItemLibrary
+import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType
@@ -18,7 +19,8 @@ import java.math.RoundingMode
 @RestController
 class ApiResource(
     private val treasureClassCalculator: TreasureClassCalculator,
-    private val monsterLibrary: MonsterLibrary
+    private val monsterLibrary: MonsterLibrary,
+    private val itemLibrary: ItemLibrary
 ) {
     @GetMapping("/atomicTcs")
     fun getAtomicTcs(
@@ -27,8 +29,16 @@ class ApiResource(
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int
-    ): List<AtomicTcsResponse> {
-        return getOutcomes(monsterId, difficulty, monsterType, DEFINED, nPlayers, partySize)
+    ): List<ApiResponse> {
+        return getTreasureClassPathsForMonsterAndApplyFunction(
+            monsterId,
+            difficulty,
+            monsterType,
+            DEFINED,
+            nPlayers,
+            partySize,
+            ::generateBaseTreasureClassResponse
+        )
     }
 
     @GetMapping("/monster")
@@ -39,19 +49,62 @@ class ApiResource(
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int,
         @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
-    ): List<AtomicTcsResponse> {
-        return getOutcomes(monsterId, difficulty, monsterType, VIRTUAL, nPlayers, partySize)
-    }
+    ) = getTreasureClassPathsForMonsterAndApplyFunction(
+        monsterId,
+        difficulty,
+        monsterType,
+        VIRTUAL,
+        nPlayers,
+        partySize,
+        if (itemQuality == WHITE) ::generateBaseTreasureClassResponse else generateItemQualityResponse(itemQuality)
+    )
 
-    private fun getOutcomes(
+    private fun generateItemQualityResponse(itemQuality: ItemQuality): (TreasureClassPaths, Monster, OutcomeType) -> List<ApiResponse> =
+        { treasureClassPaths, monster, outcomeType ->
+            val baseItem = outcomeType as BaseItem
+            val eligibleItems = itemLibrary.itemsByQualityAndBaseId
+                .getOrDefault(itemQuality to baseItem.id, emptyList())
+                .filter { it.level <= monster.level }
+            val raritySum = eligibleItems.sumOf { it.rarity }
+            eligibleItems.map { item ->
+                val additionalFactorGenerator: (ItemQualityRatios) -> BigFraction = {
+                    itemLibrary.getProbQuality(itemQuality, monster, baseItem, it)
+                        .multiply(BigFraction(item.rarity, raritySum))
+                }
+                ApiResponse(
+                    item.name,
+                    monster.area.name,
+                    Probability(
+                        treasureClassPaths.getFinalProbability(
+                            outcomeType,
+                            additionalFactorGenerator
+                        )
+                    )
+                )
+            }
+        }
+
+    private fun generateBaseTreasureClassResponse(
+        treasureClassPaths: TreasureClassPaths,
+        monster: Monster,
+        outcomeType: OutcomeType
+    ) = listOf(
+        ApiResponse(
+            outcomeType.name,
+            monster.area.name,
+            Probability(treasureClassPaths.getFinalProbability(outcomeType))
+        )
+    )
+
+    private fun getTreasureClassPathsForMonsterAndApplyFunction(
         monsterId: String,
         difficulty: Difficulty,
         monsterType: MonsterType,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
         partySize: Int,
+        function: (TreasureClassPaths, Monster, OutcomeType) -> List<ApiResponse>
     ) = monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
-        println("${monster.monsterClass.id} - ${monster.difficulty.name} - ${monster.type.name} - ${monster.area.name} - ${monster.level} - ${monster.treasureClass}")
         val treasureClassPaths: TreasureClassPaths =
             treasureClassCalculator.getLeafOutcomes(
                 monster.treasureClass,
@@ -61,16 +114,10 @@ class ApiResource(
                 nPlayers,
                 partySize
             )
-        treasureClassPaths.map { outcomeType ->
-            AtomicTcsResponse(
-                outcomeType.name,
-                monster.area.name,
-                Probability(treasureClassPaths.getFinalProbability(outcomeType))
-            )
-        }
-    }.sortedBy { it.tc }
+        treasureClassPaths.flatMap { function(treasureClassPaths, monster, it) }
+    }.sortedBy { it.name }
 
-//    https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?
+    //    https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?
 //    type=item&itemName=aegis&diff=A&monClass=regMon&nPlayers=1&nGroup=1&mf=0&quality=regItem&decMode=false&version=112
 
     @GetMapping("/item")
@@ -87,7 +134,7 @@ class ApiResource(
 
 }
 
-data class AtomicTcsResponse(val tc: String, val area: String, val prob: Probability)
+data class ApiResponse(val name: String, val area: String, val prob: Probability)
 
 data class Probability(val frac: String, val dec: Double) {
     constructor(fraction: BigFraction) : this(

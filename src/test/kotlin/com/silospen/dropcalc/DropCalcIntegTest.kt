@@ -1,6 +1,7 @@
 package com.silospen.dropcalc
 
 import com.silospen.dropcalc.Difficulty.*
+import com.silospen.dropcalc.ItemQuality.UNIQUE
 import com.silospen.dropcalc.ItemQuality.WHITE
 import com.silospen.dropcalc.MonsterType.CHAMPION
 import com.silospen.dropcalc.MonsterType.REGULAR
@@ -8,7 +9,7 @@ import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.resource.ApiResource
-import com.silospen.dropcalc.resource.AtomicTcsResponse
+import com.silospen.dropcalc.resource.ApiResponse
 import com.silospen.dropcalc.resource.Probability
 import io.ktor.client.*
 import org.apache.commons.math3.util.Precision
@@ -140,7 +141,10 @@ class DropCalcIntegTest {
 
     @Test
     fun monstersTest() {
+        runMonsterTestWithRemoteExpectations("andariel", MonsterType.BOSS, NORMAL, 1, 1, UNIQUE)
         runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, WHITE)
+        runMonsterTestWithRemoteExpectations("baalcrab", MonsterType.BOSS, NORMAL, 1, 1, WHITE)
+        runMonsterTestWithRemoteExpectations("andariel", MonsterType.BOSS, NORMAL, 1, 1, WHITE)
         runMonsterTestWithRemoteExpectations("snowyeti2", CHAMPION, NORMAL, 1, 1, WHITE)
         runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, HELL, 6, 6, WHITE)
     }
@@ -157,6 +161,21 @@ class DropCalcIntegTest {
             it
         )
     }
+
+    @Test
+    fun runLocalMonsterTests() =
+        getResource("integExpectations/monsterTests").listFiles()!!.filter { it.name.endsWith(".tsv") }.forEach {
+            val parts = it.name.removeSuffix(".tsv").split("_")
+            runMonsterTestWithLocalExpectations(
+                parts[0],
+                MonsterType.valueOf(parts[1]),
+                valueOf(parts[2]),
+                parts[3].toInt(),
+                parts[4].toInt(),
+                ItemQuality.valueOf(parts[5]),
+                it
+            )
+        }
 
     fun runMonsterTestWithRemoteExpectations(
         monsterId: String,
@@ -246,16 +265,16 @@ class DropCalcIntegTest {
     }
 
     private fun runAtomicTcAsserts(
-        actual: List<AtomicTcsResponse>,
-        expected: List<AtomicTcsResponse>,
+        actual: List<ApiResponse>,
+        expected: List<ApiResponse>,
         testInput: String
     ) {
-        val actualsByTcAndArea: Map<Pair<String, String>, List<AtomicTcsResponse>> =
-            actual.groupBy { it.tc to it.area }
+        val actualsByTcAndArea: Map<Pair<String, String>, List<ApiResponse>> =
+            actual.groupBy { it.name to it.area }
         val outcomes = expected
-            .filterNot { brokenTreasureClasses.contains(it.tc) }
+            .filterNot { brokenTreasureClasses.contains(it.name) }
             .map {
-                val key = it.tc to it.area
+                val key = it.name to it.area
                 val value = actualsByTcAndArea.getValue(key)
                 if (value.size != 1) throw RuntimeException("Multiple probs found for $it and $value")
                 val actualProb = value[0].prob
@@ -271,9 +290,9 @@ class DropCalcIntegTest {
         }
     }
 
-    private val tcExpectationDataLineParser = object : LineParser<AtomicTcsResponse?> {
-        override fun parseLine(line: List<String>): AtomicTcsResponse =
-            AtomicTcsResponse(line[0], line[1], Probability("", line[2].toDouble()))
+    private val tcExpectationDataLineParser = object : LineParser<ApiResponse?> {
+        override fun parseLine(line: List<String>): ApiResponse =
+            ApiResponse(line[0], line[1], Probability("", line[2].toDouble()))
     }
 
     private val brokenTreasureClasses = setOf(
@@ -297,6 +316,7 @@ class DropCalcIntegTest {
         "Large Charm",
         "Ring",
         "Small Charm",
-        "Fulminating Potion"
+        "Fulminating Potion",
+        "Rainbow Facet"
     )
 }

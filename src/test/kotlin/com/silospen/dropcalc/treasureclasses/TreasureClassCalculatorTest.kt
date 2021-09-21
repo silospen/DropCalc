@@ -20,7 +20,7 @@ class TreasureClassCalculatorTest {
         TreasureClassesLineParser()
     ).toList()
 
-    private val itemLibrary = ItemLibrary(listOf(armor1, weapon1, weapon2, ring))
+    private val itemLibrary = ItemLibrary(listOf(armor1, weapon1, weapon2, ring), emptyList(), emptyList())
     private val treasureClassCalculator = TreasureClassCalculator(
         treasureClassConfigs, itemLibrary
     )
