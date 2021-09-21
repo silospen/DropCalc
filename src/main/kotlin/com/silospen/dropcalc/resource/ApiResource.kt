@@ -49,6 +49,7 @@ class ApiResource(
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int,
         @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("magicFind", required = true) magicFind: Int,
     ) = getTreasureClassPathsForMonsterAndApplyFunction(
         monsterId,
         difficulty,
@@ -56,10 +57,16 @@ class ApiResource(
         VIRTUAL,
         nPlayers,
         partySize,
-        if (itemQuality == WHITE) ::generateBaseTreasureClassResponse else generateItemQualityResponse(itemQuality)
+        if (itemQuality == WHITE) ::generateBaseTreasureClassResponse else generateItemQualityResponse(
+            itemQuality,
+            magicFind
+        )
     )
 
-    private fun generateItemQualityResponse(itemQuality: ItemQuality): (TreasureClassPaths, Monster, OutcomeType) -> List<ApiResponse> =
+    private fun generateItemQualityResponse(
+        itemQuality: ItemQuality,
+        magicFind: Int
+    ): (TreasureClassPaths, Monster, OutcomeType) -> List<ApiResponse> =
         { treasureClassPaths, monster, outcomeType ->
             val baseItem = outcomeType as BaseItem
             val eligibleItems = itemLibrary.itemsByQualityAndBaseId
@@ -68,7 +75,7 @@ class ApiResource(
             val raritySum = eligibleItems.sumOf { it.rarity }
             eligibleItems.map { item ->
                 val additionalFactorGenerator: (ItemQualityRatios) -> BigFraction = {
-                    itemLibrary.getProbQuality(itemQuality, monster, baseItem, it)
+                    itemLibrary.getProbQuality(itemQuality, monster, baseItem, it, magicFind)
                         .multiply(BigFraction(item.rarity, raritySum))
                 }
                 ApiResponse(

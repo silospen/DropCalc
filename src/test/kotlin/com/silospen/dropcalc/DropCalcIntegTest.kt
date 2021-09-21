@@ -140,13 +140,16 @@ class DropCalcIntegTest {
 
     @Test
     fun monstersTest() {
-        runMonsterTestWithRemoteExpectations("andariel", MonsterType.BOSS, NORMAL, 1, 1, UNIQUE)
-        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, WHITE)
-        runMonsterTestWithRemoteExpectations("baalcrab", MonsterType.BOSS, NORMAL, 1, 1, WHITE)
-        runMonsterTestWithRemoteExpectations("andariel", MonsterType.BOSS, NORMAL, 1, 1, WHITE)
-        runMonsterTestWithRemoteExpectations("snowyeti2", CHAMPION, NORMAL, 1, 1, WHITE)
-        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, HELL, 6, 6, WHITE)
-        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, SET)
+        runMonsterTestWithRemoteExpectations("andariel", MonsterType.BOSS, NORMAL, 1, 1, UNIQUE, 0)
+        runMonsterTestWithRemoteExpectations("andariel", MonsterType.BOSS, NORMAL, 1, 1, UNIQUE, 500)
+        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, WHITE, 0)
+        runMonsterTestWithRemoteExpectations("baalcrab", MonsterType.BOSS, NORMAL, 1, 1, WHITE, 0)
+        runMonsterTestWithRemoteExpectations("baalcrab", MonsterType.BOSS, NORMAL, 1, 1, WHITE, 100)
+        runMonsterTestWithRemoteExpectations("andariel", MonsterType.BOSS, NORMAL, 1, 1, WHITE, 0)
+        runMonsterTestWithRemoteExpectations("snowyeti2", CHAMPION, NORMAL, 1, 1, WHITE, 0)
+        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, HELL, 6, 6, WHITE, 0)
+        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, SET, 0)
+        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, SET, 600)
     }
 
 //    testDataGenerator.generateMonsterExpectationDataToFile("zombie1", REGULAR, NORMAL, 1, 1, RARE)
@@ -176,6 +179,7 @@ class DropCalcIntegTest {
                 parts[3].toInt(),
                 parts[4].toInt(),
                 ItemQuality.valueOf(parts[5]),
+                parts[6].toInt(),
                 it
             )
         }
@@ -186,16 +190,18 @@ class DropCalcIntegTest {
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
-        itemQuality: ItemQuality
+        itemQuality: ItemQuality,
+        magicFind: Int,
     ) = runMonsterTestWithLocalExpectations(
-        monsterId, monsterType, difficulty, nPlayers, partySize, itemQuality,
+        monsterId, monsterType, difficulty, nPlayers, partySize, itemQuality, magicFind,
         testDataGenerator.generateMonsterExpectationDataToFile(
             monsterId,
             monsterType,
             difficulty,
             nPlayers,
             partySize,
-            itemQuality
+            itemQuality,
+            magicFind
         )
     )
 
@@ -206,13 +212,14 @@ class DropCalcIntegTest {
         nPlayers: Int,
         partySize: Int,
         itemQuality: ItemQuality,
+        magicFind: Int,
         file: File
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
-        { apiResource.getMonster(monsterId, monsterType, difficulty, nPlayers, partySize, itemQuality) },
+        { apiResource.getMonster(monsterId, monsterType, difficulty, nPlayers, partySize, itemQuality, magicFind) },
         this::runAtomicTcAsserts,
-        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality",
+        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind",
     )
 
     fun runAtomicTcTestWithRemoteExpectations(

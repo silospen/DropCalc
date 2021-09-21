@@ -17,7 +17,8 @@ class TestDataGenerator(private val client: HttpClient) {
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
-        quality: ItemQuality
+        quality: ItemQuality,
+        magicFind: Int,
     ) = generateExpectationDataToFile {
         generateMonsterExpectationData(
             monsterId,
@@ -25,7 +26,8 @@ class TestDataGenerator(private val client: HttpClient) {
             difficulty,
             nPlayers,
             partySize,
-            quality
+            quality,
+            magicFind
         )
     }
 
@@ -73,13 +75,14 @@ class TestDataGenerator(private val client: HttpClient) {
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
-        quality: ItemQuality
+        quality: ItemQuality,
+        magicFind: Int
     ): String = callSilospenDropCalcAndParseResponse(
         "https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=mon&monID=${monsterId.lowercase()}&diff=${
             toDifficulty(
                 difficulty
             )
-        }&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&quality=${toQuality(quality)}&mf=0&decMode=true&version=112"
+        }&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&quality=${toQuality(quality)}&mf=$magicFind&decMode=true&version=112"
     )
 
     private fun toQuality(quality: ItemQuality): String =
