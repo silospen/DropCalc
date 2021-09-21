@@ -96,7 +96,7 @@ class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios:
         val chanceWithMf = (mulChance * 100) / (100 + effectiveMf)
         val chanceAfterMin = if (min > chanceWithMf) min else chanceWithMf
         val chanceAfterFactor = chanceAfterMin - (chanceAfterMin * itemQualityRatios.get(itemQuality) / 1024)
-        return BigFraction(128, chanceAfterFactor)
+        return if (chanceAfterFactor == 0) BigFraction.ONE else BigFraction(128, chanceAfterFactor)
     }
 
     private fun getEffectiveMf(magicFind: Int, itemQuality: ItemQuality) = when (itemQuality) {

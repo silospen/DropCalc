@@ -89,4 +89,12 @@ class ItemLibraryTest {
             itemLibrary.getProbQuality(MAGIC, skeletonMonster, armor1, itemQualityRatios, 400)
         )
     }
+
+    @Test
+    fun getProbabilityQualityWhenGuaranteedDrop() {
+        assertEquals(
+            BigFraction.ONE,
+            itemLibrary.getProbQuality(UNIQUE, skeletonMonster, armor1, ItemQualityRatios(1024, 1, 1, 1), 400)
+        )
+    }
 }
