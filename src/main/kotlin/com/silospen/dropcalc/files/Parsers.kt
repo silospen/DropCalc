@@ -124,12 +124,17 @@ class ItemTypeParser(private val itemTypeCodeLibrary: ItemTypeCodeLibrary) : Lin
     override fun parseLine(line: List<String>): ItemType? {
         val id = line[1]
         if (id.isBlank()) return null
+//        val isOnlyMagic = parseNumericBoolean(line[14])
+        val canBeRare = parseNumericBoolean(line[15])
+        val isOnlyNormal = parseNumericBoolean(line[16])
         return ItemType(
             id,
             line[0],
             line[27].isNotBlank(),
             line[24].toInt(),
-            itemTypeCodeLibrary.getAllParentCodes(id) + id
+            itemTypeCodeLibrary.getAllParentCodes(id) + id,
+            canBeRare,
+            !isOnlyNormal
         )
     }
 }
@@ -162,6 +167,29 @@ class UniqueItemLineParser(
             translations.getTranslation(id),
             ItemQuality.UNIQUE,
             baseItemsById.getValue(line[8]),
+            level,
+            rarity
+        )
+    }
+}
+
+class SetItemLineParser(
+    private val translations: Translations,
+    baseItems: List<BaseItem>
+) : LineParser<Item?> {
+
+    private val baseItemsById = baseItems.associateBy { it.id }
+
+    override fun parseLine(line: List<String>): Item? {
+        val level = line[5].toIntOrNull() ?: 0
+        if (level == 0) return null
+        val id = line[0]
+        val rarity = line[4].toInt()
+        return Item(
+            id,
+            translations.getTranslation(id),
+            SET,
+            baseItemsById.getValue(line[2]),
             level,
             rarity
         )

@@ -104,7 +104,26 @@ class Beans {
             File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\uniqueItems.txt"),
             UniqueItemLineParser(translations, baseItems)
         )
-        return uniqueItems
+        val setItems = readTsv(
+            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SetItems.txt"),
+            SetItemLineParser(translations, baseItems)
+        )
+        val rareItems = generateItems(ItemQuality.RARE, baseItems) { it.itemType.canBeRare }
+        val magicItems = generateItems(ItemQuality.MAGIC, baseItems) { it.itemType.canBeRare }
+        return uniqueItems + setItems + rareItems + magicItems
     }
 
+    fun generateItems(itemQuality: ItemQuality, baseItems: List<BaseItem>, filter: (BaseItem) -> Boolean): List<Item> =
+        baseItems
+            .filter(filter)
+            .map {
+                Item(
+                    it.id,
+                    it.name,
+                    itemQuality,
+                    it,
+                    it.level,
+                    it.itemType.rarity
+                )
+            }
 }

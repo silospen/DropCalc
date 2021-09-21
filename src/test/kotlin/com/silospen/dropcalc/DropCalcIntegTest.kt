@@ -1,8 +1,7 @@
 package com.silospen.dropcalc
 
 import com.silospen.dropcalc.Difficulty.*
-import com.silospen.dropcalc.ItemQuality.UNIQUE
-import com.silospen.dropcalc.ItemQuality.WHITE
+import com.silospen.dropcalc.ItemQuality.*
 import com.silospen.dropcalc.MonsterType.CHAMPION
 import com.silospen.dropcalc.MonsterType.REGULAR
 import com.silospen.dropcalc.files.LineParser
@@ -147,7 +146,11 @@ class DropCalcIntegTest {
         runMonsterTestWithRemoteExpectations("andariel", MonsterType.BOSS, NORMAL, 1, 1, WHITE)
         runMonsterTestWithRemoteExpectations("snowyeti2", CHAMPION, NORMAL, 1, 1, WHITE)
         runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, HELL, 6, 6, WHITE)
+        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, SET)
     }
+
+//    testDataGenerator.generateMonsterExpectationDataToFile("zombie1", REGULAR, NORMAL, 1, 1, RARE)
+//    .copyTo(File("C:\\Users\\silos\\Projects\\DropCalc\\src\\test\\resources\\integExpectations\\monsterTests\\zombie1_REGULAR_NORMAL_1_1_RARE_0.tsv"))
 
     @Test
     fun runLocalTests() = getResource("integExpectations/tcTests").listFiles()!!.forEach {
@@ -155,7 +158,7 @@ class DropCalcIntegTest {
         runAtomicTcTestWithLocalExpectations(
             parts[0],
             MonsterType.valueOf(parts[1]),
-            valueOf(parts[2]),
+            Difficulty.valueOf(parts[2]),
             parts[3].toInt(),
             parts[4].toInt(),
             it
@@ -169,7 +172,7 @@ class DropCalcIntegTest {
             runMonsterTestWithLocalExpectations(
                 parts[0],
                 MonsterType.valueOf(parts[1]),
-                valueOf(parts[2]),
+                Difficulty.valueOf(parts[2]),
                 parts[3].toInt(),
                 parts[4].toInt(),
                 ItemQuality.valueOf(parts[5]),
@@ -205,10 +208,11 @@ class DropCalcIntegTest {
         itemQuality: ItemQuality,
         file: File
     ) = runTestWithLocalExpectations(
-        monsterId, monsterType, difficulty, nPlayers, partySize, file,
+        file,
         tcExpectationDataLineParser,
         { apiResource.getMonster(monsterId, monsterType, difficulty, nPlayers, partySize, itemQuality) },
         this::runAtomicTcAsserts,
+        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality",
     )
 
     fun runAtomicTcTestWithRemoteExpectations(
@@ -236,23 +240,19 @@ class DropCalcIntegTest {
         partySize: Int,
         file: File
     ) = runTestWithLocalExpectations(
-        monsterId, monsterType, difficulty, nPlayers, partySize,
         file,
         tcExpectationDataLineParser,
         { apiResource.getAtomicTcs(monsterId, monsterType, difficulty, nPlayers, partySize) },
         this::runAtomicTcAsserts,
+        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize",
     )
 
     fun <T> runTestWithLocalExpectations(
-        monsterId: String,
-        monsterType: MonsterType,
-        difficulty: Difficulty,
-        nPlayers: Int,
-        partySize: Int,
         expectationsFile: File,
         expectationsLineParser: LineParser<T?>,
         actualSource: () -> List<T>,
-        assertionsRunner: (List<T>, List<T>, String) -> Unit
+        assertionsRunner: (List<T>, List<T>, String) -> Unit,
+        inputsForLogging: String
     ) {
         val actual = actualSource()
         val expected = readTsv(
@@ -261,7 +261,7 @@ class DropCalcIntegTest {
         )
         assertTrue(expected.isNotEmpty(), "Expected is empty")
         assertTrue(actual.isNotEmpty(), "Actual is empty")
-        assertionsRunner(actual, expected, "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize")
+        assertionsRunner(actual, expected, inputsForLogging)
     }
 
     private fun runAtomicTcAsserts(

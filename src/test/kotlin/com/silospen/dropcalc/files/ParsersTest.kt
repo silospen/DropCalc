@@ -81,6 +81,26 @@ class UniqueItemsLineParserTest {
     }
 }
 
+class SetItemsLineParserTest {
+    @Test
+    fun setItemsParser() {
+        val shieldItemType = ItemType("lrg", "Large Shield", false, 3, setOf("armo"))
+        val shieldBaseItem = BaseItem("lrg", "shield-name", shieldItemType, ItemVersion.NORMAL, 1, setOf("armo3"))
+        val actual = readTsv(
+            getResource("parsersTestData/setitems.txt"),
+            SetItemLineParser(
+                stubTranslations, listOf(
+                    shieldBaseItem
+                )
+            )
+        )
+        val expected = listOf(
+            Item("Civerb's Ward", "Civerb's Ward-name", ItemQuality.SET, shieldBaseItem, 13, 7),
+        )
+        assertEquals(expected, actual)
+    }
+}
+
 class BaseItemLineParserTest {
     @Test
     fun weaponParser() {
@@ -161,7 +181,7 @@ class ItemTypeParserTest {
             listOf(
                 ItemType("shie", "Shield", false, 3, setOf("armo", "shie")),
                 ItemType("tors", "Armor", false, 3, setOf("armo", "tors")),
-                ItemType("gold", "Gold", false, 3, setOf("misc", "gold")),
+                ItemType("gold", "Gold", false, 3, setOf("misc", "gold"), canBeRare = false, canBeMagic = false),
                 ItemType("aspe", "Amazon Spear", true, 1, setOf("weap", "aspe"))
             ), actual
         )

@@ -1,6 +1,7 @@
 package com.silospen.dropcalc.items
 
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.ItemQuality.*
 import org.apache.commons.math3.fraction.BigFraction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -32,24 +33,40 @@ class ItemLibraryTest {
     }
 
     @Test
-    fun getProbQuality_unique() {
+    fun getProbQuality() {
         val itemLibrary = ItemLibrary(
             listOf(armor1, weapon1, weapon2, ring),
             listOf(
                 ItemRatio(
                     isUber = false,
                     isClassSpecific = false,
-                    modifiers = mapOf(ItemQuality.UNIQUE to ItemQualityModifiers(1, 2, 10))
+                    modifiers = mapOf(
+                        UNIQUE to ItemQualityModifiers(400, 2, 10),
+                        RARE to ItemQualityModifiers(100, 4, 10),
+                        SET to ItemQualityModifiers(100, 6, 10),
+                        MAGIC to ItemQualityModifiers(10, 8, 10)
+                    )
                 )
             ),
             emptyList()
         )
-        val probQuality = itemLibrary.getProbQuality(
-            ItemQuality.UNIQUE,
-            skeletonMonster,
-            armor1,
-            ItemQualityRatios(100, 200, 300, 400)
+        val itemQualityRatios = ItemQualityRatios(400, 300, 200, 100)
+        assertEquals(
+            BigFraction(4, 975),
+            itemLibrary.getProbQuality(UNIQUE, skeletonMonster, armor1, itemQualityRatios)
         )
-        assertEquals(BigFraction(32, 29), probQuality)
+        assertEquals(
+            BigFraction(62144, 4411875),
+            itemLibrary.getProbQuality(SET, skeletonMonster, armor1, itemQualityRatios)
+        )
+        assertEquals(
+            BigFraction(46204064, 3786859375),
+            itemLibrary.getProbQuality(RARE, skeletonMonster, armor1, itemQualityRatios)
+        )
+        assertEquals(
+            BigFraction(469987739008, 4373822578125),
+            itemLibrary.getProbQuality(MAGIC, skeletonMonster, armor1, itemQualityRatios)
+        )
     }
+
 }

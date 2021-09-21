@@ -1,7 +1,7 @@
 package com.silospen.dropcalc.resource
 
 import com.silospen.dropcalc.*
-import com.silospen.dropcalc.ItemQuality.WHITE
+import com.silospen.dropcalc.ItemQuality.*
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
@@ -64,7 +64,7 @@ class ApiResource(
             val baseItem = outcomeType as BaseItem
             val eligibleItems = itemLibrary.itemsByQualityAndBaseId
                 .getOrDefault(itemQuality to baseItem.id, emptyList())
-                .filter { it.level <= monster.level }
+                .filter { if (itemQuality == UNIQUE || itemQuality == SET) it.level <= monster.level else true }
             val raritySum = eligibleItems.sumOf { it.rarity }
             eligibleItems.map { item ->
                 val additionalFactorGenerator: (ItemQualityRatios) -> BigFraction = {

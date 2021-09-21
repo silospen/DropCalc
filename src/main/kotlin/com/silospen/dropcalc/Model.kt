@@ -102,7 +102,9 @@ data class ItemType(
     val name: String,
     val isClassSpecific: Boolean,
     val rarity: Int,
-    val itemTypeCodes: Set<String>
+    val itemTypeCodes: Set<String>,
+    val canBeRare: Boolean = true,
+    val canBeMagic: Boolean = true
 )
 
 data class ItemQualityModifiers(

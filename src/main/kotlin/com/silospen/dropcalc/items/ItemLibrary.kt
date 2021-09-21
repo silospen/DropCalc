@@ -1,6 +1,7 @@
 package com.silospen.dropcalc.items
 
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.ItemQuality.*
 import com.silospen.dropcalc.monsters.Monster
 import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.stereotype.Component
@@ -39,6 +40,33 @@ class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios:
     }
 
     fun getProbQuality(
+        itemQuality: ItemQuality,
+        monster: Monster,
+        baseItem: BaseItem,
+        itemQualityRatios: ItemQualityRatios
+    ): BigFraction {
+        return when (itemQuality) {
+            UNIQUE -> getProbOfSingleItemQuality(UNIQUE, monster, baseItem, itemQualityRatios)
+            SET -> getProbQualitySequentially(SET, listOf(UNIQUE), monster, baseItem, itemQualityRatios)
+            RARE -> getProbQualitySequentially(RARE, listOf(UNIQUE, SET), monster, baseItem, itemQualityRatios)
+            MAGIC -> getProbQualitySequentially(MAGIC, listOf(UNIQUE, SET, RARE), monster, baseItem, itemQualityRatios)
+            else -> throw IllegalArgumentException("Unexpected item quality: $itemQuality")
+        }
+    }
+
+    private fun getProbQualitySequentially(
+        wantedItemQuality: ItemQuality,
+        unwantedItemQualities: List<ItemQuality>,
+        monster: Monster,
+        baseItem: BaseItem,
+        itemQualityRatios: ItemQualityRatios
+    ) = unwantedItemQualities
+        .map { getProbOfSingleItemQuality(it, monster, baseItem, itemQualityRatios) }
+        .map { BigFraction.ONE.subtract(it) }
+        .reduce { acc, bigFraction -> acc.multiply(bigFraction) }
+        .multiply(getProbOfSingleItemQuality(wantedItemQuality, monster, baseItem, itemQualityRatios))
+
+    private fun getProbOfSingleItemQuality(
         itemQuality: ItemQuality,
         monster: Monster,
         baseItem: BaseItem,

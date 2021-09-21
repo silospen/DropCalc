@@ -86,7 +86,9 @@ class TestDataGenerator(private val client: HttpClient) {
         when (quality) {
             ItemQuality.WHITE -> "regItem"
             ItemQuality.UNIQUE -> "uniqItem"
-            else -> throw RuntimeException()
+            ItemQuality.SET -> "setItem"
+            ItemQuality.RARE -> "rareItem"
+            ItemQuality.MAGIC -> "magicItem"
         }
 
     private fun toDifficulty(difficulty: Difficulty) = when (difficulty) {
