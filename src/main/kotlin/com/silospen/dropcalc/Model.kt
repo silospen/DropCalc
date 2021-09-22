@@ -79,7 +79,7 @@ data class Area(
     val monsterClassIds: Table<Difficulty, MonsterType, Set<String>>
 )
 
-data class Item( //Follow the same pattern as monsters and have this as the item type and then another item with the actual instance of an item?
+data class Item(
     val id: String,
     val name: String,
     val quality: ItemQuality,

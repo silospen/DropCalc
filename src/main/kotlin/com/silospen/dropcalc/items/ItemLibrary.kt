@@ -6,7 +6,11 @@ import com.silospen.dropcalc.monsters.Monster
 import org.springframework.stereotype.Component
 
 @Component
-class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios: List<ItemRatio>, items: List<Item>) {
+final class ItemLibrary(
+    private val baseItems: List<BaseItem>,
+    private val itemRatios: List<ItemRatio>,
+    val items: List<Item>
+) {
     private val itemTreasureClassesByName = generateVirtualTreasureClasses().associateBy { it.name }
     private val baseItemsById = baseItems.associateBy { it.id }
     private val itemsByQualityAndBaseId = items.groupBy { it.quality to it.baseItem.id }

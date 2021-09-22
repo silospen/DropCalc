@@ -426,7 +426,7 @@ class LevelsLineParser(
 
 private fun parseNumericBoolean(s: String) = s == "1"
 
-private fun <R, C, V> Table<R, C, V>.getOrDefault(rowKey: R, colKey: C, default: V): V {
+fun <R, C, V> Table<R, C, V>.getOrDefault(rowKey: R, colKey: C, default: V): V {
     return get(rowKey, colKey) ?: default
 }
 
