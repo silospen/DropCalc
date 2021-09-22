@@ -25,7 +25,7 @@ class MonsterLibraryTest {
                     mapOf(NORMAL to "Bonebreak TC", HELL to "Bonebreak TC(H)")
                 )
             ),
-            areasLibrary
+            MonsterFactory(areasLibrary)
         )
         val expected = MonsterLibrary(monstersTestData)
         assertEquals(expected, actual)
@@ -46,9 +46,11 @@ class MonsterLibraryTest {
         val actual = MonsterLibrary.fromConfig(
             listOf(durielMonsterClass),
             emptyList(),
-            AreasLibrary.fromAreas(
-                listOf(
-                    durielArea
+            MonsterFactory(
+                AreasLibrary.fromAreas(
+                    listOf(
+                        durielArea
+                    )
                 )
             )
         )

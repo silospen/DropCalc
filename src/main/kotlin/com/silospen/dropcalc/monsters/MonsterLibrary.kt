@@ -2,6 +2,7 @@ package com.silospen.dropcalc.monsters
 
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.areas.AreasLibrary
+import org.springframework.stereotype.Component
 
 class MonsterLibrary(val monsters: Set<Monster>) {
     private val monstersByIdDifficultyType =
@@ -11,24 +12,21 @@ class MonsterLibrary(val monsters: Set<Monster>) {
         fun fromConfig(
             monsterClassConfigs: List<MonsterClass>,
             superUniqueMonsterConfigs: List<SuperUniqueMonsterConfig>,
-            areasLibrary: AreasLibrary
+            monsterFactory: MonsterFactory
         ): MonsterLibrary {
             val monsterClassConfigsById = monsterClassConfigs.associateBy { it.id }
             val superUniqueConfigsById = superUniqueMonsterConfigs.associateBy { it.id }
             val monstersFromClassConfigs = monsterClassConfigs.flatMap { monsterClass ->
                 monsterClass.monsterClassTreasureClasses.cellSet().flatMap {
-                    createMonster(areasLibrary, monsterClass, it.rowKey!!, it.columnKey!!)
+                    monsterFactory.createMonster(monsterClass, it.rowKey!!, it.columnKey!!)
                 }
             }
             val monstersFromSuperUniqueMonsterConfigs = superUniqueMonsterConfigs.flatMap { superUniqueMonsterConfig ->
                 superUniqueMonsterConfig.treasureClasses.map { (difficulty, treasureClass) ->
-                    Monster(
-                        superUniqueMonsterConfig.id,
-                        superUniqueMonsterConfig.name,
+                    monsterFactory.createSuperUniqueMonster(
+                        superUniqueMonsterConfig,
                         monsterClassConfigsById.getValue(superUniqueMonsterConfig.monsterClassId),
-                        areasLibrary.getArea(superUniqueMonsterConfig.areaName),
                         difficulty,
-                        MonsterType.SUPERUNIQUE,
                         treasureClass
                     )
                 }
@@ -41,45 +39,13 @@ class MonsterLibrary(val monsters: Set<Monster>) {
                 .flatMap { parentMonster ->
                     parentMonster.monsterClass.minionIds.map { minionId ->
                         val monsterClass = monsterClassConfigsById.getValue(minionId)
-                        Monster(
-                            "$minionId:${parentMonster.id}",
-                            "${monsterClass.name} (${parentMonster.name})",
-                            parentMonster.monsterClass,
-                            parentMonster.area,
-                            parentMonster.difficulty,
-                            MonsterType.MINION,
-                            monsterClass.monsterClassTreasureClasses.getValue(
-                                parentMonster.difficulty,
-                                TreasureClassType.REGULAR
-                            )
-                        )
+                        monsterFactory.createMinionMonster(minionId, parentMonster, monsterClass)
                     }
                 }
 
             return MonsterLibrary(
                 (minions + monstersFromSuperUniqueMonsterConfigs + monstersFromClassConfigs).toSet()
             )
-        }
-
-        private fun createMonster(
-            areasLibrary: AreasLibrary,
-            monsterClass: MonsterClass,
-            difficulty: Difficulty,
-            treasureClassType: TreasureClassType
-        ): List<Monster> {
-            return treasureClassType.validMonsterTypes.flatMap { monsterType ->
-                areasLibrary.getAreasForMonsterClassId(monsterClass.id, difficulty, monsterType).map {
-                    Monster(
-                        "${monsterClass.id}${treasureClassType.idSuffix}",
-                        monsterClass.name + if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else "",
-                        monsterClass,
-                        it,
-                        difficulty,
-                        monsterType,
-                        monsterClass.monsterClassTreasureClasses.getValue(difficulty, treasureClassType)
-                    )
-                }
-            }
         }
     }
 
@@ -106,5 +72,60 @@ class MonsterLibrary(val monsters: Set<Monster>) {
 
     override fun toString(): String {
         return "MonsterLibrary(monsters=$monsters, monstersByIdDifficultyType=$monstersByIdDifficultyType)"
+    }
+}
+
+@Component
+class MonsterFactory(private val areasLibrary: AreasLibrary) {
+    fun createMinionMonster(
+        minionId: String,
+        parentMonster: Monster,
+        monsterClass: MonsterClass
+    ) = Monster(
+        "$minionId:${parentMonster.id}",
+        "${monsterClass.name} (${parentMonster.name})",
+        parentMonster.monsterClass,
+        parentMonster.area,
+        parentMonster.difficulty,
+        MonsterType.MINION,
+        monsterClass.monsterClassTreasureClasses.getValue(
+            parentMonster.difficulty,
+            TreasureClassType.REGULAR
+        )
+    )
+
+    fun createSuperUniqueMonster(
+        superUniqueMonsterConfig: SuperUniqueMonsterConfig,
+        monsterClass: MonsterClass,
+        difficulty: Difficulty,
+        treasureClass: String
+    ) = Monster(
+        superUniqueMonsterConfig.id,
+        superUniqueMonsterConfig.name,
+        monsterClass,
+        areasLibrary.getArea(superUniqueMonsterConfig.areaName),
+        difficulty,
+        MonsterType.SUPERUNIQUE,
+        treasureClass
+    )
+
+    fun createMonster(
+        monsterClass: MonsterClass,
+        difficulty: Difficulty,
+        treasureClassType: TreasureClassType
+    ): List<Monster> {
+        return treasureClassType.validMonsterTypes.flatMap { monsterType ->
+            areasLibrary.getAreasForMonsterClassId(monsterClass.id, difficulty, monsterType).map {
+                Monster(
+                    "${monsterClass.id}${treasureClassType.idSuffix}",
+                    monsterClass.name + if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else "",
+                    monsterClass,
+                    it,
+                    difficulty,
+                    monsterType,
+                    monsterClass.monsterClassTreasureClasses.getValue(difficulty, treasureClassType)
+                )
+            }
+        }
     }
 }

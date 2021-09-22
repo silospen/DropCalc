@@ -7,6 +7,7 @@ import com.silospen.dropcalc.areas.hardcodedSuperUniqueAreas
 import com.silospen.dropcalc.files.*
 import com.silospen.dropcalc.items.ItemTypeCodeLibrary
 import com.silospen.dropcalc.items.SingleItemTypeCodeEntry
+import com.silospen.dropcalc.monsters.MonsterFactory
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import com.silospen.dropcalc.translations.CompositeTranslations
 import com.silospen.dropcalc.translations.MapBasedTranslations
@@ -51,9 +52,9 @@ class Beans {
     fun getMonsterLibrary(
         monsterClassConfigs: List<MonsterClass>,
         superUniqueMonsterConfigs: List<SuperUniqueMonsterConfig>,
-        areasLibrary: AreasLibrary
+        monsterFactory: MonsterFactory
     ): MonsterLibrary {
-        return MonsterLibrary.fromConfig(monsterClassConfigs, superUniqueMonsterConfigs, areasLibrary)
+        return MonsterLibrary.fromConfig(monsterClassConfigs, superUniqueMonsterConfigs, monsterFactory)
     }
 
     @Bean
