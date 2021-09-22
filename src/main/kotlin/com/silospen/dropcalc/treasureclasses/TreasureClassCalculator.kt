@@ -230,6 +230,7 @@ internal fun calculateNoDrop(
     partySize: Int
 ): Int {
     if (noDrop == null || noDrop < 1) return 0
+    if (nPlayers <= 1) return noDrop
     val noDropExponent = floor(1 + ((nPlayers - 1) / 2.0) + ((partySize - 1) / 2.0)).toInt()
     val baseNoDropRate: Double = noDrop.toDouble() / (noDrop + tcProbabilityDenominator)
     val newNoDropRateBd: BigDecimal = baseNoDropRate.pow(noDropExponent).toBigDecimal()

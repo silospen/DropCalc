@@ -23,8 +23,6 @@ class DropCalcIntegTest {
 
     @Test
     fun remoteTests() {
-//        runItemsTestWithRemoteExpectations("The Stone of Jordan", REGULAR, HELL, 1, 1, UNIQUE, 0)
-//        runItemsTestWithRemoteExpectations("The Stone of Jordan", BOSS, HELL, 1, 1, UNIQUE, 0)
     }
 
     @Test
@@ -95,6 +93,7 @@ class DropCalcIntegTest {
             itemQuality,
             magicFind
         )
+//            .copyTo(File("C:\\Users\\silos\\Projects\\DropCalc\\src\\test\\resources\\integExpectations\\itemTests\\${itemId}_${monsterType}_${difficulty}_${nPlayers}_${partySize}_${itemQuality}_${magicFind}.tsv"))
     )
 
     fun runItemsTestWithLocalExpectations(
@@ -143,6 +142,16 @@ class DropCalcIntegTest {
             itemQuality,
             magicFind
         )
+//            .copyTo(
+//                File(
+//                    "C:\\Users\\silos\\Projects\\DropCalc\\src\\test\\resources\\integExpectations\\monsterTests\\${
+//                        monsterId.replace(
+//                            ":",
+//                            "$"
+//                        )
+//                    }_${monsterType}_${difficulty}_${nPlayers}_${partySize}_${itemQuality}_${magicFind}.tsv"
+//                )
+//            )
     )
 
     fun runMonsterTestWithLocalExpectations(
@@ -177,6 +186,16 @@ class DropCalcIntegTest {
             nPlayers,
             partySize
         )
+//            .copyTo(
+//                File(
+//                    "C:\\Users\\silos\\Projects\\DropCalc\\src\\test\\resources\\integExpectations\\tcTests\\${
+//                        monsterId.replace(
+//                            ":",
+//                            "$"
+//                        )
+//                    }_${monsterType}_${difficulty}_${nPlayers}_${partySize}.tsv"
+//                )
+//            )
     )
 
     fun runAtomicTcTestWithLocalExpectations(
