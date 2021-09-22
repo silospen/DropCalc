@@ -1,9 +1,5 @@
 package com.silospen.dropcalc
 
-import com.silospen.dropcalc.Difficulty.*
-import com.silospen.dropcalc.ItemQuality.*
-import com.silospen.dropcalc.ItemQuality.UNIQUE
-import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
@@ -26,167 +22,26 @@ class DropCalcIntegTest {
     private lateinit var testDataGenerator: TestDataGenerator
 
     @Test
-    fun test() {
-        runAtomicTcTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 3, 3)
-        runAtomicTcTestWithRemoteExpectations("snowyeti2", REGULAR, NIGHTMARE, 3, 3)
-        runAtomicTcTestWithRemoteExpectations("snowyeti2", REGULAR, HELL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("snowyeti2", REGULAR, HELL, 3, 3)
-        runAtomicTcTestWithRemoteExpectations("snowyeti2", CHAMPION, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("snowyeti2", CHAMPION, HELL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("snowyeti2", CHAMPION, HELL, 8, 8)
-        runAtomicTcTestWithRemoteExpectations("snowyeti2", MonsterType.UNIQUE, HELL, 8, 8)
-    }
-
-    @Test
-    fun primeEvilTest() {
-        runAtomicTcTestWithRemoteExpectations("mephisto", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("mephisto", BOSS, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("mephisto", BOSS, HELL, 6, 6)
-        runAtomicTcTestWithRemoteExpectations("mephistoq", BOSS, HELL, 6, 6)
-        runAtomicTcTestWithRemoteExpectations("diablo", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("diablo", BOSS, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("diablo", BOSS, HELL, 6, 6)
-        runAtomicTcTestWithRemoteExpectations("diabloq", BOSS, HELL, 6, 6)
-        runAtomicTcTestWithRemoteExpectations("baalcrab", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("baalcrab", BOSS, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("baalcrab", BOSS, HELL, 6, 6)
-        runAtomicTcTestWithRemoteExpectations("baalcrabq", BOSS, HELL, 6, 6)
-    }
-
-    @Test
-    fun bossTest() {
-        runAtomicTcTestWithRemoteExpectations("radament", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("radament", BOSS, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("radament", BOSS, NIGHTMARE, 6, 6)
-        runAtomicTcTestWithRemoteExpectations("radament", BOSS, HELL, 1, 1)
-
-        runAtomicTcTestWithRemoteExpectations("summoner", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("summoner", BOSS, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("summoner", BOSS, HELL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("summoner", BOSS, HELL, 7, 7)
-
-        runAtomicTcTestWithRemoteExpectations("izual", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("izual", BOSS, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("izual", BOSS, HELL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("izual", BOSS, HELL, 7, 7)
-
-        runAtomicTcTestWithRemoteExpectations("bloodraven", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("bloodraven", BOSS, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("bloodraven", BOSS, HELL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("bloodraven", BOSS, HELL, 7, 7)
-
-        runAtomicTcTestWithRemoteExpectations("nihlathakboss", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("nihlathakboss", BOSS, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("nihlathakboss", BOSS, HELL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("nihlathakboss", BOSS, HELL, 7, 7)
-
-        runAtomicTcTestWithRemoteExpectations("andariel", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("andariel", BOSS, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("andariel", BOSS, HELL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("andariel", BOSS, HELL, 7, 7)
-
-        runAtomicTcTestWithRemoteExpectations("putriddefiler1", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler2", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler3", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler4", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler5", BOSS, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler1", BOSS, NIGHTMARE, 5, 3)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler2", BOSS, NIGHTMARE, 5, 3)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler3", BOSS, NIGHTMARE, 5, 3)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler4", BOSS, NIGHTMARE, 5, 3)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler5", BOSS, NIGHTMARE, 5, 3)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler1", BOSS, HELL, 8, 8)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler2", BOSS, HELL, 8, 8)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler3", BOSS, HELL, 8, 8)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler4", BOSS, HELL, 8, 8)
-        runAtomicTcTestWithRemoteExpectations("putriddefiler5", BOSS, HELL, 8, 8)
-    }
-
-    @Test
-    fun minionTest() {
-        runAtomicTcTestWithRemoteExpectations("skeleton4:Radament", MINION, HELL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("skeleton1:skeleton1", MINION, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("skeleton2:skeleton2", MINION, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("skeleton2:unraveler1", MINION, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("skeleton2:unraveler1", MINION, HELL, 5, 5)
-        runAtomicTcTestWithRemoteExpectations("snowyeti4:Frozenstein", MINION, HELL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("snowyeti4:Frozenstein", MINION, NIGHTMARE, 3, 3)
-    }
-
-    @Test
-    fun superUniqueTest() {
-        runAtomicTcTestWithRemoteExpectations("Bloodwitch the Wild", SUPERUNIQUE, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("Axe Dweller", SUPERUNIQUE, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("Toorc Icefist", SUPERUNIQUE, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("Pindleskin", SUPERUNIQUE, NORMAL, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("Pindleskin", SUPERUNIQUE, NIGHTMARE, 1, 1)
-        runAtomicTcTestWithRemoteExpectations("Pindleskin", SUPERUNIQUE, HELL, 8, 8)
-        runAtomicTcTestWithRemoteExpectations("Baal Subject 3", SUPERUNIQUE, NORMAL, 1, 1)
-        runAtomicTcTestWithLocalExpectations(
-            "Nihlathak Boss",
-            SUPERUNIQUE,
-            NORMAL,
-            1,
-            1,
-            testDataGenerator.generateTcExpectationDataToFile(
-                "nihlathakboss",
-                BOSS,
-                NORMAL,
-                1,
-                1
-            )
-        )
-    }
-
-    @Test
-    fun monstersTest() {
-        runMonsterTestWithRemoteExpectations("andariel", BOSS, NORMAL, 1, 1, UNIQUE, 0)
-        runMonsterTestWithRemoteExpectations("andariel", BOSS, NORMAL, 1, 1, UNIQUE, 500)
-        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, WHITE, 0)
-        runMonsterTestWithRemoteExpectations("baalcrab", BOSS, NORMAL, 1, 1, WHITE, 0)
-        runMonsterTestWithRemoteExpectations("baalcrab", BOSS, NORMAL, 1, 1, WHITE, 100)
-        runMonsterTestWithRemoteExpectations("andariel", BOSS, NORMAL, 1, 1, WHITE, 0)
-        runMonsterTestWithRemoteExpectations("snowyeti2", CHAMPION, NORMAL, 1, 1, WHITE, 0)
-        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, HELL, 6, 6, WHITE, 0)
-        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, SET, 0)
-        runMonsterTestWithRemoteExpectations("snowyeti2", REGULAR, NORMAL, 1, 1, SET, 600)
-    }
-
-//    testDataGenerator.generateMonsterExpectationDataToFile("zombie1", REGULAR, NORMAL, 1, 1, RARE)
-//    .copyTo(File("C:\\Users\\silos\\Projects\\DropCalc\\src\\test\\resources\\integExpectations\\monsterTests\\zombie1_REGULAR_NORMAL_1_1_RARE_0.tsv"))
-
-    @Test
-    fun itemsTest() {
+    fun remoteTests() {
 //        runItemsTestWithRemoteExpectations("The Stone of Jordan", REGULAR, HELL, 1, 1, UNIQUE, 0)
 //        runItemsTestWithRemoteExpectations("The Stone of Jordan", BOSS, HELL, 1, 1, UNIQUE, 0)
-        runItemsTestWithRemoteExpectations("scm", REGULAR, NORMAL, 1, 1, WHITE, 0)
-        runItemsTestWithRemoteExpectations("scm", REGULAR, NORMAL, 1, 1, RARE, 0)
-        runItemsTestWithRemoteExpectations("scm", REGULAR, NORMAL, 1, 1, RARE, 500)
-        runItemsTestWithRemoteExpectations("scm", REGULAR, NORMAL, 1, 1, MAGIC, 500)
-        runItemsTestWithRemoteExpectations("utg", MINION, HELL, 1, 1, WHITE, 0)
-        runItemsTestWithRemoteExpectations("utg", MINION, HELL, 1, 1, RARE, 0)
-        runItemsTestWithRemoteExpectations("utg", MINION, HELL, 1, 1, RARE, 500)
-        runItemsTestWithRemoteExpectations("utg", MINION, HELL, 1, 1, MAGIC, 500)
     }
 
     @Test
-    fun runLocalTests() = getResource("integExpectations/tcTests").listFiles()!!.forEach {
-        val parts = it.name.removeSuffix(".tsv").split("_")
+    fun runLocalTcTests() = runLocalTests("integExpectations/tcTests") { parts, file ->
         runAtomicTcTestWithLocalExpectations(
             parts[0],
             MonsterType.valueOf(parts[1]),
             Difficulty.valueOf(parts[2]),
             parts[3].toInt(),
             parts[4].toInt(),
-            it
+            file
         )
     }
 
     @Test
     fun runLocalMonsterTests() =
-        getResource("integExpectations/monsterTests").listFiles()!!.filter { it.name.endsWith(".tsv") }.forEach {
-            val parts = it.name.removeSuffix(".tsv").split("_")
+        runLocalTests("integExpectations/monsterTests") { parts, file ->
             runMonsterTestWithLocalExpectations(
                 parts[0],
                 MonsterType.valueOf(parts[1]),
@@ -195,9 +50,31 @@ class DropCalcIntegTest {
                 parts[4].toInt(),
                 ItemQuality.valueOf(parts[5]),
                 parts[6].toInt(),
-                it
+                file
             )
         }
+
+    @Test
+    fun runLocalItemTests() =
+        runLocalTests("integExpectations/itemTests") { parts, file ->
+            runItemsTestWithLocalExpectations(
+                parts[0],
+                MonsterType.valueOf(parts[1]),
+                Difficulty.valueOf(parts[2]),
+                parts[3].toInt(),
+                parts[4].toInt(),
+                ItemQuality.valueOf(parts[5]),
+                parts[6].toInt(),
+                file
+            )
+        }
+
+    fun runLocalTests(resourceName: String, testToRun: (List<String>, File) -> Unit) {
+        getResource(resourceName).listFiles()!!.filter { it.name.endsWith(".tsv") }.forEach {
+            val parts = it.name.removeSuffix(".tsv").replace("$", ":").split("_")
+            testToRun(parts, it)
+        }
+    }
 
     fun runItemsTestWithRemoteExpectations(
         itemId: String,
@@ -367,7 +244,6 @@ class DropCalcIntegTest {
     }
 
     private val brokenNames = setOf(
-        //TODO: CM, JEW, RIN don't appear to have changes in drop rate due to player changes? Is this correct?
         "cm1",
         "cm2",
         "cm3",
