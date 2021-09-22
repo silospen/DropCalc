@@ -161,10 +161,10 @@ enum class ItemVersion {
     ELITE,
 }
 
-enum class Difficulty {
-    NORMAL,
-    NIGHTMARE,
-    HELL
+enum class Difficulty(val displayString: String) {
+    NORMAL("N"),
+    NIGHTMARE("NM"),
+    HELL("H")
 }
 
 enum class MonsterType {

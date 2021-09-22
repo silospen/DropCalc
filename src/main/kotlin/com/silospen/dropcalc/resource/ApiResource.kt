@@ -27,25 +27,23 @@ class ApiResource(
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int
-    ): List<ApiResponse> {
-        return monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
-            .asSequence()
-            .flatMap { monster ->
-                val treasureClassPaths: TreasureClassPaths =
-                    treasureClassCalculator.getLeafOutcomes(monster.treasureClass, DEFINED, null, nPlayers, partySize)
-                treasureClassPaths
-                    .asSequence()
-                    .map {
-                        ApiResponse(
-                            it.name,
-                            monster.area.name,
-                            treasureClassPaths.getFinalProbability(it).toDouble()
-                        )
-                    }
-            }
-            .sortedBy { it.name }
-            .toList()
-    }
+    ): List<ApiResponse> = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
+        .asSequence()
+        .flatMap { monster ->
+            val treasureClassPaths: TreasureClassPaths =
+                treasureClassCalculator.getLeafOutcomes(monster.treasureClass, DEFINED, null, nPlayers, partySize)
+            treasureClassPaths
+                .asSequence()
+                .map {
+                    ApiResponse(
+                        it.name,
+                        monster.area.name,
+                        treasureClassPaths.getFinalProbability(it).toDouble()
+                    )
+                }
+        }
+        .sortedBy { it.name }
+        .toList()
 
     @GetMapping("/monster")
     fun getMonster(
@@ -56,22 +54,20 @@ class ApiResource(
         @RequestParam("party", required = true) partySize: Int,
         @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
         @RequestParam("magicFind", required = true) magicFind: Int,
-    ): List<ApiResponse> {
-        return monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
-            .asSequence()
-            .flatMap { monster ->
-                val treasureClassPaths: TreasureClassPaths =
-                    treasureClassCalculator.getLeafOutcomes(monster.treasureClass, VIRTUAL, null, nPlayers, partySize)
-                treasureClassPaths
-                    .asSequence()
-                    .flatMap {
-                        generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it)
-                        { item, monster, prob -> ApiResponse(item.name, monster.area.name, prob) }
-                    }
-            }
-            .sortedBy { it.name }
-            .toList()
-    }
+    ): List<ApiResponse> = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
+        .asSequence()
+        .flatMap { monster ->
+            val treasureClassPaths: TreasureClassPaths =
+                treasureClassCalculator.getLeafOutcomes(monster.treasureClass, VIRTUAL, null, nPlayers, partySize)
+            treasureClassPaths
+                .asSequence()
+                .flatMap {
+                    generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it, null)
+                    { item, monster, prob -> ApiResponse(item.name, monster.area.name, prob) }
+                }
+        }
+        .sortedBy { it.name }
+        .toList()
 
     private fun generateItemQualityResponse(
         itemQuality: ItemQuality,
@@ -79,6 +75,7 @@ class ApiResource(
         treasureClassPaths: TreasureClassPaths,
         monster: Monster,
         outcomeType: OutcomeType,
+        itemToFilterTo: Item?,
         responseGenerator: (Item, Monster, Double) -> ApiResponse
     ): Sequence<ApiResponse> {
         val baseItem = outcomeType as BaseItem
@@ -86,7 +83,7 @@ class ApiResource(
             .asSequence()
             .filter { if (itemQuality == UNIQUE || itemQuality == SET) it.level <= monster.level else true }
         val raritySum = eligibleItems.sumOf { it.rarity }
-        return eligibleItems.map { item ->
+        return eligibleItems.filter { itemToFilterTo == null || itemToFilterTo == it }.map { item ->
             val additionalFactorGenerator: (ItemQualityRatios) -> Probability = {
                 itemLibrary.getProbQuality(itemQuality, monster, baseItem, it, magicFind)
                     .multiply(Probability(item.rarity, raritySum))
@@ -99,9 +96,6 @@ class ApiResource(
         }
     }
 
-    //    https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?
-//    type=item&itemName=aegis&diff=A&monClass=regMon&nPlayers=1&nGroup=1&mf=0&quality=regItem&decMode=false&version=112
-
     @GetMapping("/item")
     fun getItemProbabilities(
         @RequestParam("itemId", required = true) itemId: String,
@@ -111,8 +105,39 @@ class ApiResource(
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int,
         @RequestParam("magicFind", required = true) magicFind: Int,
-    ) {
-//        val item: Item = itemLibrary.getItem(itemId, itemQuality)
+    ): List<ApiResponse> {
+        val item: Item = itemLibrary.getItem(itemQuality, itemId) ?: return emptyList()
+        val treasureClassPathsCache = mutableMapOf<String, TreasureClassPaths>()
+        return monsterLibrary.getMonsters(difficulty, monsterType)
+            .asSequence()
+            .flatMap { monster ->
+                val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
+                    monster.treasureClass
+                ) {
+                    treasureClassCalculator.getLeafOutcomes(
+                        monster.treasureClass,
+                        VIRTUAL,
+                        item.baseItem,
+                        nPlayers,
+                        partySize
+                    )
+                }
+                treasureClassPaths
+                    .asSequence()
+                    .flatMap {
+                        generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it, item)
+                        { _, monster, prob ->
+                            ApiResponse(
+                                "${monster.name} ${monster.monsterClass.id} (${monster.difficulty.displayString})",
+                                monster.area.name,
+                                prob
+                            )
+                        }
+                    }
+            }
+            .toSet()
+            .sortedBy { it.name }
+            .toList()
     }
 }
 

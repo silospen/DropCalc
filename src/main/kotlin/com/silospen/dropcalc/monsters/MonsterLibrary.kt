@@ -98,7 +98,7 @@ class MonsterFactory(
         return Monster(
             "$minionId:${parentMonster.id}",
             "${monsterClass.name} (${parentMonster.name})",
-            parentMonster.monsterClass,
+            monsterClass,
             parentMonster.area,
             difficulty,
             MINION,
@@ -171,13 +171,13 @@ class MonsterFactory(
         monsterType: MonsterType,
         area: Area
     ): Int {
-        return (if (difficulty == Difficulty.NORMAL || monsterType == MonsterType.BOSS)
+        return (if (difficulty == Difficulty.NORMAL || monsterType == MonsterType.BOSS || monsterType == MINION && monsterClass.isBoss)
             monsterClass.monsterLevels.getValue(difficulty)
-        else area.monsterLevels.getValue(difficulty)) + getLevelAdjustment(monsterType)
+        else area.monsterLevels.getValue(difficulty)) + getLevelAdjustment(monsterType, monsterClass)
     }
 
-    private fun getLevelAdjustment(monsterType: MonsterType): Int {
-        if (monsterType == MonsterType.BOSS) return 0
+    private fun getLevelAdjustment(monsterType: MonsterType, monsterClass: MonsterClass): Int {
+        if (monsterType == MonsterType.BOSS || monsterClass.isBoss) return 0
         if (monsterType == MonsterType.CHAMPION) return 2
         if (monsterType == MonsterType.UNIQUE || monsterType == MINION) return 3
         return 0

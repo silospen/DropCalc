@@ -1,15 +1,39 @@
 package com.silospen.dropcalc
 
-import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.*
+import com.silospen.dropcalc.items.ItemLibrary
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
+import org.springframework.stereotype.Component
 import java.io.File
 
-class TestDataGenerator(private val client: HttpClient) {
+@Component
+class TestDataGenerator(private val itemLibrary: ItemLibrary) {
+
+    private val client: HttpClient = HttpClient()
+
+    fun generateItemExpectationDataToFile(
+        itemId: String,
+        monsterType: MonsterType,
+        difficulty: Difficulty,
+        nPlayers: Int,
+        partySize: Int,
+        quality: ItemQuality,
+        magicFind: Int,
+    ) = generateExpectationDataToFile {
+        generateItemExpectationData(
+            itemId,
+            monsterType,
+            difficulty,
+            nPlayers,
+            partySize,
+            quality,
+            magicFind
+        )
+    }
 
     fun generateMonsterExpectationDataToFile(
         monsterId: String,
@@ -62,11 +86,11 @@ class TestDataGenerator(private val client: HttpClient) {
         nPlayers: Int,
         partySize: Int,
     ): String = callSilospenDropCalcAndParseResponse(
-        "https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=attc&monID=${monsterId.lowercase()}&diff=${
-            toDifficulty(
-                difficulty
+        "https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=attc&monID=${monsterId.lowercase()}&diff=${difficulty.displayString}&monClass=${
+            toMonsterType(
+                monsterType
             )
-        }&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&decMode=true&version=112"
+        }&nPlayers=$nPlayers&nGroup=$partySize&decMode=true&version=112"
     )
 
     private fun generateMonsterExpectationData(
@@ -78,11 +102,33 @@ class TestDataGenerator(private val client: HttpClient) {
         quality: ItemQuality,
         magicFind: Int
     ): String = callSilospenDropCalcAndParseResponse(
-        "https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=mon&monID=${monsterId.lowercase()}&diff=${
-            toDifficulty(
-                difficulty
+        "https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=mon&monID=${monsterId.lowercase()}&diff=${difficulty.displayString}&monClass=${
+            toMonsterType(
+                monsterType
             )
-        }&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&quality=${toQuality(quality)}&mf=$magicFind&decMode=true&version=112"
+        }&nPlayers=$nPlayers&nGroup=$partySize&quality=${toQuality(quality)}&mf=$magicFind&decMode=true&version=112"
+    )
+//    Request URL: https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=item&itemName=akaran%20targe&diff=H&monClass=minMon&nPlayers=1&nGroup=1&mf=0&quality=rareItem&decMode=true&version=112
+
+    private fun generateItemExpectationData(
+        itemId: String,
+        monsterType: MonsterType,
+        difficulty: Difficulty,
+        nPlayers: Int,
+        partySize: Int,
+        quality: ItemQuality,
+        magicFind: Int
+    ): String = callSilospenDropCalcAndParseResponse(
+        "https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=item&itemName=${
+            itemLibrary.getItem(
+                quality,
+                itemId
+            )!!.name.lowercase()
+        }&diff=${difficulty.displayString}&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&quality=${
+            toQuality(
+                quality
+            )
+        }&mf=$magicFind&decMode=true&version=112"
     )
 
     private fun toQuality(quality: ItemQuality): String =
@@ -93,12 +139,6 @@ class TestDataGenerator(private val client: HttpClient) {
             ItemQuality.RARE -> "rareItem"
             ItemQuality.MAGIC -> "magicItem"
         }
-
-    private fun toDifficulty(difficulty: Difficulty) = when (difficulty) {
-        NORMAL -> "N"
-        NIGHTMARE -> "NM"
-        HELL -> "H"
-    }
 
     private fun toMonsterType(monsterType: MonsterType) = when (monsterType) {
         BOSS -> "bossMon"
