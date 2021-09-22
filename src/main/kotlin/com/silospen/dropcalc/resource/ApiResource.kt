@@ -101,14 +101,16 @@ class ApiResource(
         @RequestParam("itemId", required = true) itemId: String,
         @RequestParam("monsterType", required = true) monsterType: MonsterType,
         @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
-        @RequestParam("difficulty", required = true) difficulty: Difficulty,
+        @RequestParam("difficulty", required = false) difficulty: Difficulty?,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int,
         @RequestParam("magicFind", required = true) magicFind: Int,
     ): List<ApiResponse> {
         val item: Item = itemLibrary.getItem(itemQuality, itemId) ?: return emptyList()
         val treasureClassPathsCache = mutableMapOf<String, TreasureClassPaths>()
-        return monsterLibrary.getMonsters(difficulty, monsterType)
+        return (difficulty?.let { monsterLibrary.getMonsters(difficulty, monsterType) } ?: monsterLibrary.getMonsters(
+            monsterType
+        ))
             .asSequence()
             .flatMap { monster ->
                 val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(

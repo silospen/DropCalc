@@ -18,7 +18,7 @@ class TestDataGenerator(private val itemLibrary: ItemLibrary) {
     fun generateItemExpectationDataToFile(
         itemId: String,
         monsterType: MonsterType,
-        difficulty: Difficulty,
+        difficulty: Difficulty?,
         nPlayers: Int,
         partySize: Int,
         quality: ItemQuality,
@@ -113,7 +113,7 @@ class TestDataGenerator(private val itemLibrary: ItemLibrary) {
     private fun generateItemExpectationData(
         itemId: String,
         monsterType: MonsterType,
-        difficulty: Difficulty,
+        difficulty: Difficulty?,
         nPlayers: Int,
         partySize: Int,
         quality: ItemQuality,
@@ -124,7 +124,7 @@ class TestDataGenerator(private val itemLibrary: ItemLibrary) {
                 quality,
                 itemId
             )!!.name.lowercase()
-        }&diff=${difficulty.displayString}&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&quality=${
+        }&diff=${difficulty?.displayString ?: "A"}&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&quality=${
             toQuality(
                 quality
             )

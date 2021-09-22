@@ -58,7 +58,7 @@ class DropCalcIntegTest {
             runItemsTestWithLocalExpectations(
                 parts[0],
                 MonsterType.valueOf(parts[1]),
-                Difficulty.valueOf(parts[2]),
+                if (parts[2] == "null") null else Difficulty.valueOf(parts[2]),
                 parts[3].toInt(),
                 parts[4].toInt(),
                 ItemQuality.valueOf(parts[5]),
@@ -77,7 +77,7 @@ class DropCalcIntegTest {
     fun runItemsTestWithRemoteExpectations(
         itemId: String,
         monsterType: MonsterType,
-        difficulty: Difficulty,
+        difficulty: Difficulty?,
         nPlayers: Int,
         partySize: Int,
         itemQuality: ItemQuality,
@@ -99,7 +99,7 @@ class DropCalcIntegTest {
     fun runItemsTestWithLocalExpectations(
         itemId: String,
         monsterType: MonsterType,
-        difficulty: Difficulty,
+        difficulty: Difficulty?,
         nPlayers: Int,
         partySize: Int,
         itemQuality: ItemQuality,
