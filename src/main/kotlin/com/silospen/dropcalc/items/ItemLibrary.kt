@@ -3,7 +3,6 @@ package com.silospen.dropcalc.items
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.ItemQuality.*
 import com.silospen.dropcalc.monsters.Monster
-import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.stereotype.Component
 
 @Component
@@ -45,7 +44,7 @@ class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios:
         baseItem: BaseItem,
         itemQualityRatios: ItemQualityRatios,
         magicFind: Int
-    ): BigFraction {
+    ): Probability {
         return when (itemQuality) {
             UNIQUE -> getProbOfSingleItemQuality(UNIQUE, monster, baseItem, itemQualityRatios, magicFind)
             SET -> getProbQualitySequentially(SET, listOf(UNIQUE), monster, baseItem, itemQualityRatios, magicFind)
@@ -78,8 +77,8 @@ class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios:
         magicFind: Int
     ) = unwantedItemQualities
         .map { getProbOfSingleItemQuality(it, monster, baseItem, itemQualityRatios, magicFind) }
-        .map { BigFraction.ONE.subtract(it) }
-        .reduce { acc, bigFraction -> acc.multiply(bigFraction) }
+        .map { Probability.ONE.subtract(it) }
+        .reduce { acc, Probability -> acc.multiply(Probability) }
         .multiply(getProbOfSingleItemQuality(wantedItemQuality, monster, baseItem, itemQualityRatios, magicFind))
 
     private fun getProbOfSingleItemQuality(
@@ -88,7 +87,7 @@ class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios:
         baseItem: BaseItem,
         itemQualityRatios: ItemQualityRatios,
         magicFind: Int
-    ): BigFraction {
+    ): Probability {
         val (ratio, divisor, min) = getItemQualityModifiers(baseItem, itemQuality)
         val chance = ratio - ((monster.level - baseItem.level) / divisor)
         val mulChance = chance * 128
@@ -96,7 +95,7 @@ class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios:
         val chanceWithMf = (mulChance * 100) / (100 + effectiveMf)
         val chanceAfterMin = if (min > chanceWithMf) min else chanceWithMf
         val chanceAfterFactor = chanceAfterMin - (chanceAfterMin * itemQualityRatios.get(itemQuality) / 1024)
-        return if (chanceAfterFactor == 0) BigFraction.ONE else BigFraction(128, chanceAfterFactor)
+        return if (chanceAfterFactor == 0) Probability.ONE else Probability(128, chanceAfterFactor)
     }
 
     private fun getEffectiveMf(magicFind: Int, itemQuality: ItemQuality) = when (itemQuality) {

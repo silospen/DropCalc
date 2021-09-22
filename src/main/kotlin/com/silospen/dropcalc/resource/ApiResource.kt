@@ -10,11 +10,9 @@ import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
 import com.silospen.dropcalc.treasureclasses.TreasureClassPaths
-import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.math.RoundingMode
 
 @RestController
 class ApiResource(
@@ -74,19 +72,17 @@ class ApiResource(
                 .filter { if (itemQuality == UNIQUE || itemQuality == SET) it.level <= monster.level else true }
             val raritySum = eligibleItems.sumOf { it.rarity }
             eligibleItems.map { item ->
-                val additionalFactorGenerator: (ItemQualityRatios) -> BigFraction = {
+                val additionalFactorGenerator: (ItemQualityRatios) -> Probability = {
                     itemLibrary.getProbQuality(itemQuality, monster, baseItem, it, magicFind)
-                        .multiply(BigFraction(item.rarity, raritySum))
+                        .multiply(Probability(item.rarity, raritySum))
                 }
                 ApiResponse(
                     item.name,
                     monster.area.name,
-                    Probability(
-                        treasureClassPaths.getFinalProbability(
-                            outcomeType,
-                            additionalFactorGenerator
-                        )
-                    )
+                    treasureClassPaths.getFinalProbability(
+                        outcomeType,
+                        additionalFactorGenerator
+                    ).toDouble()
                 )
             }
         }
@@ -99,7 +95,7 @@ class ApiResource(
         ApiResponse(
             outcomeType.name,
             monster.area.name,
-            Probability(treasureClassPaths.getFinalProbability(outcomeType))
+            treasureClassPaths.getFinalProbability(outcomeType).toDouble()
         )
     )
 
@@ -139,11 +135,4 @@ class ApiResource(
 
 }
 
-data class ApiResponse(val name: String, val area: String, val prob: Probability)
-
-data class Probability(val frac: String, val dec: Double) {
-    constructor(fraction: BigFraction) : this(
-        "${fraction.numerator}/${fraction.denominator}",
-        fraction.bigDecimalValue(20, RoundingMode.HALF_UP.ordinal).toDouble()
-    )
-}
+data class ApiResponse(val name: String, val area: String, val prob: Double)

@@ -1,8 +1,8 @@
 package com.silospen.dropcalc.treasureclasses
 
 import com.silospen.dropcalc.ItemQualityRatios.Companion.EMPTY
+import com.silospen.dropcalc.Probability
 import com.silospen.dropcalc.VirtualTreasureClass
-import org.apache.commons.math3.fraction.BigFraction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -12,7 +12,7 @@ class TreasureClassPathsTest {
         val actual = TreasureClassPaths.forSinglePath(
             mapOf(
                 VirtualTreasureClass("tc1") to TreasureClassPathOutcome(
-                    BigFraction(1, 3),
+                    Probability(1, 3),
                     EMPTY,
                     2,
                     3
@@ -24,7 +24,7 @@ class TreasureClassPathsTest {
             mapOf(
                 VirtualTreasureClass("tc1") to listOf(
                     TreasureClassPathOutcome(
-                        BigFraction(1, 3),
+                        Probability(1, 3),
                         EMPTY,
                         2,
                         3
@@ -41,7 +41,7 @@ class TreasureClassPathsTest {
             listOf(
                 mapOf(
                     VirtualTreasureClass("tc1") to TreasureClassPathOutcome(
-                        BigFraction(1, 3),
+                        Probability(1, 3),
                         EMPTY,
                         2,
                         3
@@ -49,13 +49,13 @@ class TreasureClassPathsTest {
                 ),
                 mapOf(
                     VirtualTreasureClass("tc1") to TreasureClassPathOutcome(
-                        BigFraction(2, 3),
+                        Probability(2, 3),
                         EMPTY,
                         3,
                         4
                     ),
                     VirtualTreasureClass("tc2") to TreasureClassPathOutcome(
-                        BigFraction(3, 4),
+                        Probability(3, 4),
                         EMPTY,
                         3,
                         4
@@ -68,13 +68,13 @@ class TreasureClassPathsTest {
             mapOf(
                 VirtualTreasureClass("tc1") to listOf(
                     TreasureClassPathOutcome(
-                        BigFraction(1, 3),
+                        Probability(1, 3),
                         EMPTY,
                         2,
                         3
                     ),
                     TreasureClassPathOutcome(
-                        BigFraction(2, 3),
+                        Probability(2, 3),
                         EMPTY,
                         3,
                         4
@@ -82,7 +82,7 @@ class TreasureClassPathsTest {
                 ),
                 VirtualTreasureClass("tc2") to listOf(
                     TreasureClassPathOutcome(
-                        BigFraction(3, 4),
+                        Probability(3, 4),
                         EMPTY,
                         3,
                         4
@@ -99,13 +99,13 @@ class TreasureClassPathsTest {
             mapOf(
                 VirtualTreasureClass("tc1") to listOf(
                     TreasureClassPathOutcome(
-                        BigFraction(1, 3),
+                        Probability(1, 3),
                         EMPTY,
                         2,
                         3
                     ),
                     TreasureClassPathOutcome(
-                        BigFraction(2, 3),
+                        Probability(2, 3),
                         EMPTY,
                         3,
                         4
@@ -113,7 +113,7 @@ class TreasureClassPathsTest {
                 ),
                 VirtualTreasureClass("tc2") to listOf(
                     TreasureClassPathOutcome(
-                        BigFraction(3, 4),
+                        Probability(3, 4),
                         EMPTY,
                         3,
                         4
@@ -122,13 +122,13 @@ class TreasureClassPathsTest {
             )
         )
 
-        assertEquals(BigFraction(387420425, 387420489), paths.getFinalProbability(VirtualTreasureClass("tc1")))
-        assertEquals(BigFraction(386420489, 387420489), paths.getFinalProbability(VirtualTreasureClass("tc1")) {
-            BigFraction(
+        assertEquals(Probability(387420425, 387420489), paths.getFinalProbability(VirtualTreasureClass("tc1")))
+        assertEquals(Probability(386420489, 387420489), paths.getFinalProbability(VirtualTreasureClass("tc1")) {
+            Probability(
                 1,
                 2
             )
         })
-        assertEquals(BigFraction(16777215, 16777216), paths.getFinalProbability(VirtualTreasureClass("tc2")))
+        assertEquals(Probability(16777215, 16777216), paths.getFinalProbability(VirtualTreasureClass("tc2")))
     }
 }

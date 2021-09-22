@@ -4,7 +4,6 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
-import org.apache.commons.math3.fraction.BigFraction
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -74,7 +73,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
     ) = TreasureClassPaths.forSinglePath(
         calculatePathSum(
             Outcome(treasureClass, 1),
-            BigFraction(1),
+            Probability.ONE,
             treasureClass.properties.itemQualityRatios,
             1,
             treasureClassOutcomeType,
@@ -102,7 +101,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
                     }
                     calculatePathSum(
                         outcome,
-                        BigFraction(1),
+                        Probability.ONE,
                         treasureClass.properties.itemQualityRatios.merge(itemQualityRatios),
                         outcome.probability,
                         treasureClassOutcomeType,
@@ -134,7 +133,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
 
     private fun calculatePathSum(
         outcome: Outcome,
-        pathProbabilityAccumulator: BigFraction,
+        pathProbabilityAccumulator: Probability,
         itemQualityRatiosAccumulator: ItemQualityRatios,
         tcProbabilityDenominator: Int,
         treasureClassOutcomeType: TreasureClassOutcomeType,
@@ -158,7 +157,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
 
     private fun calculatePathSumRecurse(
         outcome: Outcome,
-        pathProbabilityAccumulator: BigFraction,
+        pathProbabilityAccumulator: Probability,
         itemQualityRatiosAccumulator: ItemQualityRatios,
         tcProbabilityDenominator: Int,
         leafAccumulator: TreasureClassPathAccumulator,
@@ -166,7 +165,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         nPlayers: Int,
         partySize: Int
     ) {
-        val outcomeChance = BigFraction(outcome.probability, tcProbabilityDenominator)
+        val outcomeChance = Probability(outcome.probability, tcProbabilityDenominator)
         val selectionProbability = outcomeChance.multiply(pathProbabilityAccumulator)
         val outcomeType = outcome.outcomeType
         if ((outcomeType is VirtualTreasureClass && treasureClassOutcomeType == DEFINED) || (outcomeType is BaseItem && treasureClassOutcomeType == VIRTUAL)) {

@@ -2,7 +2,7 @@ package com.silospen.dropcalc.treasureclasses
 
 import com.silospen.dropcalc.ItemQualityRatios
 import com.silospen.dropcalc.OutcomeType
-import org.apache.commons.math3.fraction.BigFraction
+import com.silospen.dropcalc.Probability
 
 class TreasureClassPathAccumulator(
     private val accumulator: MutableMap<OutcomeType, TreasureClassPathOutcome>,
@@ -12,12 +12,12 @@ class TreasureClassPathAccumulator(
     constructor(picks: Int, drops: Int) : this(mutableMapOf(), picks, drops)
 
     fun accumulateProbability(
-        probability: BigFraction,
+        probability: Probability,
         itemQualityRatios: ItemQualityRatios,
         outcomeType: OutcomeType
     ) {
         val old = accumulator[outcomeType]
-        val newProbability = probability.add(old?.probability ?: BigFraction.ZERO)
+        val newProbability = probability.add(old?.probability ?: Probability.ZERO)
         val newItemQualityRatios = (old?.itemQualityRatios ?: ItemQualityRatios.EMPTY).merge(itemQualityRatios)
         accumulator[outcomeType] = TreasureClassPathOutcome(newProbability, newItemQualityRatios, picks, drops)
     }
@@ -58,16 +58,16 @@ class TreasureClassPaths(private val pathsByOutcomeType: Map<OutcomeType, List<T
         }
     }
 
-    fun not(bigFraction: BigFraction): BigFraction = BigFraction.ONE.subtract(bigFraction)
+    fun not(p: Probability): Probability = Probability.ONE.subtract(p)
 
     private fun mergeFinals(
         outcomes: List<TreasureClassPathOutcome>,
-        additionalFactorGenerator: (ItemQualityRatios) -> BigFraction
-    ): BigFraction {
+        additionalFactorGenerator: (ItemQualityRatios) -> Probability
+    ): Probability {
         return not(outcomes
             .map { it.getProbability(additionalFactorGenerator(it.itemQualityRatios)) }
             .map { not(it) }
-            .reduce { acc, bigFraction -> acc.multiply(bigFraction) }
+            .reduce { acc, Probability -> acc.multiply(Probability) }
         )
     }
 
@@ -75,7 +75,7 @@ class TreasureClassPaths(private val pathsByOutcomeType: Map<OutcomeType, List<T
 
     fun getFinalProbability(
         outcomeType: OutcomeType,
-        additionalFactorGenerator: (ItemQualityRatios) -> BigFraction = { BigFraction.ONE }
+        additionalFactorGenerator: (ItemQualityRatios) -> Probability = { Probability.ONE }
     ) = mergeFinals(pathsByOutcomeType.getOrDefault(outcomeType, emptyList()), additionalFactorGenerator)
 
     override fun iterator() = pathsByOutcomeType.keys.iterator()
@@ -100,15 +100,15 @@ class TreasureClassPaths(private val pathsByOutcomeType: Map<OutcomeType, List<T
 }
 
 data class TreasureClassPathOutcome(
-    internal val probability: BigFraction,
+    internal val probability: Probability,
     val itemQualityRatios: ItemQualityRatios,
     private val picks: Int,
     private val drops: Int
 ) {
-    fun getProbability(additionalFactor: BigFraction = BigFraction.ONE) =
+    fun getProbability(additionalFactor: Probability = Probability.ONE) =
         applyPicks(drops, applyPicks(picks, probability.multiply(additionalFactor)))
 
-    private fun applyPicks(picks: Int, p: BigFraction): BigFraction {
+    private fun applyPicks(picks: Int, p: Probability): Probability {
         return when {
             picks == 1 -> p
             picks > 1 -> calculateProbabilityForPicks(p, if (picks > 6) 6 else picks)
@@ -116,6 +116,6 @@ data class TreasureClassPathOutcome(
         }
     }
 
-    private fun calculateProbabilityForPicks(p: BigFraction, picks: Int) =
-        BigFraction.ONE.subtract(BigFraction.ONE.subtract(p).pow(picks))
+    private fun calculateProbabilityForPicks(p: Probability, picks: Int) =
+        Probability.ONE.subtract(Probability.ONE.subtract(p).pow(picks))
 }

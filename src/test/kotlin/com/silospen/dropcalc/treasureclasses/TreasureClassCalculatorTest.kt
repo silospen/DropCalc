@@ -9,7 +9,6 @@ import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
-import org.apache.commons.math3.fraction.BigFraction
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -28,17 +27,17 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes() {
         val expectations = listOf(
-            expectation("gld", TreasureClassPathOutcome(BigFraction(21, 160), EMPTY, 1, 1)),
-            expectation("weap3", TreasureClassPathOutcome(BigFraction(1, 20), EMPTY, 1, 1)),
-            expectation("armo3", TreasureClassPathOutcome(BigFraction(1, 20), EMPTY, 1, 1)),
-            expectation("Act 1 Junk", TreasureClassPathOutcome(BigFraction(21, 160), EMPTY, 1, 1)),
-            expectation("rin", TreasureClassPathOutcome(BigFraction(1, 400), EMPTY, 1, 1)),
-            expectation("amu", TreasureClassPathOutcome(BigFraction(1, 800), EMPTY, 1, 1)),
-            expectation("jew", TreasureClassPathOutcome(BigFraction(1, 1600), EMPTY, 1, 1)),
-            expectation("cm3", TreasureClassPathOutcome(BigFraction(1, 1600), EMPTY, 1, 1)),
-            expectation("cm2", TreasureClassPathOutcome(BigFraction(1, 1600), EMPTY, 1, 1)),
-            expectation("cm1", TreasureClassPathOutcome(BigFraction(1, 1600), EMPTY, 1, 1)),
-            expectation("Chipped Gem", TreasureClassPathOutcome(BigFraction(1, 160), EMPTY, 1, 1)),
+            expectation("gld", TreasureClassPathOutcome(Probability(21, 160), EMPTY, 1, 1)),
+            expectation("weap3", TreasureClassPathOutcome(Probability(1, 20), EMPTY, 1, 1)),
+            expectation("armo3", TreasureClassPathOutcome(Probability(1, 20), EMPTY, 1, 1)),
+            expectation("Act 1 Junk", TreasureClassPathOutcome(Probability(21, 160), EMPTY, 1, 1)),
+            expectation("rin", TreasureClassPathOutcome(Probability(1, 400), EMPTY, 1, 1)),
+            expectation("amu", TreasureClassPathOutcome(Probability(1, 800), EMPTY, 1, 1)),
+            expectation("jew", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1, 1)),
+            expectation("cm3", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1, 1)),
+            expectation("cm2", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1, 1)),
+            expectation("cm1", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1, 1)),
+            expectation("Chipped Gem", TreasureClassPathOutcome(Probability(1, 160), EMPTY, 1, 1)),
         )
         runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED))
     }
@@ -48,23 +47,23 @@ class TreasureClassCalculatorTest {
         val expectations = listOf(
             TcExpectation(
                 weapon1,
-                listOf(TreasureClassPathOutcome(BigFraction(1, 30), EMPTY, 1, 1)),
-                BigFraction(1, 30)
+                listOf(TreasureClassPathOutcome(Probability(1, 30), EMPTY, 1, 1)),
+                Probability(1, 30)
             ),
             TcExpectation(
                 weapon2,
-                listOf(TreasureClassPathOutcome(BigFraction(1, 60), EMPTY, 1, 1)),
-                BigFraction(1, 60)
+                listOf(TreasureClassPathOutcome(Probability(1, 60), EMPTY, 1, 1)),
+                Probability(1, 60)
             ),
             TcExpectation(
                 armor1,
-                listOf(TreasureClassPathOutcome(BigFraction(1, 20), EMPTY, 1, 1)),
-                BigFraction(1, 20)
+                listOf(TreasureClassPathOutcome(Probability(1, 20), EMPTY, 1, 1)),
+                Probability(1, 20)
             ),
             TcExpectation(
                 ring,
-                listOf(TreasureClassPathOutcome(BigFraction(1, 400), EMPTY, 1, 1)),
-                BigFraction(1, 400)
+                listOf(TreasureClassPathOutcome(Probability(1, 400), EMPTY, 1, 1)),
+                Probability(1, 400)
             ),
         )
         runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", VIRTUAL))
@@ -73,17 +72,17 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_withPartyAndPlayersSet() {
         val expectations = listOf(
-            expectation("gld", TreasureClassPathOutcome(BigFraction(21, 79), EMPTY, 1, 1)),
-            expectation("weap3", TreasureClassPathOutcome(BigFraction(8, 79), EMPTY, 1, 1)),
-            expectation("armo3", TreasureClassPathOutcome(BigFraction(8, 79), EMPTY, 1, 1)),
-            expectation("Act 1 Junk", TreasureClassPathOutcome(BigFraction(21, 79), EMPTY, 1, 1)),
-            expectation("rin", TreasureClassPathOutcome(BigFraction(2, 395), EMPTY, 1, 1)),
-            expectation("amu", TreasureClassPathOutcome(BigFraction(1, 395), EMPTY, 1, 1)),
-            expectation("jew", TreasureClassPathOutcome(BigFraction(1, 790), EMPTY, 1, 1)),
-            expectation("cm3", TreasureClassPathOutcome(BigFraction(1, 790), EMPTY, 1, 1)),
-            expectation("cm2", TreasureClassPathOutcome(BigFraction(1, 790), EMPTY, 1, 1)),
-            expectation("cm1", TreasureClassPathOutcome(BigFraction(1, 790), EMPTY, 1, 1)),
-            expectation("Chipped Gem", TreasureClassPathOutcome(BigFraction(1, 79), EMPTY, 1, 1)),
+            expectation("gld", TreasureClassPathOutcome(Probability(21, 79), EMPTY, 1, 1)),
+            expectation("weap3", TreasureClassPathOutcome(Probability(8, 79), EMPTY, 1, 1)),
+            expectation("armo3", TreasureClassPathOutcome(Probability(8, 79), EMPTY, 1, 1)),
+            expectation("Act 1 Junk", TreasureClassPathOutcome(Probability(21, 79), EMPTY, 1, 1)),
+            expectation("rin", TreasureClassPathOutcome(Probability(2, 395), EMPTY, 1, 1)),
+            expectation("amu", TreasureClassPathOutcome(Probability(1, 395), EMPTY, 1, 1)),
+            expectation("jew", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1, 1)),
+            expectation("cm3", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1, 1)),
+            expectation("cm2", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1, 1)),
+            expectation("cm1", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1, 1)),
+            expectation("Chipped Gem", TreasureClassPathOutcome(Probability(1, 79), EMPTY, 1, 1)),
         )
         runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED, 3, 3))
     }
@@ -94,23 +93,23 @@ class TreasureClassCalculatorTest {
         val expectations = listOf(
             expectation(
                 "gld",
-                TreasureClassPathOutcome(BigFraction(11, 67), radamentItemQualityRatios, 5, 1),
-                BigFraction(799393331, 1350125107)
+                TreasureClassPathOutcome(Probability(11, 67), radamentItemQualityRatios, 5, 1),
+                Probability(799393331, 1350125107)
             ),
             expectation(
                 "Act 3 Equip B",
-                TreasureClassPathOutcome(BigFraction(19, 67), radamentItemQualityRatios, 5, 1),
-                BigFraction(1095321139, 1350125107)
+                TreasureClassPathOutcome(Probability(19, 67), radamentItemQualityRatios, 5, 1),
+                Probability(1095321139, 1350125107)
             ),
             expectation(
                 "Act 3 Junk",
-                TreasureClassPathOutcome(BigFraction(15, 67), radamentItemQualityRatios, 5, 1),
-                BigFraction(969921075, 1350125107)
+                TreasureClassPathOutcome(Probability(15, 67), radamentItemQualityRatios, 5, 1),
+                Probability(969921075, 1350125107)
             ),
             expectation(
                 "Act 3 Good",
-                TreasureClassPathOutcome(BigFraction(3, 67), radamentItemQualityRatios, 5, 1),
-                BigFraction(276383283, 1350125107)
+                TreasureClassPathOutcome(Probability(3, 67), radamentItemQualityRatios, 5, 1),
+                Probability(276383283, 1350125107)
             ),
         )
         runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Radament", DEFINED))
@@ -123,45 +122,45 @@ class TreasureClassCalculatorTest {
         val expectations = listOf(
             expectation(
                 "gld",
-                TreasureClassPathOutcome(BigFraction(60, 100), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(60, 100), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "weap3",
-                TreasureClassPathOutcome(BigFraction(37, 200), subLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "armo3",
-                TreasureClassPathOutcome(BigFraction(37, 200), subLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "rin",
-                TreasureClassPathOutcome(BigFraction(3, 500), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 500), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "amu",
-                TreasureClassPathOutcome(BigFraction(3, 1000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 1000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "jew",
-                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "cm3",
-                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "cm2",
-                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "cm1",
-                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "Chipped Gem",
-                TreasureClassPathOutcome(BigFraction(3, 200), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 200), topLevelQualityRatios, 1, 1)
             ),
-            expectation("Act 1 Cpot A", TreasureClassPathOutcome(BigFraction(1), EMPTY, 1, 2)),
+            expectation("Act 1 Cpot A", TreasureClassPathOutcome(Probability.ONE, EMPTY, 1, 2)),
         )
         runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", DEFINED))
     }
@@ -173,56 +172,56 @@ class TreasureClassCalculatorTest {
         val expectations = listOf(
             expectation(
                 "gld",
-                TreasureClassPathOutcome(BigFraction(60, 100), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(60, 100), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "weap3",
                 listOf(
-                    TreasureClassPathOutcome(BigFraction(37, 200), subLevelQualityRatios, 1, 1),
-                    TreasureClassPathOutcome(BigFraction(7, 22), EMPTY, 3, 2),
+                    TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1, 1),
+                    TreasureClassPathOutcome(Probability(7, 22), EMPTY, 3, 2),
                 ),
-                BigFraction(832772357, 907039232)
+                Probability(832772357, 907039232)
             ),
             expectation(
                 "armo3",
                 listOf(
-                    TreasureClassPathOutcome(BigFraction(37, 200), subLevelQualityRatios, 1, 1),
-                    TreasureClassPathOutcome(BigFraction(7, 22), EMPTY, 3, 2),
+                    TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1, 1),
+                    TreasureClassPathOutcome(Probability(7, 22), EMPTY, 3, 2),
                 ),
-                BigFraction(832772357, 907039232)
+                Probability(832772357, 907039232)
             ),
             expectation(
                 "rin",
-                TreasureClassPathOutcome(BigFraction(3, 500), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 500), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "amu",
-                TreasureClassPathOutcome(BigFraction(3, 1000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 1000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "jew",
-                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "cm3",
-                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "cm2",
-                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "cm1",
-                TreasureClassPathOutcome(BigFraction(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
             ),
             expectation(
                 "Chipped Gem",
-                TreasureClassPathOutcome(BigFraction(3, 200), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 200), topLevelQualityRatios, 1, 1)
             ),//1-((1-(1-((1-(8/22))*(1-(8/22)))))^3)
             expectation(
                 "armo6",
-                TreasureClassPathOutcome(BigFraction(4, 11), EMPTY, 3, 2),
-                BigFraction(1653912, 1771561)
+                TreasureClassPathOutcome(Probability(4, 11), EMPTY, 3, 2),
+                Probability(1653912, 1771561)
             ),
         )
         runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", DEFINED))
@@ -268,7 +267,7 @@ class TreasureClassCalculatorTest {
     private fun expectation(
         tcName: String,
         outcome: TreasureClassPathOutcome,
-        finalProbability: BigFraction
+        finalProbability: Probability
     ) = expectation(tcName, listOf(outcome), finalProbability)
 
     private fun expectation(
@@ -279,7 +278,7 @@ class TreasureClassCalculatorTest {
     private fun expectation(
         tcName: String,
         outcomes: List<TreasureClassPathOutcome>,
-        finalProbability: BigFraction
+        finalProbability: Probability
     ) = TcExpectation(
         itemLibrary.getOrConstructVirtualTreasureClass(tcName),
         outcomes,
@@ -290,5 +289,5 @@ class TreasureClassCalculatorTest {
 private data class TcExpectation(
     val outcomeType: OutcomeType,
     val outcome: List<TreasureClassPathOutcome>,
-    val finalProbability: BigFraction
+    val finalProbability: Probability
 )

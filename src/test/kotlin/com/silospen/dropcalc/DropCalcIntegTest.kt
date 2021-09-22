@@ -9,7 +9,6 @@ import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.resource.ApiResource
 import com.silospen.dropcalc.resource.ApiResponse
-import com.silospen.dropcalc.resource.Probability
 import io.ktor.client.*
 import org.apache.commons.math3.util.Precision
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -286,7 +285,7 @@ class DropCalcIntegTest {
                 if (value.size != 1) throw RuntimeException("Multiple probs found for $it and $value")
                 val actualProb = value[0].prob
                 val expectedProb = it.prob
-                key to Precision.equals(actualProb.dec, expectedProb.dec, 0.00000000001)
+                key to Precision.equals(actualProb.dec(), expectedProb.dec(), 0.00000000001)
             }
         val failedAsserts = outcomes.filter { !it.second }
         if (failedAsserts.isNotEmpty()) {
@@ -299,7 +298,7 @@ class DropCalcIntegTest {
 
     private val tcExpectationDataLineParser = object : LineParser<ApiResponse?> {
         override fun parseLine(line: List<String>): ApiResponse =
-            ApiResponse(line[0], line[1], Probability("", line[2].toDouble()))
+            ApiResponse(line[0], line[1], line[2].toDouble())
     }
 
     private val brokenTreasureClasses = setOf(
