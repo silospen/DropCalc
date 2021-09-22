@@ -40,7 +40,7 @@ class TreasureClassCalculatorTest {
             expectation("cm1", TreasureClassPathOutcome(BigFraction(1, 1600), EMPTY, 1, 1)),
             expectation("Chipped Gem", TreasureClassPathOutcome(BigFraction(1, 160), EMPTY, 1, 1)),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED))
     }
 
     @Test
@@ -67,18 +67,7 @@ class TreasureClassCalculatorTest {
                 BigFraction(1, 400)
             ),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, VIRTUAL))
-    }
-
-    @Test
-    fun getLeafOutcomes_withTcUpgraded() {
-        val expectedProbabilities = BigFraction(5, 110).multiply(BigFraction(7, 14))
-        val expectations = listOf(
-            expectation("gld", TreasureClassPathOutcome(BigFraction(5, 110), EMPTY, 1, 1)),
-            expectation("weap3", TreasureClassPathOutcome(expectedProbabilities, EMPTY, 1, 1)),
-            expectation("armo3", TreasureClassPathOutcome(expectedProbabilities, EMPTY, 1, 1)),
-        )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 50, HELL, DEFINED))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", VIRTUAL))
     }
 
     @Test
@@ -96,7 +85,7 @@ class TreasureClassCalculatorTest {
             expectation("cm1", TreasureClassPathOutcome(BigFraction(1, 790), EMPTY, 1, 1)),
             expectation("Chipped Gem", TreasureClassPathOutcome(BigFraction(1, 79), EMPTY, 1, 1)),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", 0, NORMAL, DEFINED, 3, 3))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED, 3, 3))
     }
 
     @Test
@@ -124,7 +113,7 @@ class TreasureClassCalculatorTest {
                 BigFraction(276383283, 1350125107)
             ),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Radament", 50, NORMAL, DEFINED))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Radament", DEFINED))
     }
 
     @Test
@@ -174,7 +163,7 @@ class TreasureClassCalculatorTest {
             ),
             expectation("Act 1 Cpot A", TreasureClassPathOutcome(BigFraction(1), EMPTY, 1, 2)),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", 4, NORMAL, DEFINED))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", DEFINED))
     }
 
     @Test
@@ -236,7 +225,7 @@ class TreasureClassCalculatorTest {
                 BigFraction(1653912, 1771561)
             ),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", 4, NORMAL, DEFINED))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", DEFINED))
     }
 
 

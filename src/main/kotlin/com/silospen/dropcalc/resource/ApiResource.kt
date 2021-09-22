@@ -115,8 +115,6 @@ class ApiResource(
         val treasureClassPaths: TreasureClassPaths =
             treasureClassCalculator.getLeafOutcomes(
                 monster.treasureClass,
-                monster.level,
-                difficulty,
                 treasureClassOutcomeType,
                 nPlayers,
                 partySize

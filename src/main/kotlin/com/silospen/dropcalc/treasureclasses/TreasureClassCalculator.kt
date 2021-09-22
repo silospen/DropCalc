@@ -46,22 +46,19 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
 
     fun getLeafOutcomes(
         treasureClassName: String,
-        monsterLevel: Int,
-        difficulty: Difficulty,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int = 1,
         partySize: Int = 1
     ): TreasureClassPaths {
-        val possiblyUpgradedTreasureClass =
-            changeTcBasedOnLevel(getTreasureClass(treasureClassName), monsterLevel, difficulty)
-        return if (possiblyUpgradedTreasureClass.properties.picks > 0) getLeafOutcomesForPositivePicks(
-            possiblyUpgradedTreasureClass,
+        val treasureClass = getTreasureClass(treasureClassName)
+        return if (treasureClass.properties.picks > 0) getLeafOutcomesForPositivePicks(
+            treasureClass,
             treasureClassOutcomeType,
             nPlayers,
             partySize,
-            possiblyUpgradedTreasureClass.properties.picks
+            treasureClass.properties.picks
         ) else getLeafOutcomesForNegativePicks(
-            possiblyUpgradedTreasureClass,
+            treasureClass,
             treasureClassOutcomeType,
             nPlayers,
             partySize
@@ -132,7 +129,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         return treasureClassGroup.last()
     }
 
-    fun getTreasureClass(treasureClassName: String) = treasureClassesByName.getValue(treasureClassName)
+    fun getTreasureClass(treasureClassName: String) =
+        treasureClassesByName.getOrDefault(treasureClassName, VirtualTreasureClass(treasureClassName))
 
     private fun calculatePathSum(
         outcome: Outcome,

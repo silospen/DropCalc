@@ -4,6 +4,7 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.MonsterType.MINION
 import com.silospen.dropcalc.MonsterType.SUPERUNIQUE
 import com.silospen.dropcalc.areas.AreasLibrary
+import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
 import org.springframework.stereotype.Component
 
 class MonsterLibrary(val monsters: Set<Monster>) {
@@ -78,24 +79,33 @@ class MonsterLibrary(val monsters: Set<Monster>) {
 }
 
 @Component
-class MonsterFactory(private val areasLibrary: AreasLibrary) {
+class MonsterFactory(
+    private val areasLibrary: AreasLibrary,
+    private val treasureClassCalculator: TreasureClassCalculator
+) {
     fun createMinionMonster(
         minionId: String,
         parentMonster: Monster,
         monsterClass: MonsterClass
-    ) = Monster(
-        "$minionId:${parentMonster.id}",
-        "${monsterClass.name} (${parentMonster.name})",
-        parentMonster.monsterClass,
-        parentMonster.area,
-        parentMonster.difficulty,
-        MINION,
-        monsterClass.monsterClassTreasureClasses.getValue(
-            parentMonster.difficulty,
-            TreasureClassType.REGULAR
-        ),
-        constructLevel(parentMonster.monsterClass, parentMonster.difficulty, MINION, parentMonster.area)
-    )
+    ): Monster {
+        val difficulty = parentMonster.difficulty
+        val level = constructLevel(parentMonster.monsterClass, difficulty, MINION, parentMonster.area)
+        return Monster(
+            "$minionId:${parentMonster.id}",
+            "${monsterClass.name} (${parentMonster.name})",
+            parentMonster.monsterClass,
+            parentMonster.area,
+            difficulty,
+            MINION,
+            getUpgradedTc(
+                monsterClass.monsterClassTreasureClasses.getValue(
+                    difficulty,
+                    TreasureClassType.REGULAR
+                ), level, difficulty
+            ),
+            level
+        )
+    }
 
     fun createSuperUniqueMonster(
         superUniqueMonsterConfig: SuperUniqueMonsterConfig,
@@ -104,6 +114,7 @@ class MonsterFactory(private val areasLibrary: AreasLibrary) {
         treasureClass: String
     ): Monster {
         val area = areasLibrary.getArea(superUniqueMonsterConfig.areaName)
+        val level = constructLevel(monsterClass, difficulty, SUPERUNIQUE, area)
         return Monster(
             superUniqueMonsterConfig.id,
             superUniqueMonsterConfig.name,
@@ -111,8 +122,8 @@ class MonsterFactory(private val areasLibrary: AreasLibrary) {
             area,
             difficulty,
             SUPERUNIQUE,
-            treasureClass,
-            constructLevel(monsterClass, difficulty, SUPERUNIQUE, area)
+            getUpgradedTc(treasureClass, level, difficulty),
+            level
         )
     }
 
@@ -123,6 +134,7 @@ class MonsterFactory(private val areasLibrary: AreasLibrary) {
     ): List<Monster> {
         return treasureClassType.validMonsterTypes.flatMap { monsterType ->
             areasLibrary.getAreasForMonsterClassId(monsterClass.id, difficulty, monsterType).map {
+                val level = constructLevel(monsterClass, difficulty, monsterType, it)
                 Monster(
                     "${monsterClass.id}${treasureClassType.idSuffix}",
                     monsterClass.name + if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else "",
@@ -130,12 +142,23 @@ class MonsterFactory(private val areasLibrary: AreasLibrary) {
                     it,
                     difficulty,
                     monsterType,
-                    monsterClass.monsterClassTreasureClasses.getValue(difficulty, treasureClassType),
-                    constructLevel(monsterClass, difficulty, monsterType, it)
+                    getUpgradedTc(
+                        monsterClass.monsterClassTreasureClasses.getValue(difficulty, treasureClassType),
+                        level,
+                        difficulty
+                    ),
+                    level
                 )
             }
         }
     }
+
+    private fun getUpgradedTc(treasureClassName: String, monsterLevel: Int, difficulty: Difficulty) =
+        treasureClassCalculator.changeTcBasedOnLevel(
+            treasureClassCalculator.getTreasureClass(treasureClassName),
+            monsterLevel,
+            difficulty
+        ).name
 
     private fun constructLevel(
         monsterClass: MonsterClass,
