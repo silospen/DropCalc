@@ -39,7 +39,22 @@ class TreasureClassCalculatorTest {
             expectation("cm1", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1, 1)),
             expectation("Chipped Gem", TreasureClassPathOutcome(Probability(1, 160), EMPTY, 1, 1)),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED, null))
+    }
+
+    @Test
+    fun getLeafOutcomes_withFilter() {
+        val expectations = listOf(
+            expectation("Act 1 Junk", TreasureClassPathOutcome(Probability(21, 160), EMPTY, 1, 1)),
+        )
+        runExpectations(
+            expectations,
+            treasureClassCalculator.getLeafOutcomes(
+                "Act 1 H2H A",
+                DEFINED,
+                itemLibrary.getOrConstructVirtualTreasureClass("Act 1 Junk")
+            )
+        )
     }
 
     @Test
@@ -66,7 +81,7 @@ class TreasureClassCalculatorTest {
                 Probability(1, 400)
             ),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", VIRTUAL))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", VIRTUAL, null))
     }
 
     @Test
@@ -84,7 +99,7 @@ class TreasureClassCalculatorTest {
             expectation("cm1", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1, 1)),
             expectation("Chipped Gem", TreasureClassPathOutcome(Probability(1, 79), EMPTY, 1, 1)),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED, 3, 3))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED, null, 3, 3))
     }
 
     @Test
@@ -112,7 +127,7 @@ class TreasureClassCalculatorTest {
                 Probability(276383283, 1350125107)
             ),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Radament", DEFINED))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Radament", DEFINED, null))
     }
 
     @Test
@@ -162,7 +177,7 @@ class TreasureClassCalculatorTest {
             ),
             expectation("Act 1 Cpot A", TreasureClassPathOutcome(Probability.ONE, EMPTY, 1, 2)),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", DEFINED))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", DEFINED, null))
     }
 
     @Test
@@ -224,7 +239,7 @@ class TreasureClassCalculatorTest {
                 Probability(1653912, 1771561)
             ),
         )
-        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", DEFINED))
+        runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ B", DEFINED, null))
     }
 
 

@@ -33,6 +33,7 @@ class ApiResource(
             difficulty,
             monsterType,
             DEFINED,
+            null,
             nPlayers,
             partySize,
             ::generateBaseTreasureClassResponse
@@ -53,6 +54,7 @@ class ApiResource(
         difficulty,
         monsterType,
         VIRTUAL,
+        null,
         nPlayers,
         partySize,
         if (itemQuality == WHITE) ::generateBaseTreasureClassResponse else generateItemQualityResponse(
@@ -104,6 +106,7 @@ class ApiResource(
         difficulty: Difficulty,
         monsterType: MonsterType,
         treasureClassOutcomeType: TreasureClassOutcomeType,
+        filterToOutcomeType: OutcomeType?,
         nPlayers: Int,
         partySize: Int,
         function: (TreasureClassPaths, Monster, OutcomeType) -> Sequence<ApiResponse>
@@ -112,6 +115,7 @@ class ApiResource(
             treasureClassCalculator.getLeafOutcomes(
                 monster.treasureClass,
                 treasureClassOutcomeType,
+                filterToOutcomeType,
                 nPlayers,
                 partySize
             )

@@ -46,6 +46,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
     fun getLeafOutcomes(
         treasureClassName: String,
         treasureClassOutcomeType: TreasureClassOutcomeType,
+        filterToOutcomeType: OutcomeType?,
         nPlayers: Int = 1,
         partySize: Int = 1
     ): TreasureClassPaths {
@@ -55,12 +56,14 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
             treasureClassOutcomeType,
             nPlayers,
             partySize,
-            treasureClass.properties.picks
+            treasureClass.properties.picks,
+            filterToOutcomeType
         ) else getLeafOutcomesForNegativePicks(
             treasureClass,
             treasureClassOutcomeType,
             nPlayers,
-            partySize
+            partySize,
+            filterToOutcomeType
         )
     }
 
@@ -69,7 +72,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
         partySize: Int,
-        picks: Int
+        picks: Int,
+        filterToOutcomeType: OutcomeType?
     ) = TreasureClassPaths.forSinglePath(
         calculatePathSum(
             Outcome(treasureClass, 1),
@@ -80,7 +84,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
             nPlayers,
             partySize,
             picks,
-            1
+            1,
+            filterToOutcomeType
         )
     )
 
@@ -88,7 +93,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         treasureClass: TreasureClass,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
-        partySize: Int
+        partySize: Int,
+        filterToOutcomeType: OutcomeType?
     ): TreasureClassPaths =
 //        var picksCounter = treasureClass.properties.picks //TODO: Use this!
         TreasureClassPaths.forMultiplePaths(
@@ -108,7 +114,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
                         nPlayers,
                         partySize,
                         picks,
-                        outcome.probability
+                        outcome.probability,
+                        filterToOutcomeType
                     )
                 }
         )
@@ -140,7 +147,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         nPlayers: Int,
         partySize: Int,
         picks: Int,
-        drops: Int
+        drops: Int,
+        filterToOutcomeType: OutcomeType?
     ): Map<OutcomeType, TreasureClassPathOutcome> =
         TreasureClassPathAccumulator(picks, drops).apply {
             calculatePathSumRecurse(
@@ -151,7 +159,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
                 this,
                 treasureClassOutcomeType,
                 nPlayers,
-                partySize
+                partySize,
+                filterToOutcomeType
             )
         }.getOutcomes()
 
@@ -163,13 +172,18 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         leafAccumulator: TreasureClassPathAccumulator,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
-        partySize: Int
+        partySize: Int,
+        filterToOutcomeType: OutcomeType?
     ) {
         val outcomeChance = Probability(outcome.probability, tcProbabilityDenominator)
         val selectionProbability = outcomeChance.multiply(pathProbabilityAccumulator)
         val outcomeType = outcome.outcomeType
         if ((outcomeType is VirtualTreasureClass && treasureClassOutcomeType == DEFINED) || (outcomeType is BaseItem && treasureClassOutcomeType == VIRTUAL)) {
-            leafAccumulator.accumulateProbability(selectionProbability, itemQualityRatiosAccumulator, outcomeType)
+            if (filterToOutcomeType == null || filterToOutcomeType == outcomeType) leafAccumulator.accumulateProbability(
+                selectionProbability,
+                itemQualityRatiosAccumulator,
+                outcomeType
+            )
         } else if (outcomeType is TreasureClass) {
             val denominatorWithNoDrop = calculateDenominatorWithNoDrop(
                 outcomeType.probabilityDenominator,
@@ -187,7 +201,8 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
                     leafAccumulator,
                     treasureClassOutcomeType,
                     nPlayers,
-                    partySize
+                    partySize,
+                    filterToOutcomeType
                 )
             }
         }
