@@ -64,11 +64,12 @@ class ApiResource(
     private fun generateItemQualityResponse(
         itemQuality: ItemQuality,
         magicFind: Int
-    ): (TreasureClassPaths, Monster, OutcomeType) -> List<ApiResponse> =
+    ): (TreasureClassPaths, Monster, OutcomeType) -> Sequence<ApiResponse> =
         { treasureClassPaths, monster, outcomeType ->
             val baseItem = outcomeType as BaseItem
             val eligibleItems = itemLibrary.itemsByQualityAndBaseId
                 .getOrDefault(itemQuality to baseItem.id, emptyList())
+                .asSequence()
                 .filter { if (itemQuality == UNIQUE || itemQuality == SET) it.level <= monster.level else true }
             val raritySum = eligibleItems.sumOf { it.rarity }
             eligibleItems.map { item ->
@@ -91,7 +92,7 @@ class ApiResource(
         treasureClassPaths: TreasureClassPaths,
         monster: Monster,
         outcomeType: OutcomeType
-    ) = listOf(
+    ) = sequenceOf(
         ApiResponse(
             outcomeType.name,
             monster.area.name,
@@ -106,8 +107,8 @@ class ApiResource(
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
         partySize: Int,
-        function: (TreasureClassPaths, Monster, OutcomeType) -> List<ApiResponse>
-    ) = monsterLibrary.getMonsters(monsterId, difficulty, monsterType).flatMap { monster ->
+        function: (TreasureClassPaths, Monster, OutcomeType) -> Sequence<ApiResponse>
+    ) = monsterLibrary.getMonsters(monsterId, difficulty, monsterType).asSequence().flatMap { monster ->
         val treasureClassPaths: TreasureClassPaths =
             treasureClassCalculator.getLeafOutcomes(
                 monster.treasureClass,
@@ -115,8 +116,10 @@ class ApiResource(
                 nPlayers,
                 partySize
             )
-        treasureClassPaths.flatMap { function(treasureClassPaths, monster, it) }
-    }.sortedBy { it.name }
+        treasureClassPaths.asSequence().flatMap { function(treasureClassPaths, monster, it) }
+    }
+        .sortedBy { it.name }
+        .toList()
 
     //    https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?
 //    type=item&itemName=aegis&diff=A&monClass=regMon&nPlayers=1&nGroup=1&mf=0&quality=regItem&decMode=false&version=112
