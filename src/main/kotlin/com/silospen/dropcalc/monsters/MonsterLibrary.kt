@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component
 class MonsterLibrary(val monsters: Set<Monster>) {
     private val monstersByIdDifficultyType =
         monsters.groupBy { Triple(it.id, it.difficulty, it.type) }.mapValues { it.value.toSet() }
+    private val monstersByDifficultyType =
+        monsters.groupBy { it.difficulty to it.type }.mapValues { it.value.toSet() }
 
     companion object {
         fun fromConfig(
@@ -54,6 +56,9 @@ class MonsterLibrary(val monsters: Set<Monster>) {
 
     fun getMonsters(monsterClassId: String, difficulty: Difficulty, monsterType: MonsterType) =
         monstersByIdDifficultyType.getOrDefault(Triple(monsterClassId, difficulty, monsterType), emptySet())
+
+    fun getMonsters(difficulty: Difficulty, monsterType: MonsterType) =
+        monstersByDifficultyType.getOrDefault(difficulty to monsterType, emptySet())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

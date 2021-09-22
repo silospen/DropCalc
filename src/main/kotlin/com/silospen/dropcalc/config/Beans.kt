@@ -111,7 +111,7 @@ class Beans {
         )
         val rareItems = generateItems(ItemQuality.RARE, baseItems) { it.itemType.canBeRare }
         val magicItems = generateItems(ItemQuality.MAGIC, baseItems) { it.itemType.canBeRare }
-        return uniqueItems + setItems + rareItems + magicItems
+        return uniqueItems + setItems + rareItems + magicItems + generateItems(ItemQuality.WHITE, baseItems) { true }
     }
 
     fun generateItems(itemQuality: ItemQuality, baseItems: List<BaseItem>, filter: (BaseItem) -> Boolean): List<Item> =
