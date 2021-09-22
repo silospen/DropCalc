@@ -9,7 +9,14 @@ import org.springframework.stereotype.Component
 class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios: List<ItemRatio>, items: List<Item>) {
     private val itemTreasureClassesByName = generateVirtualTreasureClasses().associateBy { it.name }
     private val baseItemsById = baseItems.associateBy { it.id }
-    val itemsByQualityAndBaseId = items.groupBy { it.quality to it.baseItem.id }
+    private val itemsByQualityAndBaseId = items.groupBy { it.quality to it.baseItem.id }
+    private val itemsByQualityAndId = items.associateBy { it.quality to it.id }
+
+    fun getItemsForBaseId(itemQuality: ItemQuality, baseItemId: String): List<Item> =
+        itemsByQualityAndBaseId.getOrDefault(itemQuality to baseItemId, emptyList())
+
+    fun getItem(itemQuality: ItemQuality, id: String): Item? =
+        itemsByQualityAndId[itemQuality to id]
 
     private fun generateVirtualTreasureClasses() =
         baseItems.flatMap { item -> item.treasureClasses.map { it to item } }

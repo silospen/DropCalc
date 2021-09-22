@@ -67,8 +67,7 @@ class ApiResource(
     ): (TreasureClassPaths, Monster, OutcomeType) -> Sequence<ApiResponse> =
         { treasureClassPaths, monster, outcomeType ->
             val baseItem = outcomeType as BaseItem
-            val eligibleItems = itemLibrary.itemsByQualityAndBaseId
-                .getOrDefault(itemQuality to baseItem.id, emptyList())
+            val eligibleItems = itemLibrary.getItemsForBaseId(itemQuality, baseItem.id)
                 .asSequence()
                 .filter { if (itemQuality == UNIQUE || itemQuality == SET) it.level <= monster.level else true }
             val raritySum = eligibleItems.sumOf { it.rarity }
@@ -127,6 +126,7 @@ class ApiResource(
     @GetMapping("/item")
     fun getItemProbabilities(
         @RequestParam("itemId", required = true) itemId: String,
+        @RequestParam("monsterType", required = true) monsterType: MonsterType,
         @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("players", required = true) nPlayers: Int,
