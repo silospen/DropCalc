@@ -71,7 +71,7 @@ class ItemLibrary(private val baseItems: List<BaseItem>, private val itemRatios:
                 itemQualityRatios,
                 magicFind
             )
-            else -> throw IllegalArgumentException("Unexpected item quality: $itemQuality")
+            WHITE -> Probability.ONE
         }
     }
 
