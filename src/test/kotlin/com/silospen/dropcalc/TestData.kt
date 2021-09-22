@@ -198,7 +198,8 @@ val skeletonMonster = Monster(
     area1Data,
     NORMAL,
     REGULAR,
-    skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR)
+    skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
+    2
 )
 val monstersTestData = setOf(
     Monster(
@@ -208,7 +209,8 @@ val monstersTestData = setOf(
         bonebreakAreaData,
         NORMAL,
         MINION,
-        skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR)
+        skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
+        5
     ),
     Monster(
         "skeleton1:Bonebreak",
@@ -217,7 +219,8 @@ val monstersTestData = setOf(
         bonebreakAreaData,
         HELL,
         MINION,
-        skeletonMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.REGULAR)
+        skeletonMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.REGULAR),
+        58
     ),
     Monster(
         "skeleton1:skeleton1",
@@ -226,7 +229,8 @@ val monstersTestData = setOf(
         area1Data,
         NORMAL,
         MINION,
-        skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR)
+        skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
+        5
     ),
     Monster(
         "Bonebreak",
@@ -235,7 +239,8 @@ val monstersTestData = setOf(
         bonebreakAreaData,
         NORMAL,
         SUPERUNIQUE,
-        "Bonebreak TC"
+        "Bonebreak TC",
+        2
     ),
     Monster(
         "Bonebreak",
@@ -244,7 +249,8 @@ val monstersTestData = setOf(
         bonebreakAreaData,
         HELL,
         SUPERUNIQUE,
-        "Bonebreak TC(H)"
+        "Bonebreak TC(H)",
+        55
     ),
     skeletonMonster,
     Monster(
@@ -254,7 +260,8 @@ val monstersTestData = setOf(
         area1Data,
         NORMAL,
         UNIQUE,
-        skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.UNIQUE)
+        skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.UNIQUE),
+        5
     ),
     Monster(
         fetishShamanMonsterClass.id,
@@ -263,7 +270,8 @@ val monstersTestData = setOf(
         area1Data,
         NORMAL,
         REGULAR,
-        fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR)
+        fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
+        22
     ),
     Monster(
         fetishShamanMonsterClass.id,
@@ -272,7 +280,8 @@ val monstersTestData = setOf(
         area2Data,
         NORMAL,
         REGULAR,
-        fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR)
+        fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
+        22
     ),
     Monster(
         fetishShamanMonsterClass.id,
@@ -281,7 +290,8 @@ val monstersTestData = setOf(
         area2Data,
         HELL,
         CHAMPION,
-        fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.CHAMPION)
+        fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.CHAMPION),
+        85
     )
 )
 

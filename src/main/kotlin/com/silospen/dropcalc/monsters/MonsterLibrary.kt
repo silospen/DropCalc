@@ -1,6 +1,8 @@
 package com.silospen.dropcalc.monsters
 
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.MonsterType.MINION
+import com.silospen.dropcalc.MonsterType.SUPERUNIQUE
 import com.silospen.dropcalc.areas.AreasLibrary
 import org.springframework.stereotype.Component
 
@@ -34,7 +36,7 @@ class MonsterLibrary(val monsters: Set<Monster>) {
             val minions = (monstersFromSuperUniqueMonsterConfigs + monstersFromClassConfigs)
                 .filter {
                     it.type == MonsterType.UNIQUE ||
-                            (it.type == MonsterType.SUPERUNIQUE && superUniqueConfigsById.getValue(it.id).hasMinions)
+                            (it.type == SUPERUNIQUE && superUniqueConfigsById.getValue(it.id).hasMinions)
                 }
                 .flatMap { parentMonster ->
                     parentMonster.monsterClass.minionIds.map { minionId ->
@@ -87,11 +89,12 @@ class MonsterFactory(private val areasLibrary: AreasLibrary) {
         parentMonster.monsterClass,
         parentMonster.area,
         parentMonster.difficulty,
-        MonsterType.MINION,
+        MINION,
         monsterClass.monsterClassTreasureClasses.getValue(
             parentMonster.difficulty,
             TreasureClassType.REGULAR
-        )
+        ),
+        constructLevel(parentMonster.monsterClass, parentMonster.difficulty, MINION, parentMonster.area)
     )
 
     fun createSuperUniqueMonster(
@@ -99,15 +102,19 @@ class MonsterFactory(private val areasLibrary: AreasLibrary) {
         monsterClass: MonsterClass,
         difficulty: Difficulty,
         treasureClass: String
-    ) = Monster(
-        superUniqueMonsterConfig.id,
-        superUniqueMonsterConfig.name,
-        monsterClass,
-        areasLibrary.getArea(superUniqueMonsterConfig.areaName),
-        difficulty,
-        MonsterType.SUPERUNIQUE,
-        treasureClass
-    )
+    ): Monster {
+        val area = areasLibrary.getArea(superUniqueMonsterConfig.areaName)
+        return Monster(
+            superUniqueMonsterConfig.id,
+            superUniqueMonsterConfig.name,
+            monsterClass,
+            area,
+            difficulty,
+            SUPERUNIQUE,
+            treasureClass,
+            constructLevel(monsterClass, difficulty, SUPERUNIQUE, area)
+        )
+    }
 
     fun createMonster(
         monsterClass: MonsterClass,
@@ -123,9 +130,28 @@ class MonsterFactory(private val areasLibrary: AreasLibrary) {
                     it,
                     difficulty,
                     monsterType,
-                    monsterClass.monsterClassTreasureClasses.getValue(difficulty, treasureClassType)
+                    monsterClass.monsterClassTreasureClasses.getValue(difficulty, treasureClassType),
+                    constructLevel(monsterClass, difficulty, monsterType, it)
                 )
             }
         }
+    }
+
+    private fun constructLevel(
+        monsterClass: MonsterClass,
+        difficulty: Difficulty,
+        monsterType: MonsterType,
+        area: Area
+    ): Int {
+        return (if (difficulty == Difficulty.NORMAL || monsterType == MonsterType.BOSS)
+            monsterClass.monsterLevels.getValue(difficulty)
+        else area.monsterLevels.getValue(difficulty)) + getLevelAdjustment(monsterType)
+    }
+
+    private fun getLevelAdjustment(monsterType: MonsterType): Int {
+        if (monsterType == MonsterType.BOSS) return 0
+        if (monsterType == MonsterType.CHAMPION) return 2
+        if (monsterType == MonsterType.UNIQUE || monsterType == MINION) return 3
+        return 0
     }
 }

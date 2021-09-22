@@ -19,7 +19,8 @@ class MetadataResourceTest {
                         area1Data,
                         Difficulty.NORMAL,
                         MonsterType.SUPERUNIQUE,
-                        "foo"
+                        "foo",
+                        1
                     ),
                     Monster(
                         "1",
@@ -28,7 +29,8 @@ class MetadataResourceTest {
                         area2Data,
                         Difficulty.NORMAL,
                         MonsterType.SUPERUNIQUE,
-                        "foo"
+                        "foo",
+                        2
                     ),
                     Monster(
                         "2",
@@ -37,7 +39,8 @@ class MetadataResourceTest {
                         area2Data,
                         Difficulty.NORMAL,
                         MonsterType.SUPERUNIQUE,
-                        "foo"
+                        "foo",
+                        3
                     ),
                     Monster(
                         "1",
@@ -46,7 +49,8 @@ class MetadataResourceTest {
                         area2Data,
                         Difficulty.NORMAL,
                         MonsterType.BOSS,
-                        "foo"
+                        "foo",
+                        4
                     )
                 )
             )

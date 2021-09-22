@@ -63,7 +63,8 @@ class MonsterLibraryTest {
                     durielArea,
                     NORMAL,
                     BOSS,
-                    durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
+                    22
                 ),
                 Monster(
                     "durielq",
@@ -72,7 +73,8 @@ class MonsterLibraryTest {
                     durielArea,
                     NORMAL,
                     BOSS,
-                    durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.QUEST)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.QUEST),
+                    22
                 ),
                 Monster(
                     "duriel",
@@ -81,7 +83,8 @@ class MonsterLibraryTest {
                     durielArea,
                     NIGHTMARE,
                     BOSS,
-                    durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.REGULAR)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.REGULAR),
+                    55
                 ),
                 Monster(
                     "durielq",
@@ -90,7 +93,8 @@ class MonsterLibraryTest {
                     durielArea,
                     NIGHTMARE,
                     BOSS,
-                    durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.QUEST)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.QUEST),
+                    55
                 ),
                 Monster(
                     "duriel",
@@ -99,7 +103,8 @@ class MonsterLibraryTest {
                     durielArea,
                     HELL,
                     BOSS,
-                    durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.REGULAR)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.REGULAR),
+                    88
                 ),
                 Monster(
                     "durielq",
@@ -108,7 +113,8 @@ class MonsterLibraryTest {
                     durielArea,
                     HELL,
                     BOSS,
-                    durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.QUEST)
+                    durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.QUEST),
+                    88
                 ),
             )
         )
