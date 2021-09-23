@@ -1,9 +1,9 @@
 package com.silospen.dropcalc.files
 
-import java.io.File
+import java.io.InputStream
 
-fun <T : Any> readTsv(file: File, lineParser: LineParser<T?>): List<T> =
-    file.useLines { lines ->
+fun <T : Any> readTsv(inputStream: InputStream, lineParser: LineParser<T?>): List<T> =
+    inputStream.bufferedReader().useLines { lines ->
         val iterator = lines.iterator()
         val header = parseHeader(iterator.next())
         iterator.asSequence().map { it.split('\t') }
@@ -21,7 +21,7 @@ interface LineParser<T> {
     fun parseLine(line: Line): T?
 }
 
-fun getResource(name: String) = File(object {}.javaClass.getResource("/$name")!!.toURI())
+fun getResource(name: String) = object {}.javaClass.getResourceAsStream("/$name")!!
 
 data class Line(
     private val line: List<String>,

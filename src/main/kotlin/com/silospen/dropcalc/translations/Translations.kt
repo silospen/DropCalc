@@ -1,6 +1,6 @@
 package com.silospen.dropcalc.translations
 
-import java.io.File
+import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder.LITTLE_ENDIAN
 
@@ -17,8 +17,8 @@ class CompositeTranslations(private vararg val translations: Translations) : Tra
 
 class MapBasedTranslations(private val translationData: Map<String, String>) : Translations {
     companion object {
-        fun loadTranslations(file: File): Translations {
-            val buffer = ByteBuffer.wrap(file.readBytes()).order(LITTLE_ENDIAN)
+        fun loadTranslations(inputStream: InputStream): Translations {
+            val buffer = ByteBuffer.wrap(inputStream.readAllBytes()).order(LITTLE_ENDIAN)
             val headerBuffer = buffer.sliceKeepEndian(0, 21)
             val header = TableFileHeader.fromByteBuffer(headerBuffer)
             val hashTableBuffer =

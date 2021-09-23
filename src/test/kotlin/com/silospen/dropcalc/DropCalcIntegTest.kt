@@ -1,9 +1,9 @@
 package com.silospen.dropcalc
 
+import com.google.common.io.Resources
 import com.silospen.dropcalc.config.ConfigLoader
 import com.silospen.dropcalc.files.Line
 import com.silospen.dropcalc.files.LineParser
-import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.resource.ApiResource
 import com.silospen.dropcalc.resource.ApiResponse
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.io.File
+import java.io.FileInputStream
 
 @SpringBootTest
 class DropCalcIntegTest {
@@ -72,7 +73,8 @@ class DropCalcIntegTest {
         }
 
     fun runLocalTests(resourceName: String, testToRun: (List<String>, File) -> Unit) {
-        getResource(resourceName).listFiles()!!.filter { it.name.endsWith(".tsv") }.forEach {
+        @Suppress("UnstableApiUsage")
+        File(Resources.getResource(resourceName).toURI()).listFiles()!!.filter { it.name.endsWith(".tsv") }.forEach {
             val parts = it.name.removeSuffix(".tsv").replace("$", ":").split("_")
             testToRun(parts, it)
         }
@@ -239,7 +241,7 @@ class DropCalcIntegTest {
     ) {
         val actual = actualSource()
         val expected = readTsv(
-            expectationsFile,
+            FileInputStream(expectationsFile),
             expectationsLineParser
         )
         assertTrue(expected.isNotEmpty(), "Expected is empty")
