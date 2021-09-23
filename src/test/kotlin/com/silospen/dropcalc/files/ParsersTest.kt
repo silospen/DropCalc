@@ -10,7 +10,6 @@ import com.silospen.dropcalc.items.ItemTypeCodeLibrary
 import com.silospen.dropcalc.items.ItemTypeCodeWithParents
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import java.io.File
 import java.util.*
 
 class ItemRatioLineParserTest {
@@ -192,7 +191,6 @@ class MonstatsLineParserTest {
     @Test
     fun monstatsParser() {
         val actual = readTsv(
-//            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\monstats.txt"),
             getResource("parsersTestData/monstats.txt"),
             MonstatsLineParser(stubTranslations)
         ).toSet()
@@ -204,7 +202,6 @@ class SuperUniqueLineParserTest {
     @Test
     fun superUniquesParser() {
         val actual = readTsv(
-//            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SuperUniques.txt"),
             getResource("parsersTestData/superuniques.txt"),
             SuperUniqueLineParser(
                 mapOf(
@@ -247,7 +244,6 @@ class TreasureClassesLineParserTest {
     @Test
     fun treasureClassesParser() {
         val actual = readTsv(
-//            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\TreasureClassEx.txt"),
             getResource("parsersTestData/treasureclass.txt"),
             TreasureClassesLineParser()
         ).toSet()
@@ -298,7 +294,6 @@ class LevelsLineParserTest {
     @Test
     fun levelsLineParser() {
         val actual = readTsv(
-//            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
             getResource("parsersTestData/levels.txt"),
             LevelsLineParser(
                 stubTranslations,
@@ -351,5 +346,3 @@ class LevelsLineParserTest {
         assertEquals(expected, actual)
     }
 }
-
-fun getResource(name: String) = File(object {}.javaClass.getResource("/$name")!!.toURI())

@@ -14,3 +14,5 @@ fun <T : Any> readTsv(file: File, lineParser: LineParser<T?>): List<T> =
 interface LineParser<T> {
     fun parseLine(line: List<String>): T?
 }
+
+fun getResource(name: String) = File(object {}.javaClass.getResource("/$name")!!.toURI())

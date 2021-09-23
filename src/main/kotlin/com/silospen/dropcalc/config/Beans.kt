@@ -18,7 +18,6 @@ import com.silospen.dropcalc.translations.Translations
 import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.io.File
 
 @Configuration
 class Beans {
@@ -55,29 +54,28 @@ class ConfigLoader(private val version: Version) {
 
     companion object {
         private val expansionTranslations =
-            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\expansionstring.tbl"))
-        private val coreTranslations =
-            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\string.tbl"))
+            MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/expansionstring.tbl"))
+        private val coreTranslations = MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/string.tbl"))
     }
 
     private fun loadTreasureClassConfigs(): List<TreasureClassConfig> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\TreasureClassEx.txt"),
+        getResource("d2Files/${version.pathName}/TreasureClassEx.txt"),
         TreasureClassesLineParser()
     )
 
     private fun loadMonsterClassConfigs(translations: Translations): List<MonsterClass> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\monstats.txt"),
+        getResource("d2Files/${version.pathName}/monstats.txt"),
         MonstatsLineParser(translations)
     )
 
     private fun loadSuperUniqueMonsterConfigs(translations: Translations): List<SuperUniqueMonsterConfig> =
         readTsv(
-            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\SuperUniques.txt"),
+            getResource("d2Files/${version.pathName}/SuperUniques.txt"),
             SuperUniqueLineParser(hardcodedSuperUniqueAreas, translations)
         )
 
     private fun loadAreas(translations: Translations): List<Area> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\Levels.txt"),
+        getResource("d2Files/${version.pathName}/Levels.txt"),
         LevelsLineParser(translations, hardcodedBossAreas)
     )
 
@@ -95,35 +93,35 @@ class ConfigLoader(private val version: Version) {
 
     private fun loadTranslations(): Translations {
         return CompositeTranslations(
-            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\${version.pathName}\\patchstring.tbl")),
+            MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/${version.pathName}/patchstring.tbl")),
             expansionTranslations,
             coreTranslations
         )
     }
 
     private fun loadBaseItems(translations: Translations, itemTypes: List<ItemType>): List<BaseItem> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\weapons.txt"),
+        getResource("d2Files/${version.pathName}/weapons.txt"),
         BaseItemLineParser.forWeaponsTxt(translations, itemTypes)
     ) + readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\armor.txt"),
+        getResource("d2Files/${version.pathName}/armor.txt"),
         BaseItemLineParser.forArmorTxt(translations, itemTypes)
     ) + readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\misc.txt"),
+        getResource("d2Files/${version.pathName}/misc.txt"),
         BaseItemLineParser.forMiscTxt(translations, itemTypes)
     )
 
     private fun loadItemTypes(itemTypeCodeLibrary: ItemTypeCodeLibrary): List<ItemType> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\itemTypes.txt"),
+        getResource("d2Files/${version.pathName}/itemTypes.txt"),
         ItemTypeParser(itemTypeCodeLibrary)
     )
 
     private fun loadItemTypeCodes(): List<SingleItemTypeCodeEntry> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\itemTypes.txt"),
+        getResource("d2Files/${version.pathName}/itemTypes.txt"),
         ItemTypeCodesParser()
     )
 
     private fun loadItemRatio(): List<ItemRatio> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\itemratio.txt"),
+        getResource("d2Files/${version.pathName}/itemratio.txt"),
         ItemRatioLineParser()
     )
 
@@ -132,11 +130,11 @@ class ConfigLoader(private val version: Version) {
 
     private fun loadItems(translations: Translations, baseItems: List<BaseItem>): List<Item> {
         val uniqueItems = readTsv(
-            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\uniqueItems.txt"),
+            getResource("d2Files/${version.pathName}/uniqueItems.txt"),
             UniqueItemLineParser(translations, baseItems)
         )
         val setItems = readTsv(
-            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\SetItems.txt"),
+            getResource("d2Files/${version.pathName}/SetItems.txt"),
             SetItemLineParser(translations, baseItems)
         )
         val rareItems = generateItems(ItemQuality.RARE, baseItems) { it.itemType.canBeRare }
