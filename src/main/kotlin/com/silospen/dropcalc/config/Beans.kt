@@ -101,13 +101,13 @@ class ConfigLoader(private val version: Version) {
 
     private fun loadBaseItems(translations: Translations, itemTypes: List<ItemType>): List<BaseItem> = readTsv(
         getResource("d2Files/${version.pathName}/weapons.txt"),
-        BaseItemLineParser.forWeaponsTxt(translations, itemTypes)
+        BaseItemLineParser(translations, itemTypes)
     ) + readTsv(
         getResource("d2Files/${version.pathName}/armor.txt"),
-        BaseItemLineParser.forArmorTxt(translations, itemTypes)
+        BaseItemLineParser(translations, itemTypes)
     ) + readTsv(
         getResource("d2Files/${version.pathName}/misc.txt"),
-        BaseItemLineParser.forMiscTxt(translations, itemTypes)
+        BaseItemLineParser(translations, itemTypes, ItemVersion.NORMAL)
     )
 
     private fun loadItemTypes(itemTypeCodeLibrary: ItemTypeCodeLibrary): List<ItemType> = readTsv(

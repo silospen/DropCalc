@@ -107,12 +107,13 @@ class BaseItemLineParserTest {
         val potionItemType = ItemType("tpot", "Potion", false, 3, setOf("misc"))
         val actual = readTsv(
             getResource("parsersTestData/weapons.txt"),
-            BaseItemLineParser.forWeaponsTxt(
-                stubTranslations, listOf(
+            BaseItemLineParser(
+                stubTranslations,
+                listOf(
                     axeItemType,
                     potionItemType,
                     ItemType("knif", "Knife", false, 3, setOf("weap")),
-                )
+                ),
             )
         )
         assertEquals(
@@ -129,9 +130,7 @@ class BaseItemLineParserTest {
         val helmItemType = ItemType("helm", "Helm", false, 3, setOf("armo"))
         val actual = readTsv(
             getResource("parsersTestData/armor.txt"),
-            BaseItemLineParser.forArmorTxt(
-                stubTranslations, listOf(helmItemType)
-            )
+            BaseItemLineParser(stubTranslations, listOf(helmItemType))
         )
         assertEquals(
             listOf(BaseItem("cap", "cap-name", helmItemType, ItemVersion.NORMAL, 1, setOf("armo3"))),
@@ -145,9 +144,7 @@ class BaseItemLineParserTest {
         val ringItemType = ItemType("ring", "Ring", false, 3, setOf("misc"))
         val actual = readTsv(
             getResource("parsersTestData/misc.txt"),
-            BaseItemLineParser.forMiscTxt(
-                stubTranslations, listOf(elixirItemType, ringItemType)
-            )
+            BaseItemLineParser(stubTranslations, listOf(elixirItemType, ringItemType), ItemVersion.NORMAL)
         )
         assertEquals(
             listOf(
@@ -265,7 +262,8 @@ class TreasureClassesLineParserTest {
                     "armo57" to 7,
                     "weap60" to 6,
                     "armo60" to 3,
-                    "Act 5 (N) Melee A" to 1743
+                    "Act 5 (N) Melee A" to 1743,
+                    "anItem" to 50
                 ),
             ),
             TreasureClassConfig(
