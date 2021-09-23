@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
 class MetadataResourceTest {
-    private val metadataResource = MetadataResource(
+    private val metadataResource = VersionedMetadataResource(
         MonsterLibrary(
             setOf(
                 Monster(

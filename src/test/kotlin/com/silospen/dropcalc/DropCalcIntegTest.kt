@@ -1,5 +1,6 @@
 package com.silospen.dropcalc
 
+import com.silospen.dropcalc.config.ConfigLoader
 import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
@@ -19,7 +20,9 @@ class DropCalcIntegTest {
     private lateinit var apiResource: ApiResource
 
     @Autowired
-    private lateinit var testDataGenerator: TestDataGenerator
+    private lateinit var configLoaders: Map<Version, ConfigLoader>
+
+    private val testDataGenerator: TestDataGenerator = TestDataGenerator()
 
     @Test
     fun remoteTests() {
@@ -82,16 +85,17 @@ class DropCalcIntegTest {
         partySize: Int,
         itemQuality: ItemQuality,
         magicFind: Int,
+        itemName: String,
     ) = runItemsTestWithLocalExpectations(
         itemId, monsterType, difficulty, nPlayers, partySize, itemQuality, magicFind,
         testDataGenerator.generateItemExpectationDataToFile(
-            itemId,
             monsterType,
             difficulty,
             nPlayers,
             partySize,
             itemQuality,
-            magicFind
+            magicFind,
+            itemName
         )
 //            .copyTo(File("C:\\Users\\silos\\Projects\\DropCalc\\src\\test\\resources\\integExpectations\\itemTests\\${itemId}_${monsterType}_${difficulty}_${nPlayers}_${partySize}_${itemQuality}_${magicFind}.tsv"))
     )
@@ -110,6 +114,7 @@ class DropCalcIntegTest {
         tcExpectationDataLineParser,
         {
             apiResource.getItemProbabilities(
+                Version.V1_12,
                 itemId,
                 monsterType,
                 itemQuality,
@@ -166,7 +171,18 @@ class DropCalcIntegTest {
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
-        { apiResource.getMonster(monsterId, monsterType, difficulty, nPlayers, partySize, itemQuality, magicFind) },
+        {
+            apiResource.getMonster(
+                Version.V1_12,
+                monsterId,
+                monsterType,
+                difficulty,
+                nPlayers,
+                partySize,
+                itemQuality,
+                magicFind
+            )
+        },
         this::runAtomicTcAsserts,
         "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind",
     )
@@ -208,7 +224,7 @@ class DropCalcIntegTest {
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
-        { apiResource.getAtomicTcs(monsterId, monsterType, difficulty, nPlayers, partySize) },
+        { apiResource.getAtomicTcs(Version.V1_12, monsterId, monsterType, difficulty, nPlayers, partySize) },
         this::runAtomicTcAsserts,
         "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize",
     )

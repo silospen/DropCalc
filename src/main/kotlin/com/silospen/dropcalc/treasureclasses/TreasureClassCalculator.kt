@@ -4,13 +4,11 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
-import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.floor
 import kotlin.math.pow
 
-@Component
 class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, private val itemLibrary: ItemLibrary) {
     private val treasureClasses: List<TreasureClass> = generateTreasureClasses(treasureClassConfigs)
     private val treasureClassesByName: Map<String, TreasureClass> = treasureClasses.associateBy { it.name }

@@ -5,51 +5,87 @@ import com.silospen.dropcalc.areas.AreasLibrary
 import com.silospen.dropcalc.areas.hardcodedBossAreas
 import com.silospen.dropcalc.areas.hardcodedSuperUniqueAreas
 import com.silospen.dropcalc.files.*
+import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.items.ItemTypeCodeLibrary
 import com.silospen.dropcalc.items.SingleItemTypeCodeEntry
 import com.silospen.dropcalc.monsters.MonsterFactory
 import com.silospen.dropcalc.monsters.MonsterLibrary
+import com.silospen.dropcalc.resource.VersionedApiResource
+import com.silospen.dropcalc.resource.VersionedMetadataResource
 import com.silospen.dropcalc.translations.CompositeTranslations
 import com.silospen.dropcalc.translations.MapBasedTranslations
 import com.silospen.dropcalc.translations.Translations
+import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import java.io.File
 
 @Configuration
 class Beans {
+
     @Bean
-    fun getTreasureClassConfigs(): List<TreasureClassConfig> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\TreasureClassEx.txt"),
+    fun configLoaders(): Map<Version, ConfigLoader> = Version.values().associateWith { ConfigLoader(it) }
+
+    @Bean
+    fun getVersionedApiResources(configLoaders: Map<Version, ConfigLoader>): Map<Version, VersionedApiResource> =
+        configLoaders.map { (version, configLoader) ->
+            version to configLoader.createVersionedApiResource()
+        }.toMap()
+
+    @Bean
+    fun getVersionedMetadataResources(configLoaders: Map<Version, ConfigLoader>): Map<Version, VersionedMetadataResource> =
+        configLoaders.map { (version, configLoader) ->
+            version to configLoader.createVersionedMetadataResource()
+        }.toMap()
+
+}
+
+class ConfigLoader(private val version: Version) {
+    private val translations = loadTranslations()
+    private val itemTypes = loadItemTypes(loadItemTypeCodeLibrary(loadItemTypeCodes()))
+    private val baseItems = loadBaseItems(translations, itemTypes)
+    private val itemLibrary = ItemLibrary(baseItems, loadItemRatio(), loadItems(translations, baseItems))
+    private val treasureClassConfigs = loadTreasureClassConfigs()
+    private val treasureClassCalculator = TreasureClassCalculator(treasureClassConfigs, itemLibrary)
+    private val monsterLibrary = loadMonsterLibrary(
+        loadMonsterClassConfigs(translations),
+        loadSuperUniqueMonsterConfigs(translations),
+        MonsterFactory(loadAreasLibrary(loadAreas(translations)), treasureClassCalculator)
+    )
+
+    companion object {
+        private val expansionTranslations =
+            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\expansionstring.tbl"))
+        private val coreTranslations =
+            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\string.tbl"))
+    }
+
+    private fun loadTreasureClassConfigs(): List<TreasureClassConfig> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\TreasureClassEx.txt"),
         TreasureClassesLineParser()
     )
 
-    @Bean
-    fun getMonsterClassConfigs(translations: Translations): List<MonsterClass> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\monstats.txt"),
+    private fun loadMonsterClassConfigs(translations: Translations): List<MonsterClass> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\monstats.txt"),
         MonstatsLineParser(translations)
     )
 
-    @Bean
-    fun getSuperUniqueMonsterConfigs(translations: Translations): List<SuperUniqueMonsterConfig> =
+    private fun loadSuperUniqueMonsterConfigs(translations: Translations): List<SuperUniqueMonsterConfig> =
         readTsv(
-            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SuperUniques.txt"),
+            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\SuperUniques.txt"),
             SuperUniqueLineParser(hardcodedSuperUniqueAreas, translations)
         )
 
-    @Bean
-    fun getAreas(translations: Translations): List<Area> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\Levels.txt"),
+    private fun loadAreas(translations: Translations): List<Area> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\Levels.txt"),
         LevelsLineParser(translations, hardcodedBossAreas)
     )
 
-    @Bean
-    fun getAreasLibrary(areas: List<Area>): AreasLibrary {
+    private fun loadAreasLibrary(areas: List<Area>): AreasLibrary {
         return AreasLibrary.fromAreas(areas)
     }
 
-    @Bean
-    fun getMonsterLibrary(
+    private fun loadMonsterLibrary(
         monsterClassConfigs: List<MonsterClass>,
         superUniqueMonsterConfigs: List<SuperUniqueMonsterConfig>,
         monsterFactory: MonsterFactory
@@ -57,56 +93,50 @@ class Beans {
         return MonsterLibrary.fromConfig(monsterClassConfigs, superUniqueMonsterConfigs, monsterFactory)
     }
 
-    @Bean
-    fun getTranslations(): Translations =
-        CompositeTranslations(
-            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\1.12a\\patchstring.tbl")),
-            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\expansionstring.tbl")),
-            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\string.tbl"))
+    private fun loadTranslations(): Translations {
+        return CompositeTranslations(
+            MapBasedTranslations.loadTranslations(File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\tbl\\${version.pathName}\\patchstring.tbl")),
+            expansionTranslations,
+            coreTranslations
         )
+    }
 
-    @Bean
-    fun getBaseItems(translations: Translations, itemTypes: List<ItemType>): List<BaseItem> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\weapons.txt"),
+    private fun loadBaseItems(translations: Translations, itemTypes: List<ItemType>): List<BaseItem> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\weapons.txt"),
         BaseItemLineParser.forWeaponsTxt(translations, itemTypes)
     ) + readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\armor.txt"),
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\armor.txt"),
         BaseItemLineParser.forArmorTxt(translations, itemTypes)
     ) + readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\misc.txt"),
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\misc.txt"),
         BaseItemLineParser.forMiscTxt(translations, itemTypes)
     )
 
-    @Bean
-    fun getItemTypes(itemTypeCodeLibrary: ItemTypeCodeLibrary): List<ItemType> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\itemTypes.txt"),
+    private fun loadItemTypes(itemTypeCodeLibrary: ItemTypeCodeLibrary): List<ItemType> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\itemTypes.txt"),
         ItemTypeParser(itemTypeCodeLibrary)
     )
 
-    @Bean
-    fun getItemTypeCodes(): List<SingleItemTypeCodeEntry> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\itemTypes.txt"),
+    private fun loadItemTypeCodes(): List<SingleItemTypeCodeEntry> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\itemTypes.txt"),
         ItemTypeCodesParser()
     )
 
-    @Bean
-    fun getItemRatio(): List<ItemRatio> = readTsv(
-        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\itemratio.txt"),
+    private fun loadItemRatio(): List<ItemRatio> = readTsv(
+        File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\itemratio.txt"),
         ItemRatioLineParser()
     )
 
-    @Bean
-    fun getItemTypeCodeLibrary(itemTypeCodes: List<SingleItemTypeCodeEntry>) =
+    private fun loadItemTypeCodeLibrary(itemTypeCodes: List<SingleItemTypeCodeEntry>) =
         ItemTypeCodeLibrary.fromIncompleteLineages(itemTypeCodes)
 
-    @Bean
-    fun getItems(translations: Translations, baseItems: List<BaseItem>): List<Item> {
+    private fun loadItems(translations: Translations, baseItems: List<BaseItem>): List<Item> {
         val uniqueItems = readTsv(
-            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\uniqueItems.txt"),
+            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\uniqueItems.txt"),
             UniqueItemLineParser(translations, baseItems)
         )
         val setItems = readTsv(
-            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\1.12a\\SetItems.txt"),
+            File("C:\\Users\\silos\\Downloads\\D2Files\\cleanTextFiles\\${version.pathName}\\SetItems.txt"),
             SetItemLineParser(translations, baseItems)
         )
         val rareItems = generateItems(ItemQuality.RARE, baseItems) { it.itemType.canBeRare }
@@ -114,7 +144,11 @@ class Beans {
         return uniqueItems + setItems + rareItems + magicItems + generateItems(ItemQuality.WHITE, baseItems) { true }
     }
 
-    fun generateItems(itemQuality: ItemQuality, baseItems: List<BaseItem>, filter: (BaseItem) -> Boolean): List<Item> =
+    private fun generateItems(
+        itemQuality: ItemQuality,
+        baseItems: List<BaseItem>,
+        filter: (BaseItem) -> Boolean
+    ): List<Item> =
         baseItems
             .filter(filter)
             .map {
@@ -127,4 +161,16 @@ class Beans {
                     it.itemType.rarity
                 )
             }
+
+    fun createVersionedApiResource(): VersionedApiResource {
+
+        return VersionedApiResource(
+            treasureClassCalculator, monsterLibrary,
+            itemLibrary
+        )
+    }
+
+    fun createVersionedMetadataResource(): VersionedMetadataResource {
+        return VersionedMetadataResource(monsterLibrary, itemLibrary)
+    }
 }

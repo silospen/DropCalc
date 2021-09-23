@@ -3,10 +3,8 @@ package com.silospen.dropcalc.items
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.ItemQuality.*
 import com.silospen.dropcalc.monsters.Monster
-import org.springframework.stereotype.Component
 
-@Component
-final class ItemLibrary(
+class ItemLibrary(
     private val baseItems: List<BaseItem>,
     private val itemRatios: List<ItemRatio>,
     val items: List<Item>

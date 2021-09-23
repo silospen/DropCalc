@@ -5,7 +5,6 @@ import com.silospen.dropcalc.MonsterType.MINION
 import com.silospen.dropcalc.MonsterType.SUPERUNIQUE
 import com.silospen.dropcalc.areas.AreasLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
-import org.springframework.stereotype.Component
 
 class MonsterLibrary(val monsters: Set<Monster>) {
     private val monstersByIdDifficultyType =
@@ -87,7 +86,6 @@ class MonsterLibrary(val monsters: Set<Monster>) {
     }
 }
 
-@Component
 class MonsterFactory(
     private val areasLibrary: AreasLibrary,
     private val treasureClassCalculator: TreasureClassCalculator

@@ -161,6 +161,12 @@ enum class ItemVersion {
     ELITE,
 }
 
+enum class Version(val pathName: String, val displayName: String) {
+    V1_12("1.12a", "1.12"),
+    V1_13("1.13d", "1.13"),
+    V1_14("1.14d", "D2R/1.14")
+}
+
 enum class Difficulty(val displayString: String) {
     NORMAL("N"),
     NIGHTMARE("NM"),

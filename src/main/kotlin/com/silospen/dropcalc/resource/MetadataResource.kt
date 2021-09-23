@@ -1,10 +1,7 @@
 package com.silospen.dropcalc.resource
 
 import com.google.common.collect.ImmutableTable
-import com.silospen.dropcalc.Difficulty
-import com.silospen.dropcalc.ItemQuality
-import com.silospen.dropcalc.ItemVersion
-import com.silospen.dropcalc.MonsterType
+import com.silospen.dropcalc.*
 import com.silospen.dropcalc.files.getOrDefault
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.monsters.MonsterLibrary
@@ -15,8 +12,29 @@ import org.springframework.web.bind.annotation.RestController
 
 @RequestMapping(value = ["/metadata"])
 @RestController
-class MetadataResource(monsterLibrary: MonsterLibrary, private val itemLibrary: ItemLibrary) {
+class MetadataResource(private val versionedMetadataResources: Map<Version, VersionedMetadataResource>) {
 
+    val versionsResponses = Version.values().map { MetadataResponse(it.displayName, it.name) }
+
+    @GetMapping("monsters")
+    fun getMonsters(
+        @RequestParam("version", required = true) version: Version,
+        @RequestParam("difficulty", required = true) difficulty: Difficulty,
+        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+    ) = versionedMetadataResources[version]?.getMonsters(difficulty, monsterType) ?: emptyList()
+
+    @GetMapping("items")
+    fun getItems(
+        @RequestParam("version", required = true) version: Version,
+        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("itemVersion", required = false) itemVersion: ItemVersion?,
+    ) = versionedMetadataResources[version]?.getItems(itemQuality, itemVersion) ?: emptyList()
+
+    @GetMapping("versions")
+    fun getVersions() = versionsResponses
+}
+
+class VersionedMetadataResource(monsterLibrary: MonsterLibrary, private val itemLibrary: ItemLibrary) {
     private val monstersResponsesByDifficultyType =
         monsterLibrary.monsters.groupBy({ it.difficulty to it.type }) { MetadataResponse(it.name, it.id) }
             .mapValues { it.value.toSet() }
@@ -31,19 +49,16 @@ class MetadataResource(monsterLibrary: MonsterLibrary, private val itemLibrary: 
                 }
         }.build()
 
-
-    @GetMapping("monsters")
     fun getMonsters(
-        @RequestParam("difficulty", required = true) difficulty: Difficulty,
-        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+        difficulty: Difficulty,
+        monsterType: MonsterType,
     ): List<MetadataResponse> {
         return monstersResponsesByDifficultyType.getOrDefault(difficulty to monsterType, emptyList())
     }
 
-    @GetMapping("items")
     fun getItems(
-        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
-        @RequestParam("itemVersion", required = false) itemVersion: ItemVersion?,
+        itemQuality: ItemQuality,
+        itemVersion: ItemVersion?,
     ): List<MetadataResponse> =
         (if (itemVersion == null) itemsResponsesByQualityVersion.row(itemQuality).values.flatten() else (
                 itemsResponsesByQualityVersion.getOrDefault(itemQuality, itemVersion, emptySet()))).sortedBy { it.name }

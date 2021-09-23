@@ -1,37 +1,34 @@
 package com.silospen.dropcalc
 
 import com.silospen.dropcalc.MonsterType.*
-import com.silospen.dropcalc.items.ItemLibrary
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
-import org.springframework.stereotype.Component
 import java.io.File
 
-@Component
-class TestDataGenerator(private val itemLibrary: ItemLibrary) {
+class TestDataGenerator {
 
     private val client: HttpClient = HttpClient()
 
     fun generateItemExpectationDataToFile(
-        itemId: String,
         monsterType: MonsterType,
         difficulty: Difficulty?,
         nPlayers: Int,
         partySize: Int,
         quality: ItemQuality,
         magicFind: Int,
+        itemName: String,
     ) = generateExpectationDataToFile {
         generateItemExpectationData(
-            itemId,
             monsterType,
             difficulty,
             nPlayers,
             partySize,
             quality,
-            magicFind
+            magicFind,
+            itemName
         )
     }
 
@@ -111,19 +108,16 @@ class TestDataGenerator(private val itemLibrary: ItemLibrary) {
 //    Request URL: https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=item&itemName=akaran%20targe&diff=H&monClass=minMon&nPlayers=1&nGroup=1&mf=0&quality=rareItem&decMode=true&version=112
 
     private fun generateItemExpectationData(
-        itemId: String,
         monsterType: MonsterType,
         difficulty: Difficulty?,
         nPlayers: Int,
         partySize: Int,
         quality: ItemQuality,
-        magicFind: Int
+        magicFind: Int,
+        itemName: String
     ): String = callSilospenDropCalcAndParseResponse(
         "https://dropcalc.silospen.com/cgi-bin/pyDrop.cgi?type=item&itemName=${
-            itemLibrary.getItem(
-                quality,
-                itemId
-            )!!.name.lowercase()
+            itemName.lowercase()
         }&diff=${difficulty?.displayString ?: "A"}&monClass=${toMonsterType(monsterType)}&nPlayers=$nPlayers&nGroup=$partySize&quality=${
             toQuality(
                 quality

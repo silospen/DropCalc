@@ -15,18 +15,70 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class ApiResource(
-    private val treasureClassCalculator: TreasureClassCalculator,
-    private val monsterLibrary: MonsterLibrary,
-    private val itemLibrary: ItemLibrary
-) {
+class ApiResource(private val versionedApiResources: Map<Version, VersionedApiResource>) {
     @GetMapping("/atomicTcs")
     fun getAtomicTcs(
+        @RequestParam("version", required = true) version: Version,
         @RequestParam("monsterId", required = true) monsterId: String,
         @RequestParam("monsterType", required = true) monsterType: MonsterType,
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int
+    ) = versionedApiResources[version]?.getAtomicTcs(monsterId, monsterType, difficulty, nPlayers, partySize)
+        ?: emptyList()
+
+    @GetMapping("/monster")
+    fun getMonster(
+        @RequestParam("version", required = true) version: Version,
+        @RequestParam("monsterId", required = true) monsterId: String,
+        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+        @RequestParam("difficulty", required = true) difficulty: Difficulty,
+        @RequestParam("players", required = true) nPlayers: Int,
+        @RequestParam("party", required = true) partySize: Int,
+        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("magicFind", required = true) magicFind: Int,
+    ) = versionedApiResources[version]?.getMonster(
+        monsterId,
+        monsterType,
+        difficulty,
+        nPlayers,
+        partySize,
+        itemQuality,
+        magicFind
+    ) ?: emptyList()
+
+    @GetMapping("/item")
+    fun getItemProbabilities(
+        @RequestParam("version", required = true) version: Version,
+        @RequestParam("itemId", required = true) itemId: String,
+        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("difficulty", required = false) difficulty: Difficulty?,
+        @RequestParam("players", required = true) nPlayers: Int,
+        @RequestParam("party", required = true) partySize: Int,
+        @RequestParam("magicFind", required = true) magicFind: Int,
+    ) = versionedApiResources[version]?.getItemProbabilities(
+        itemId,
+        monsterType,
+        itemQuality,
+        difficulty,
+        nPlayers,
+        partySize,
+        magicFind
+    ) ?: emptyList()
+}
+
+class VersionedApiResource(
+    private val treasureClassCalculator: TreasureClassCalculator,
+    private val monsterLibrary: MonsterLibrary,
+    private val itemLibrary: ItemLibrary
+) {
+    fun getAtomicTcs(
+        monsterId: String,
+        monsterType: MonsterType,
+        difficulty: Difficulty,
+        nPlayers: Int,
+        partySize: Int
     ): List<ApiResponse> = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
         .asSequence()
         .flatMap { monster ->
@@ -45,15 +97,14 @@ class ApiResource(
         .sortedBy { it.name }
         .toList()
 
-    @GetMapping("/monster")
     fun getMonster(
-        @RequestParam("monsterId", required = true) monsterId: String,
-        @RequestParam("monsterType", required = true) monsterType: MonsterType,
-        @RequestParam("difficulty", required = true) difficulty: Difficulty,
-        @RequestParam("players", required = true) nPlayers: Int,
-        @RequestParam("party", required = true) partySize: Int,
-        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
-        @RequestParam("magicFind", required = true) magicFind: Int,
+        monsterId: String,
+        monsterType: MonsterType,
+        difficulty: Difficulty,
+        nPlayers: Int,
+        partySize: Int,
+        itemQuality: ItemQuality,
+        magicFind: Int,
     ): List<ApiResponse> = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
         .asSequence()
         .flatMap { monster ->
@@ -96,15 +147,14 @@ class ApiResource(
         }
     }
 
-    @GetMapping("/item")
     fun getItemProbabilities(
-        @RequestParam("itemId", required = true) itemId: String,
-        @RequestParam("monsterType", required = true) monsterType: MonsterType,
-        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
-        @RequestParam("difficulty", required = false) difficulty: Difficulty?,
-        @RequestParam("players", required = true) nPlayers: Int,
-        @RequestParam("party", required = true) partySize: Int,
-        @RequestParam("magicFind", required = true) magicFind: Int,
+        itemId: String,
+        monsterType: MonsterType,
+        itemQuality: ItemQuality,
+        difficulty: Difficulty?,
+        nPlayers: Int,
+        partySize: Int,
+        magicFind: Int,
     ): List<ApiResponse> {
         val item: Item = itemLibrary.getItem(itemQuality, itemId) ?: return emptyList()
         val treasureClassPathsCache = mutableMapOf<String, TreasureClassPaths>()
