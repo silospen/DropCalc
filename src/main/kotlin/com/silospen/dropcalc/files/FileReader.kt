@@ -4,15 +4,29 @@ import java.io.File
 
 fun <T : Any> readTsv(file: File, lineParser: LineParser<T?>): List<T> =
     file.useLines { lines ->
-        lines.drop(1)
-            .map { it.split('\t') }
-            .map(lineParser::parseLine)
+        val iterator = lines.iterator()
+        val header = parseHeader(iterator.next())
+        iterator.asSequence().map { it.split('\t') }
+            .map { lineParser.parseLine(Line(it, header)) }
             .filterNotNull()
             .toList()
     }
 
+fun parseHeader(headerLine: String): Map<String, Int> =
+    headerLine.split('\t')
+        .mapIndexed { index, s -> s to index }
+        .toMap()
+
 interface LineParser<T> {
-    fun parseLine(line: List<String>): T?
+    fun parseLine(line: Line): T?
 }
 
 fun getResource(name: String) = File(object {}.javaClass.getResource("/$name")!!.toURI())
+
+data class Line(
+    private val line: List<String>,
+    private val header: Map<String, Int>
+) {
+    operator fun get(i: Int) = line[i]
+    operator fun get(s: String) = line[header.getValue(s)]
+}

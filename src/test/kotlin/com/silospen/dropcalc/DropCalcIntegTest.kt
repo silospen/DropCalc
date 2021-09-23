@@ -1,6 +1,7 @@
 package com.silospen.dropcalc
 
 import com.silospen.dropcalc.config.ConfigLoader
+import com.silospen.dropcalc.files.Line
 import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
@@ -274,7 +275,7 @@ class DropCalcIntegTest {
     }
 
     private val tcExpectationDataLineParser = object : LineParser<ApiResponse?> {
-        override fun parseLine(line: List<String>): ApiResponse =
+        override fun parseLine(line: Line): ApiResponse =
             ApiResponse(line[0], line[1], line[2].toDouble())
     }
 

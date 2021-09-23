@@ -16,7 +16,7 @@ class FileReaderTest {
     }
 
     private val lineParser = object : LineParser<Pair<String, String>?> {
-        override fun parseLine(line: List<String>): Pair<String, String>? =
-            if (line.contains("ignore")) null else Pair(line[1], line[0])
+        override fun parseLine(line: Line): Pair<String, String>? =
+            if (line[0] == "ignore") null else Pair(line[1], line[0])
     }
 }

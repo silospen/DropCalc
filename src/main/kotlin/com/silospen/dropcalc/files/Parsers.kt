@@ -13,7 +13,7 @@ import com.silospen.dropcalc.translations.Translations
 import java.util.*
 
 class ItemRatioLineParser : LineParser<ItemRatio?> {
-    override fun parseLine(line: List<String>): ItemRatio? {
+    override fun parseLine(line: Line): ItemRatio? {
         val version = line[1].toInt()
         if (version != 1) return null
         val isUber = parseNumericBoolean(line[2])
@@ -21,7 +21,7 @@ class ItemRatioLineParser : LineParser<ItemRatio?> {
         return ItemRatio(isUber, isClassSpecific, parseItemQualityModifiers(line))
     }
 
-    private fun parseItemQualityModifiers(line: List<String>) =
+    private fun parseItemQualityModifiers(line: Line) =
         sequenceOf(ItemQuality.UNIQUE, RARE, SET, MAGIC)
             .mapIndexed { index, quality ->
                 val ratio = line[4 + (3 * index)].toInt()
@@ -48,7 +48,7 @@ class BaseItemLineParser(
 
     private val itemTypesById = itemTypes.associateBy { it.id }
 
-    override fun parseLine(line: List<String>): BaseItem? {
+    override fun parseLine(line: Line): BaseItem? {
         val type = line[typeColumnIndex]
         if (!parseNumericBoolean(line[spawnableColumnIndex]) || type == "ques") return null
         val level = line[levelColumnIndex].toInt()
@@ -70,7 +70,7 @@ class BaseItemLineParser(
         )
     }
 
-    private fun getItemVersion(line: List<String>, isNorm: Boolean, isUber: Boolean, isUltra: Boolean): ItemVersion {
+    private fun getItemVersion(line: Line, isNorm: Boolean, isUber: Boolean, isUltra: Boolean): ItemVersion {
         if (isNorm) return ItemVersion.NORMAL
         if (isUber) return ItemVersion.EXCEPTIONAL
         if (isUltra) return ItemVersion.ELITE
@@ -121,7 +121,7 @@ class BaseItemLineParser(
 }
 
 class ItemTypeParser(private val itemTypeCodeLibrary: ItemTypeCodeLibrary) : LineParser<ItemType?> {
-    override fun parseLine(line: List<String>): ItemType? {
+    override fun parseLine(line: Line): ItemType? {
         val id = line[1]
         if (id.isBlank()) return null
 //        val isOnlyMagic = parseNumericBoolean(line[14])
@@ -140,7 +140,7 @@ class ItemTypeParser(private val itemTypeCodeLibrary: ItemTypeCodeLibrary) : Lin
 }
 
 class ItemTypeCodesParser : LineParser<SingleItemTypeCodeEntry?> {
-    override fun parseLine(line: List<String>): SingleItemTypeCodeEntry? {
+    override fun parseLine(line: Line): SingleItemTypeCodeEntry? {
         val id = line[1]
         val equiv1 = line[2]
         val equiv2 = line[3]
@@ -156,7 +156,7 @@ class UniqueItemLineParser(
 
     private val baseItemsById = baseItems.associateBy { it.id }
 
-    override fun parseLine(line: List<String>): Item? {
+    override fun parseLine(line: Line): Item? {
         val level = line[6].toIntOrNull() ?: 0
         val enabled = parseNumericBoolean(line[2])
         if (!enabled || level == 0) return null
@@ -180,7 +180,7 @@ class SetItemLineParser(
 
     private val baseItemsById = baseItems.associateBy { it.id }
 
-    override fun parseLine(line: List<String>): Item? {
+    override fun parseLine(line: Line): Item? {
         val level = line[5].toIntOrNull() ?: 0
         if (level == 0) return null
         val id = line[0]
@@ -199,7 +199,7 @@ class SetItemLineParser(
 class MonstatsLineParser(
     private val translations: Translations
 ) : LineParser<MonsterClass?> {
-    override fun parseLine(line: List<String>): MonsterClass? {
+    override fun parseLine(line: Line): MonsterClass? {
         val isEnabled: Boolean = parseNumericBoolean(line[12])
         val isKillable: Boolean = parseNumericBoolean(line[89])
         val treasureClass1: String = line[236]
@@ -229,9 +229,7 @@ class MonstatsLineParser(
         )
     }
 
-    private fun parseMonsterClassTreasureClasses(
-        line: List<String>
-    ): HashBasedTable<Difficulty, TreasureClassType, String> {
+    private fun parseMonsterClassTreasureClasses(line: Line): HashBasedTable<Difficulty, TreasureClassType, String> {
         val treasureClass1: String = line[236]
         val treasureClass2: String = line[237]
         val treasureClass3: String = line[238]
@@ -275,7 +273,7 @@ class MonstatsLineParser(
         }
     }
 
-    private fun parseMinions(id: String, line: List<String>): Set<String> {
+    private fun parseMinions(id: String, line: Line): Set<String> {
         val minion1Id: String = line[19]
         val minion2Id: String = line[20]
         return if (minion1Id.isBlank() && minion2Id.isBlank()) setOf(id)
@@ -289,7 +287,7 @@ class SuperUniqueLineParser(
 ) :
     LineParser<SuperUniqueMonsterConfig?> {
 
-    override fun parseLine(line: List<String>): SuperUniqueMonsterConfig? {
+    override fun parseLine(line: Line): SuperUniqueMonsterConfig? {
         val id = line[0]
         val name = line[1]
         val monsterClass = line[2]
@@ -311,7 +309,7 @@ class SuperUniqueLineParser(
 }
 
 class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
-    override fun parseLine(line: List<String>): TreasureClassConfig? {
+    override fun parseLine(line: Line): TreasureClassConfig? {
         val name = line[0]
         if (name.isBlank()) return null
         val group = line[1].toIntOrNull()
@@ -342,7 +340,7 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
         )
     }
 
-    private fun parseOutcomes(line: List<String>): Set<Pair<String, Int>> =
+    private fun parseOutcomes(line: Line): Set<Pair<String, Int>> =
         generateSequence(9) { it + 2 }
             .take(10)
             .mapNotNull {
@@ -369,7 +367,7 @@ class LevelsLineParser(
     private val hardcodedAreas: Table<String, MonsterType, Set<String>>
 ) :
     LineParser<Area?> {
-    override fun parseLine(line: List<String>): Area? {
+    override fun parseLine(line: Line): Area? {
         val id = line[0]
         val name = line[120]
         val level = line[59].toIntOrNull()
@@ -389,10 +387,7 @@ class LevelsLineParser(
         )
     }
 
-    private fun parseMonsterClassIds(
-        line: List<String>,
-        id: String
-    ): Table<Difficulty, MonsterType, Set<String>> {
+    private fun parseMonsterClassIds(line: Line, id: String): Table<Difficulty, MonsterType, Set<String>> {
         val mons = (74..83)
             .map { line[it] }
             .filter { it.isNotBlank() }
