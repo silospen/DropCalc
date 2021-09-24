@@ -34,7 +34,7 @@ class MapBasedTranslations(private val translationData: Map<String, String>) : T
                     buffer.position(it.keyOffset.toInt())
                     buffer.getString(
                         it.valueOffset.toInt() - it.keyOffset.toInt()
-                    ) to buffer.getString(it.stringLength)
+                    ).trim() to buffer.getString(it.stringLength)
                 }.toMap()
 
         private fun readHashTable(hashTableBuffer: ByteBuffer): MutableList<TableFileHashEntries> {

@@ -50,7 +50,7 @@ class BaseItemLineParser(
         val id = line["code"]
         return BaseItem(
             id,
-            translations.getTranslation(line["namestr"]),
+            translations.getTranslation(line["namestr"].trim()),
             itemType,
             hardcodedItemVersion ?: getItemVersion(
                 line,
@@ -111,7 +111,7 @@ class UniqueItemLineParser(
         val level = line["lvl"].toIntOrNull() ?: 0
         val enabled = parseNumericBoolean(line["enabled"])
         if (!enabled || level == 0) return null
-        val id = line["index"]
+        val id = line["index"].trim()
         val rarity = line["rarity"].toInt()
         return Item(
             id,
@@ -134,7 +134,7 @@ class SetItemLineParser(
     override fun parseLine(line: Line): Item? {
         val level = line["lvl"].toIntOrNull() ?: 0
         if (level == 0) return null
-        val id = line["index"]
+        val id = line["index"].trim()
         val rarity = line["rarity"].toInt()
         return Item(
             id,
@@ -160,7 +160,7 @@ class MonstatsLineParser(
         if (!isValid) return null
 
         val id = line["Id"]
-        val name = translations.getTranslation(line["NameStr"])
+        val name = translations.getTranslation(line["NameStr"].trim())
         val isBoss: Boolean = parseNumericBoolean(line["boss"])
         val level: Int = line["Level"].toInt()
         val levelN: Int = line["Level(N)"].toInt()
@@ -240,7 +240,7 @@ class SuperUniqueLineParser(
 
     override fun parseLine(line: Line): SuperUniqueMonsterConfig? {
         val id = line["Superunique"]
-        val name = line["Name"]
+        val name = line["Name"].trim()
         val monsterClass = line["Class"]
         val hasMinions = line["MaxGrp"].toIntOrNull()?.let { it > 0 } ?: false
         val normalTc = line["TC"]
@@ -319,7 +319,7 @@ class LevelsLineParser(
     LineParser<Area?> {
     override fun parseLine(line: Line): Area? {
         val id = line["Name"]
-        val name = line["LevelName"]
+        val name = line["LevelName"].trim()
         val level = line["MonLvl1Ex"].toIntOrNull()
         val levelN = line["MonLvl2Ex"].toIntOrNull()
         val levelH = line["MonLvl3Ex"].toIntOrNull()
