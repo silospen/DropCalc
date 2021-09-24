@@ -31,10 +31,10 @@ class MapBasedTranslations(private val translationData: Map<String, String>) : T
                 .asSequence()
                 .filter { it.used > 0 }
                 .map {
+                    buffer.position(it.keyOffset.toInt())
                     buffer.getString(
-                        it.keyOffset.toInt(),
                         it.valueOffset.toInt() - it.keyOffset.toInt()
-                    ) to buffer.getString(it.valueOffset.toInt(), it.stringLength)
+                    ) to buffer.getString(it.stringLength)
                 }.toMap()
 
         private fun readHashTable(hashTableBuffer: ByteBuffer): MutableList<TableFileHashEntries> {
@@ -42,7 +42,7 @@ class MapBasedTranslations(private val translationData: Map<String, String>) : T
             while (hashTableBuffer.hasRemaining()) {
                 hashTableAccumulator.add(
                     TableFileHashEntries.fromByteBuffer(
-                        hashTableBuffer.slice(hashTableBuffer.position(), 17).order(LITTLE_ENDIAN)
+                        hashTableBuffer.slice().limit(17).order(LITTLE_ENDIAN)
                     )
                 )
                 hashTableBuffer.position(hashTableBuffer.position() + 17)
@@ -121,7 +121,13 @@ private fun ByteBuffer.getUInt16(): Int = java.lang.Short.toUnsignedInt(short)
 
 @Suppress("RemoveRedundantQualifierName")
 private fun ByteBuffer.getUInt32(): Long = java.lang.Integer.toUnsignedLong(int)
-private fun ByteBuffer.getString(offset: Int, length: Int) =
-    ByteArray(length).apply { get(offset, this) }.run { decodeToString().removeSuffix("\u0000") }
+private fun ByteBuffer.getString(length: Int) =
+    ByteArray(length).apply { get(this) }.run { decodeToString().removeSuffix("\u0000") }
 
-private fun ByteBuffer.sliceKeepEndian(index: Int, length: Int) = this.slice(index, length).order(this.order())
+private fun ByteBuffer.sliceKeepEndian(index: Int, length: Int): ByteBuffer {
+    val oldPosition = this.position()
+    this.position(index)
+    val slice = this.slice().limit(length).order(this.order())
+    this.position(oldPosition)
+    return slice
+}

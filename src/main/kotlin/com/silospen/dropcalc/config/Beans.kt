@@ -111,12 +111,12 @@ class ConfigLoader(private val version: Version) {
     )
 
     private fun loadItemTypes(itemTypeCodeLibrary: ItemTypeCodeLibrary): List<ItemType> = readTsv(
-        getResource("d2Files/${version.pathName}/itemTypes.txt"),
+        getResource("d2Files/${version.pathName}/ItemTypes.txt"),
         ItemTypeParser(itemTypeCodeLibrary)
     )
 
     private fun loadItemTypeCodes(): List<SingleItemTypeCodeEntry> = readTsv(
-        getResource("d2Files/${version.pathName}/itemTypes.txt"),
+        getResource("d2Files/${version.pathName}/ItemTypes.txt"),
         ItemTypeCodesParser()
     )
 
@@ -130,7 +130,7 @@ class ConfigLoader(private val version: Version) {
 
     private fun loadItems(translations: Translations, baseItems: List<BaseItem>): List<Item> {
         val uniqueItems = readTsv(
-            getResource("d2Files/${version.pathName}/uniqueItems.txt"),
+            getResource("d2Files/${version.pathName}/UniqueItems.txt"),
             UniqueItemLineParser(translations, baseItems)
         )
         val setItems = readTsv(

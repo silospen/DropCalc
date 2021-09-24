@@ -21,7 +21,8 @@ interface LineParser<T> {
     fun parseLine(line: Line): T?
 }
 
-fun getResource(name: String) = object {}.javaClass.getResourceAsStream("/$name")!!
+fun getResource(name: String) =
+    object {}.javaClass.getResourceAsStream("/$name") ?: throw IllegalStateException("Failed to load $name")
 
 data class Line(
     private val line: List<String>,
