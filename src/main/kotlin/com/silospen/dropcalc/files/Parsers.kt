@@ -244,11 +244,12 @@ class SuperUniqueLineParser(
         val monsterClass = line["Class"]
         val hasMinions = line["MaxGrp"].toIntOrNull()?.let { it > 0 } ?: false
         val normalTc = line["TC"]
-        if (name.isBlank() || monsterClass.isBlank() || normalTc.isBlank()) return null
+        val areaName = areasBySuperUniqueId[id]
+        if (name.isBlank() || monsterClass.isBlank() || normalTc.isBlank() || areaName.isNullOrBlank()) return null
         return SuperUniqueMonsterConfig(
             id,
             translations.getTranslation(name),
-            areasBySuperUniqueId.getValue(id),
+            areaName,
             monsterClass,
             hasMinions,
             EnumMap<Difficulty, String>(Difficulty::class.java).apply {
