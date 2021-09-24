@@ -260,7 +260,7 @@ class DropCalcIntegTest {
             .filterNot { brokenNames.contains(it.name) }
             .filterNot { brokenNamesAndAreas.contains(it.name to it.area) }
             .map {
-                val key = it.name.lowercase().replace(" - ", " ") to it.area
+                val key = it.name.lowercase() to it.area
                 val value = actualsByTcAndArea.getValue(key)
                 if (value.size != 1) throw RuntimeException("Multiple probs found for $it and $value")
                 val actualProb = value[0].prob
@@ -306,10 +306,10 @@ class DropCalcIntegTest {
     )
 
     private val brokenNamesAndAreas = setOf(
-        "Oblivion Knight (Lord De Seis) doomknight3 (H)" to "The Chaos Sanctuary",
-        "Overlord (Sharptooth Slayer) overseer3 (H)" to "Frigid Highlands",
-        "Soul Killer Shaman (Witch Doctor Endugu) fetishshaman4 (H)" to "Flayer Dungeon Level 3",
-        "Unraveler (Ancient Kaa the Soulless) unraveler3 (H)" to "Tal Rasha's Tomb",
-        "Warped Shaman (Colenzo the Annihilator) fallenshaman5 (H)" to "Throne of Destruction",
+        "Oblivion Knight (Lord De Seis) - doomknight3 (H)" to "The Chaos Sanctuary",
+        "Overlord (Sharptooth Slayer) - overseer3 (H)" to "Frigid Highlands",
+        "Soul Killer Shaman (Witch Doctor Endugu) - fetishshaman4 (H)" to "Flayer Dungeon Level 3",
+        "Unraveler (Ancient Kaa the Soulless) - unraveler3 (H)" to "Tal Rasha's Tomb",
+        "Warped Shaman (Colenzo the Annihilator) - fallenshaman5 (H)" to "Throne of Destruction",
     )
 }

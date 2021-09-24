@@ -180,7 +180,7 @@ class VersionedApiResource(
                         generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it, item)
                         { _, monster, prob ->
                             ApiResponse(
-                                "${monster.name} ${monster.monsterClass.id} (${monster.difficulty.displayString})",
+                                "${monster.name} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
                                 monster.area.name,
                                 prob
                             )
