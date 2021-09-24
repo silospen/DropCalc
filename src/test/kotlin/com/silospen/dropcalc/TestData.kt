@@ -240,7 +240,7 @@ val monstersTestData = setOf(
         NORMAL,
         SUPERUNIQUE,
         "Bonebreak TC",
-        2
+        5
     ),
     Monster(
         "Bonebreak",
@@ -250,7 +250,7 @@ val monstersTestData = setOf(
         HELL,
         SUPERUNIQUE,
         "Bonebreak TC(H)",
-        55
+        58
     ),
     skeletonMonster,
     Monster(
