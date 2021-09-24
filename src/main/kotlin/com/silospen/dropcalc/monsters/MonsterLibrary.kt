@@ -181,7 +181,7 @@ class MonsterFactory(
     private fun getLevelAdjustment(monsterType: MonsterType, monsterClass: MonsterClass): Int {
         if (monsterType == MonsterType.BOSS || monsterClass.isBoss) return 0
         if (monsterType == MonsterType.CHAMPION) return 2
-        if (monsterType == MonsterType.UNIQUE || monsterType == MINION) return 3
+        if (monsterType == MonsterType.UNIQUE || monsterType == MINION || monsterType == SUPERUNIQUE) return 3
         return 0
     }
 }
