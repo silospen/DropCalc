@@ -59,7 +59,7 @@ class ConfigLoader(private val version: Version) {
     }
 
     private fun loadTreasureClassConfigs(): List<TreasureClassConfig> = readTsv(
-        getResource("d2Files/${version.pathName}/TreasureClassEx.txt"),
+        getResource("d2Files/${version.pathName}/treasureclassex.txt"),
         TreasureClassesLineParser()
     )
 
@@ -70,12 +70,12 @@ class ConfigLoader(private val version: Version) {
 
     private fun loadSuperUniqueMonsterConfigs(translations: Translations): List<SuperUniqueMonsterConfig> =
         readTsv(
-            getResource("d2Files/${version.pathName}/SuperUniques.txt"),
+            getResource("d2Files/${version.pathName}/superuniques.txt"),
             SuperUniqueLineParser(hardcodedSuperUniqueAreas, translations)
         )
 
     private fun loadAreas(translations: Translations): List<Area> = readTsv(
-        getResource("d2Files/${version.pathName}/Levels.txt"),
+        getResource("d2Files/${version.pathName}/levels.txt"),
         LevelsLineParser(translations, hardcodedBossAreas)
     )
 
