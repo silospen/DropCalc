@@ -30,4 +30,9 @@ data class Line(
 ) {
     operator fun get(i: Int) = line[i]
     operator fun get(s: String) = line[header.getValue(s)]
+
+    fun coalesce(vararg fieldNames: String) = fieldNames
+        .mapNotNull { header[it] }
+        .map { line[it] }
+        .first()
 }
