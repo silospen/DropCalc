@@ -320,9 +320,9 @@ class LevelsLineParser(
     override fun parseLine(line: Line): Area? {
         val id = line["Name"]
         val name = line["LevelName"].trim()
-        val level = line.coalesce("MonLvl1Ex", "MonLvl").toIntOrNull()
-        val levelN = line.coalesce("MonLvl2Ex", "MonLvl(N)").toIntOrNull()
-        val levelH = line.coalesce("MonLvl3Ex", "MonLvl(H)").toIntOrNull()
+        val level = line.coalesce("MonLvl1Ex", "MonLvlEx").toIntOrNull()
+        val levelN = line.coalesce("MonLvl2Ex", "MonLvlEx(N)").toIntOrNull()
+        val levelH = line.coalesce("MonLvl3Ex", "MonLvlEx(H)").toIntOrNull()
         if (name.isBlank()) return null
         val monsterClassIds = parseMonsterClassIds(line, id)
         return Area(
