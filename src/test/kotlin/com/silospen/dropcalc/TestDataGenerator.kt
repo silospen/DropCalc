@@ -149,7 +149,7 @@ class TestDataGenerator {
             client.get(url)
         if (response.status != HttpStatusCode.OK) throw RuntimeException("Bad status code $response")
         response
-            .readText()
+            .bodyAsText()
             .replace(" </td></tr><tr><td>", "\n")
             .replace("</td><td>", "\t")
             .removePrefix("<tr><td>")
