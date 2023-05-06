@@ -153,10 +153,10 @@ class MonstatsLineParser(
     override fun parseLine(line: Line): MonsterClass? {
         val isEnabled: Boolean = parseNumericBoolean(line["enabled"])
         val isKillable: Boolean = parseNumericBoolean(line["killable"])
-        val treasureClass1: String = line["TreasureClass1"]
-        val treasureClass1N: String = line["TreasureClass1(N)"]
+        val treasureClass: String = line["TreasureClass1", "TreasureClass"]
+        val treasureClassN: String = line["TreasureClass1(N)", "TreasureClass(N)"]
 
-        val isValid = isEnabled && isKillable && treasureClass1.isNotBlank() && treasureClass1N.isNotBlank()
+        val isValid = isEnabled && isKillable && treasureClass.isNotBlank() && treasureClassN.isNotBlank()
         if (!isValid) return null
 
         val id = line["Id"]
@@ -181,31 +181,31 @@ class MonstatsLineParser(
     }
 
     private fun parseMonsterClassTreasureClasses(line: Line): HashBasedTable<Difficulty, TreasureClassType, String> {
-        val treasureClass1: String = line["TreasureClass1"]
-        val treasureClass2: String = line["TreasureClass2"]
-        val treasureClass3: String = line["TreasureClass3"]
-        val treasureClass4: String = line["TreasureClass4"]
-        val treasureClass1N: String = line["TreasureClass1(N)"]
-        val treasureClass2N: String = line["TreasureClass2(N)"]
-        val treasureClass3N: String = line["TreasureClass3(N)"]
-        val treasureClass4N: String = line["TreasureClass4(N)"]
-        val treasureClass1H: String = line["TreasureClass1(H)"]
-        val treasureClass2H: String = line["TreasureClass2(H)"]
-        val treasureClass3H: String = line["TreasureClass3(H)"]
-        val treasureClass4H: String = line["TreasureClass4(H)"]
+        val treasureClass: String = line["TreasureClass1", "TreasureClass"]
+        val treasureClassChamp: String = line["TreasureClass2", "TreasureClassChamp"]
+        val treasureClassUnique: String = line["TreasureClass3", "TreasureClassUnique"]
+        val treasureClassQuest: String = line["TreasureClass4", "TreasureClassQuest"]
+        val treasureClassN: String = line["TreasureClass1(N)", "TreasureClass(N)"]
+        val treasureClassChampN: String = line["TreasureClass2(N)", "TreasureClassChamp(N)"]
+        val treasureClassUniqueN: String = line["TreasureClass3(N)", "TreasureClassUnique(N)"]
+        val treasureClassQuestN: String = line["TreasureClass4(N)", "TreasureClassQuest(N)"]
+        val treasureClassH: String = line["TreasureClass1(H)", "TreasureClass(H)"]
+        val treasureClassChampH: String = line["TreasureClass2(H)", "TreasureClassChamp(H)"]
+        val treasureClassUniqueH: String = line["TreasureClass3(H)", "TreasureClassUnique(H)"]
+        val treasureClassQuestH: String = line["TreasureClass4(H)", "TreasureClassQuest(H)"]
         val monsterClassProperties = HashBasedTable.create<Difficulty, TreasureClassType, String>()
-        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.REGULAR, treasureClass1)
-        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.CHAMPION, treasureClass2)
-        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.UNIQUE, treasureClass3)
-        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.QUEST, treasureClass4)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.REGULAR, treasureClass1N)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.CHAMPION, treasureClass2N)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.UNIQUE, treasureClass3N)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.QUEST, treasureClass4N)
-        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.REGULAR, treasureClass1H)
-        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.CHAMPION, treasureClass2H)
-        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.UNIQUE, treasureClass3H)
-        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.QUEST, treasureClass4H)
+        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.REGULAR, treasureClass)
+        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.CHAMPION, treasureClassChamp)
+        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.UNIQUE, treasureClassUnique)
+        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.QUEST, treasureClassQuest)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.REGULAR, treasureClassN)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.CHAMPION, treasureClassChampN)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.UNIQUE, treasureClassUniqueN)
+        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.QUEST, treasureClassQuestN)
+        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.REGULAR, treasureClassH)
+        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.CHAMPION, treasureClassChampH)
+        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.UNIQUE, treasureClassUniqueH)
+        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.QUEST, treasureClassQuestH)
         return monsterClassProperties
     }
 
