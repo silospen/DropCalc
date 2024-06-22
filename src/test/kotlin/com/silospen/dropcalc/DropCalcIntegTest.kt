@@ -1,7 +1,6 @@
 package com.silospen.dropcalc
 
 import com.google.common.io.Resources
-import com.silospen.dropcalc.config.ConfigLoader
 import com.silospen.dropcalc.files.Line
 import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.readTsv
@@ -20,15 +19,6 @@ import java.io.FileInputStream
 class DropCalcIntegTest {
     @Autowired
     private lateinit var apiResource: ApiResource
-
-    @Autowired
-    private lateinit var configLoaders: Map<Version, ConfigLoader>
-
-    private val testDataGenerator: TestDataGenerator = TestDataGenerator()
-
-    @Test
-    fun remoteTests() {
-    }
 
     @Test
     fun runLocalTcTests() = runLocalTests("integExpectations/tcTests") { parts, file ->
@@ -73,35 +63,11 @@ class DropCalcIntegTest {
         }
 
     fun runLocalTests(resourceName: String, testToRun: (List<String>, File) -> Unit) {
-        @Suppress("UnstableApiUsage")
         File(Resources.getResource(resourceName).toURI()).listFiles()!!.filter { it.name.endsWith(".tsv") }.forEach {
             val parts = it.name.removeSuffix(".tsv").replace("$", ":").split("_")
             testToRun(parts, it)
         }
     }
-
-    fun runItemsTestWithRemoteExpectations(
-        itemId: String,
-        monsterType: MonsterType,
-        difficulty: Difficulty?,
-        nPlayers: Int,
-        partySize: Int,
-        itemQuality: ItemQuality,
-        magicFind: Int,
-        itemName: String,
-    ) = runItemsTestWithLocalExpectations(
-        itemId, monsterType, difficulty, nPlayers, partySize, itemQuality, magicFind,
-        testDataGenerator.generateItemExpectationDataToFile(
-            monsterType,
-            difficulty,
-            nPlayers,
-            partySize,
-            itemQuality,
-            magicFind,
-            itemName
-        )
-//            .copyTo(File("C:\\Users\\silos\\Projects\\DropCalc\\src\\test\\resources\\integExpectations\\itemTests\\${itemId}_${monsterType}_${difficulty}_${nPlayers}_${partySize}_${itemQuality}_${magicFind}.tsv"))
-    )
 
     fun runItemsTestWithLocalExpectations(
         itemId: String,
@@ -131,37 +97,6 @@ class DropCalcIntegTest {
         "$itemId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind",
     )
 
-    fun runMonsterTestWithRemoteExpectations(
-        monsterId: String,
-        monsterType: MonsterType,
-        difficulty: Difficulty,
-        nPlayers: Int,
-        partySize: Int,
-        itemQuality: ItemQuality,
-        magicFind: Int,
-    ) = runMonsterTestWithLocalExpectations(
-        monsterId, monsterType, difficulty, nPlayers, partySize, itemQuality, magicFind,
-        testDataGenerator.generateMonsterExpectationDataToFile(
-            monsterId,
-            monsterType,
-            difficulty,
-            nPlayers,
-            partySize,
-            itemQuality,
-            magicFind
-        )
-//            .copyTo(
-//                File(
-//                    "C:\\Users\\silos\\Projects\\DropCalc\\src\\test\\resources\\integExpectations\\monsterTests\\${
-//                        monsterId.replace(
-//                            ":",
-//                            "$"
-//                        )
-//                    }_${monsterType}_${difficulty}_${nPlayers}_${partySize}_${itemQuality}_${magicFind}.tsv"
-//                )
-//            )
-    )
-
     fun runMonsterTestWithLocalExpectations(
         monsterId: String,
         monsterType: MonsterType,
@@ -188,33 +123,6 @@ class DropCalcIntegTest {
         },
         this::runAtomicTcAsserts,
         "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind",
-    )
-
-    fun runAtomicTcTestWithRemoteExpectations(
-        monsterId: String,
-        monsterType: MonsterType,
-        difficulty: Difficulty,
-        nPlayers: Int,
-        partySize: Int
-    ) = runAtomicTcTestWithLocalExpectations(
-        monsterId, monsterType, difficulty, nPlayers, partySize,
-        testDataGenerator.generateTcExpectationDataToFile(
-            monsterId,
-            monsterType,
-            difficulty,
-            nPlayers,
-            partySize
-        )
-//            .copyTo(
-//                File(
-//                    "C:\\Users\\silos\\Projects\\DropCalc\\src\\test\\resources\\integExpectations\\tcTests\\${
-//                        monsterId.replace(
-//                            ":",
-//                            "$"
-//                        )
-//                    }_${monsterType}_${difficulty}_${nPlayers}_${partySize}.tsv"
-//                )
-//            )
     )
 
     fun runAtomicTcTestWithLocalExpectations(
