@@ -1,5 +1,6 @@
 package com.silospen.dropcalc
 
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonToken
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Charsets
@@ -16,6 +17,8 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
 
+private val mapper = ObjectMapper()
+
 @SpringBootTest
 class DropCalcLargeIntegTests {
     @Autowired
@@ -27,11 +30,18 @@ class DropCalcLargeIntegTests {
     @Autowired
     private lateinit var versionedMetadataResources: Map<Version, VersionedMetadataResource>
 
+    private val threadPool = Executors.newFixedThreadPool(6)
+
     private val bigTcTestFile = File("src/test/resources/integExpectations/bigTcTests")
+    private val bigMonstersTestFile = File("src/test/resources/integExpectations/bigMonstersTests")
+
+    @Test
+    fun runMonstersTest() {
+
+    }
 
     @Test
     fun runAtomicTcsTest() {
-        val threadPool = Executors.newFixedThreadPool(6)
         val tests: MutableList<Callable<Unit>> = mutableListOf()
         val iterations = AtomicLong(0)
         bigTcTestFile.bufferedReader().use {
@@ -61,38 +71,52 @@ class DropCalcLargeIntegTests {
             .forEach { it.get() }
     }
 
+//    @Test
+//    @Disabled
+//    fun generateMonstersTestData() {
+//        TestDataExpectationWriter.init(bigTcTestFile).use { writer ->
+//            threadPool.invokeAll(generateMonsterTestDataInputs())
+//                .forEach { writer.write(it.get()) }
+//        }
+//    }
+
     @Test
     @Disabled
     fun generateAtomicTcsTestData() {
-        bigTcTestFile.createNewFile()
-        val jsonGenerator = jacksonObjectMapper.createGenerator(bigTcTestFile.bufferedWriter())
-        jsonGenerator.use {
-            var iterations = 0L
-            jsonGenerator.writeStartArray()
-            for (version in Version.values()) {
-                val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
-                for (monsterType in MonsterType.values()) {
-                    for (monster in monsterLibrary.getMonsters(monsterType)) {
-                        for (difficulty in Difficulty.values()) {
-                            for (nPlayers in listOf(3, 7)) {
-                                jsonGenerator.writeObject(
-                                    getAtomicTcs(
-                                        version,
-                                        monster.id,
-                                        monster.type,
-                                        difficulty,
-                                        nPlayers,
-                                        3
-                                    )
+        TestDataExpectationWriter.init(bigTcTestFile).use { writer ->
+            threadPool.invokeAll(generateAtomicTcsTestDataInputs())
+                .forEach { writer.write(it.get()) }
+        }
+    }
+
+    fun generateAtomicTcsTestDataInputs(): List<Callable<TestDataExpectation>> {
+        val result = mutableListOf<Callable<TestDataExpectation>>()
+        for (version in Version.values()) {
+            val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
+            for (monsterType in MonsterType.values()) {
+                for (monsterId in monsterLibrary.getMonsters(monsterType).asSequence().map { it.id }.distinct()) {
+                    for (difficulty in Difficulty.values()) {
+                        for (nPlayers in listOf(3, 7)) {
+                            for (nGroup in listOf(5, 8)) {
+                                result.add(
+                                    Callable {
+                                        getAtomicTcs(
+                                            version,
+                                            monsterId,
+                                            monsterType,
+                                            difficulty,
+                                            nPlayers,
+                                            nGroup
+                                        )
+                                    }
                                 )
-                                if (++iterations % 1000 == 0L) println(iterations)
                             }
                         }
                     }
                 }
             }
-            jsonGenerator.writeEndArray()
         }
+        return result
     }
 
     private fun getAtomicTcs(
@@ -131,3 +155,32 @@ data class TestDataExpectation(
     val partySize: Int,
     val hash: String
 )
+
+
+class TestDataExpectationWriter(private val jsonGenerator: JsonGenerator) :
+    AutoCloseable {
+
+    companion object {
+        fun init(file: File): TestDataExpectationWriter {
+            val jsonGenerator = mapper.createGenerator(file.bufferedWriter())
+            jsonGenerator.writeStartArray()
+            return TestDataExpectationWriter(jsonGenerator)
+        }
+    }
+
+    fun write(testDataExpectation: TestDataExpectation) {
+        jsonGenerator.writeObject(testDataExpectation)
+    }
+
+    override fun close() {
+        jsonGenerator.writeEndArray()
+        jsonGenerator.close()
+    }
+}
+
+data class Counter(private val counter: AtomicLong = AtomicLong(0L)) {
+    fun incrementAndPossiblyPrint() {
+        val value = counter.incrementAndGet()
+        if (value % 1000 == 0L) println(value)
+    }
+}
