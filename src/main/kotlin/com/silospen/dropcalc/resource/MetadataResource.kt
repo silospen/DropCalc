@@ -34,7 +34,7 @@ class MetadataResource(private val versionedMetadataResources: Map<Version, Vers
     fun getVersions() = versionsResponses
 }
 
-class VersionedMetadataResource(val monsterLibrary: MonsterLibrary, private val itemLibrary: ItemLibrary) {
+class VersionedMetadataResource(val monsterLibrary: MonsterLibrary, val itemLibrary: ItemLibrary) {
     private val monstersResponsesByDifficultyType =
         monsterLibrary.monsters.groupBy({ it.difficulty to it.type }) { MetadataResponse(it.name, it.id) }
             .mapValues { it.value.toSet() }
