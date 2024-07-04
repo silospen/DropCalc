@@ -1,7 +1,7 @@
 package com.silospen.dropcalc
 
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.JsonToken
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
@@ -42,14 +42,12 @@ class DropCalcLargeIntegTests {
 
     @Test
     fun runAtomicTcsTest() {
-        val tests: MutableList<Callable<Unit>> = mutableListOf()
-        val iterations = AtomicLong(0)
-        bigTcTestFile.bufferedReader().use {
-            val jsonParser = jacksonObjectMapper.createParser(it)
-            if (jsonParser.nextToken() != JsonToken.START_ARRAY) throw RuntimeException("Expected an array")
-            while (jsonParser.nextToken() == JsonToken.START_OBJECT) {
-                val expected = jacksonObjectMapper.readValue(jsonParser, TestDataExpectation::class.java)
-                tests.add {
+        val counter = Counter()
+        val tests = jacksonObjectMapper.readValue(
+            bigTcTestFile,
+            object : TypeReference<List<TestDataExpectation>>() {})
+            .map { expected ->
+                Callable {
                     assertEquals(
                         expected,
                         getAtomicTcs(
@@ -61,14 +59,10 @@ class DropCalcLargeIntegTests {
                             expected.partySize
                         )
                     )
-                    val value = iterations.incrementAndGet()
-                    if (value % 1000 == 0L) println("Running test: $value")
-
+                    counter.incrementAndPossiblyPrint()
                 }
             }
-        }
-        threadPool.invokeAll(tests)
-            .forEach { it.get() }
+        threadPool.invokeAll(tests).forEach { it.get() }
     }
 
 //    @Test
@@ -83,13 +77,14 @@ class DropCalcLargeIntegTests {
     @Test
     @Disabled
     fun generateAtomicTcsTestData() {
+        val counter = Counter()
         TestDataExpectationWriter.init(bigTcTestFile).use { writer ->
-            threadPool.invokeAll(generateAtomicTcsTestDataInputs())
+            threadPool.invokeAll(generateAtomicTcsTestDataInputs(counter))
                 .forEach { writer.write(it.get()) }
         }
     }
 
-    fun generateAtomicTcsTestDataInputs(): List<Callable<TestDataExpectation>> {
+    fun generateAtomicTcsTestDataInputs(counter: Counter): List<Callable<TestDataExpectation>> {
         val result = mutableListOf<Callable<TestDataExpectation>>()
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
@@ -100,6 +95,7 @@ class DropCalcLargeIntegTests {
                             for (nGroup in listOf(5, 8)) {
                                 result.add(
                                     Callable {
+                                        counter.incrementAndPossiblyPrint()
                                         getAtomicTcs(
                                             version,
                                             monsterId,
