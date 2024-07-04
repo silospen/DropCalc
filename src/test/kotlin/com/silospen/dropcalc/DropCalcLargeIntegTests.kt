@@ -37,27 +37,42 @@ class DropCalcLargeIntegTests {
 
     @Test
     fun runMonstersTest() {
-
+        runTests(bigMonstersTestFile, { expected ->
+            getMonstersExpectation(
+                expected.version,
+                expected.monsterId,
+                expected.monsterType,
+                expected.difficulty,
+                expected.numPlayers,
+                expected.partySize,
+                expected.itemQuality,
+                expected.magicFind
+            )
+        }, object : TypeReference<List<MonstersTestDataExpectation>>() {})
     }
 
     @Test
     fun runAtomicTcsTest() {
+        runTests(bigTcTestFile, { expected ->
+            getAtomicTcs(
+                expected.version,
+                expected.monsterId,
+                expected.monsterType,
+                expected.difficulty,
+                expected.numPlayers,
+                expected.partySize
+            )
+        }, object : TypeReference<List<AtomicTcsTestDataExpectation>>() {})
+    }
+
+    private fun <T> runTests(file: File, actualGenerator: (T) -> T, typeReference: TypeReference<List<T>>) {
         val counter = Counter()
-        val tests = jacksonObjectMapper.readValue(
-            bigTcTestFile,
-            object : TypeReference<List<TestDataExpectation>>() {})
+        val tests = jacksonObjectMapper.readValue(file, typeReference)
             .map { expected ->
                 Callable {
                     assertEquals(
                         expected,
-                        getAtomicTcs(
-                            expected.version,
-                            expected.monsterId,
-                            expected.monsterType,
-                            expected.difficulty,
-                            expected.numPlayers,
-                            expected.partySize
-                        )
+                        actualGenerator(expected)
                     )
                     counter.incrementAndPossiblyPrint()
                 }
@@ -65,27 +80,28 @@ class DropCalcLargeIntegTests {
         threadPool.invokeAll(tests).forEach { it.get() }
     }
 
-//    @Test
-//    @Disabled
-//    fun generateMonstersTestData() {
-//        TestDataExpectationWriter.init(bigTcTestFile).use { writer ->
-//            threadPool.invokeAll(generateMonsterTestDataInputs())
-//                .forEach { writer.write(it.get()) }
-//        }
-//    }
+    @Test
+    @Disabled
+    fun generateMonstersTestData() {
+        generateTestData(bigMonstersTestFile, ::generateMonstersTestDataInputs)
+    }
 
     @Test
     @Disabled
     fun generateAtomicTcsTestData() {
+        generateTestData(bigTcTestFile, ::generateAtomicTcsTestDataInputs)
+    }
+
+    private fun <T : Any> generateTestData(file: File, dataGenerator: (Counter) -> List<Callable<T>>) {
         val counter = Counter()
-        TestDataExpectationWriter.init(bigTcTestFile).use { writer ->
-            threadPool.invokeAll(generateAtomicTcsTestDataInputs(counter))
+        TestDataExpectationWriter.init(file).use { writer ->
+            threadPool.invokeAll(dataGenerator(counter))
                 .forEach { writer.write(it.get()) }
         }
     }
 
-    fun generateAtomicTcsTestDataInputs(counter: Counter): List<Callable<TestDataExpectation>> {
-        val result = mutableListOf<Callable<TestDataExpectation>>()
+    fun generateAtomicTcsTestDataInputs(counter: Counter): List<Callable<AtomicTcsTestDataExpectation>> {
+        val result = mutableListOf<Callable<AtomicTcsTestDataExpectation>>()
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
@@ -115,6 +131,82 @@ class DropCalcLargeIntegTests {
         return result
     }
 
+    fun generateMonstersTestDataInputs(counter: Counter): List<Callable<MonstersTestDataExpectation>> {
+        val result = mutableListOf<Callable<MonstersTestDataExpectation>>()
+        for (version in Version.values()) {
+            val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
+            for (monsterType in MonsterType.values()) {
+                for (monsterId in monsterLibrary.getMonsters(monsterType).asSequence().map { it.id }.distinct()) {
+                    for (difficulty in Difficulty.values()) {
+                        for (nPlayers in listOf(7)) {
+                            for (nGroup in listOf(5)) {
+                                for (itemQuality in ItemQuality.values()) {
+                                    for (magicFind in listOf(0, 975)) {
+                                        result.add(
+                                            Callable {
+                                                counter.incrementAndPossiblyPrint()
+                                                getMonstersExpectation(
+                                                    version,
+                                                    monsterId,
+                                                    monsterType,
+                                                    difficulty,
+                                                    nPlayers,
+                                                    nGroup,
+                                                    itemQuality,
+                                                    magicFind
+                                                )
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    private fun getMonstersExpectation(
+        version: Version,
+        monsterId: String,
+        monsterType: MonsterType,
+        difficulty: Difficulty,
+        numPlayers: Int,
+        partySize: Int,
+        itemQuality: ItemQuality,
+        magicFind: Int
+    ): MonstersTestDataExpectation {
+        val hash = Hashing.sha256().hashString(
+            apiResource.getMonster(
+                version,
+                monsterId,
+                monsterType,
+                difficulty,
+                numPlayers,
+                partySize,
+                itemQuality,
+                magicFind
+            )
+                .sortedWith(compareBy({ it.name }, { it.area }))
+                .toString(),
+            Charsets.UTF_8
+        ).toString()
+        return MonstersTestDataExpectation(
+            version,
+            monsterId,
+            monsterType,
+            difficulty,
+            numPlayers,
+            partySize,
+            itemQuality,
+            magicFind,
+            hash
+        )
+
+    }
+
     private fun getAtomicTcs(
         version: Version,
         monsterId: String,
@@ -122,14 +214,14 @@ class DropCalcLargeIntegTests {
         difficulty: Difficulty,
         numPlayers: Int,
         partySize: Int
-    ): TestDataExpectation {
+    ): AtomicTcsTestDataExpectation {
         val hash = Hashing.sha256().hashString(
             apiResource.getAtomicTcs(version, monsterId, monsterType, difficulty, numPlayers, partySize)
                 .sortedWith(compareBy({ it.name }, { it.area }))
                 .toString(),
             Charsets.UTF_8
         ).toString()
-        return TestDataExpectation(
+        return AtomicTcsTestDataExpectation(
             version,
             monsterId,
             monsterType,
@@ -142,13 +234,25 @@ class DropCalcLargeIntegTests {
 }
 
 
-data class TestDataExpectation(
+data class AtomicTcsTestDataExpectation(
     val version: Version,
     val monsterId: String,
     val monsterType: MonsterType,
     val difficulty: Difficulty,
     val numPlayers: Int,
     val partySize: Int,
+    val hash: String
+)
+
+data class MonstersTestDataExpectation(
+    val version: Version,
+    val monsterId: String,
+    val monsterType: MonsterType,
+    val difficulty: Difficulty,
+    val numPlayers: Int,
+    val partySize: Int,
+    val itemQuality: ItemQuality,
+    val magicFind: Int,
     val hash: String
 )
 
@@ -164,8 +268,8 @@ class TestDataExpectationWriter(private val jsonGenerator: JsonGenerator) :
         }
     }
 
-    fun write(testDataExpectation: TestDataExpectation) {
-        jsonGenerator.writeObject(testDataExpectation)
+    fun write(o: Any) {
+        jsonGenerator.writeObject(o)
     }
 
     override fun close() {
