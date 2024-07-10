@@ -28,7 +28,8 @@ class DropCalcIntegTest {
             Difficulty.valueOf(parts[2]),
             parts[3].toInt(),
             parts[4].toInt(),
-            file
+            file,
+            if (parts.size == 5) Version.V1_12 else Version.valueOf(parts[5].replace(" ", "_"))
         )
     }
 
@@ -131,11 +132,12 @@ class DropCalcIntegTest {
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
-        file: File
+        file: File,
+        version: Version = Version.V1_12
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
-        { apiResource.getAtomicTcs(Version.V1_12, monsterId, monsterType, difficulty, nPlayers, partySize) },
+        { apiResource.getAtomicTcs(version, monsterId, monsterType, difficulty, nPlayers, partySize) },
         this::runAtomicTcAsserts,
         "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize",
     )
