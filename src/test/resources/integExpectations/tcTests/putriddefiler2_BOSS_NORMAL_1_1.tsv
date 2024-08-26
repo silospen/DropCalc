@@ -1,144 +1,196 @@
-amu	Halls of Vaught	0.001225490196078
-armo12	Halls of Vaught	0.003520600972393
-armo15	Halls of Vaught	0.004011901968904
-armo18	Halls of Vaught	0.004516136462264
-armo21	Halls of Vaught	0.004490681386420
-armo24	Halls of Vaught	0.003284974182097
-armo27	Halls of Vaught	0.002565916376189
-armo3	Halls of Vaught	0.000235586253506
-armo30	Halls of Vaught	0.001835042995745
-armo33	Halls of Vaught	0.001094749201850
-armo36	Halls of Vaught	0.000865064947817
-armo6	Halls of Vaught	0.000989462264725
-armo9	Halls of Vaught	0.002808188141791
-cm1	Halls of Vaught	0.000612745098039
-cm2	Halls of Vaught	0.000612745098039
-cm3	Halls of Vaught	0.000612745098039
-gcb	Halls of Vaught	0.000110294117647
-gcg	Halls of Vaught	0.000110294117647
-gcr	Halls of Vaught	0.000110294117647
-gcv	Halls of Vaught	0.000110294117647
-gcw	Halls of Vaught	0.000110294117647
-gcy	Halls of Vaught	0.000110294117647
-gfb	Halls of Vaught	0.000147058823529
-gfg	Halls of Vaught	0.000147058823529
-gfr	Halls of Vaught	0.000147058823529
-gfv	Halls of Vaught	0.000147058823529
-gfw	Halls of Vaught	0.000147058823529
-gfy	Halls of Vaught	0.000147058823529
-glb	Halls of Vaught	0.000073529411765
-glg	Halls of Vaught	0.000073529411765
-glr	Halls of Vaught	0.000073529411765
-glw	Halls of Vaught	0.000073529411765
-gly	Halls of Vaught	0.000073529411765
-gsb	Halls of Vaught	0.000441176470588
-gsg	Halls of Vaught	0.000441176470588
-gsr	Halls of Vaught	0.000441176470588
-gsv	Halls of Vaught	0.000441176470588
-gsw	Halls of Vaught	0.000441176470588
-gsy	Halls of Vaught	0.000441176470588
-gzv	Halls of Vaught	0.000073529411765
-jew	Halls of Vaught	0.000612745098039
-r01	Halls of Vaught	0.000271610001818
-r02	Halls of Vaught	0.000181073334545
-r03	Halls of Vaught	0.000150894445454
-r04	Halls of Vaught	0.000100596296970
-r05	Halls of Vaught	0.000105626111818
-r06	Halls of Vaught	0.000070417407879
-r07	Halls of Vaught	0.000088021759848
-r08	Halls of Vaught	0.000058681173232
-r09	Halls of Vaught	0.000061615231894
-r10	Halls of Vaught	0.000041076821263
-r11	Halls of Vaught	0.000037653752824
-r12	Halls of Vaught	0.000025102501883
-r13	Halls of Vaught	0.000019872813990
-r14	Halls of Vaught	0.000013248542660
-rin	Halls of Vaught	0.002450980392157
-skc	Halls of Vaught	0.000073529411765
-skf	Halls of Vaught	0.000098039215686
-skl	Halls of Vaught	0.000049019607843
-sku	Halls of Vaught	0.000294117647059
-weap12	Halls of Vaught	0.007041201944785
-weap15	Halls of Vaught	0.008023803937808
-weap18	Halls of Vaught	0.009032272924528
-weap21	Halls of Vaught	0.008981362772839
+amu	Halls of Vaught	0.001225490196078427
+amu	Worldstone Keep Level 1	0.001225490196078427
+aqv	Halls of Vaught	0.014062499999999978
+aqv	Worldstone Keep Level 1	0.014062499999999978
+armo12	Halls of Vaught	0.0035206009723927068
+armo12	Worldstone Keep Level 1	0.0035206009723927068
+armo15	Halls of Vaught	0.004011901968904108
+armo15	Worldstone Keep Level 1	0.004011901968904108
+armo18	Halls of Vaught	0.004516136462264009
+armo18	Worldstone Keep Level 1	0.004516136462264009
+armo21	Halls of Vaught	0.004490681386419615
+armo21	Worldstone Keep Level 1	0.004490681386419615
+armo24	Halls of Vaught	0.0032849741820970557
+armo24	Worldstone Keep Level 1	0.0032849741820970557
+armo27	Halls of Vaught	0.0025659163761887482
+armo27	Worldstone Keep Level 1	0.0025659163761887482
+armo3	Halls of Vaught	2.355862535059483E-4
+armo3	Worldstone Keep Level 1	2.355862535059483E-4
+armo30	Halls of Vaught	0.0018350429957446623
+armo30	Worldstone Keep Level 1	0.0018350429957446623
+armo33	Halls of Vaught	0.0010947492018503757
+armo33	Worldstone Keep Level 1	0.0010947492018503757
+armo36	Halls of Vaught	8.650649478173511E-4
+armo36	Worldstone Keep Level 1	8.650649478173511E-4
+armo6	Halls of Vaught	9.894622647249607E-4
+armo6	Worldstone Keep Level 1	9.894622647249607E-4
+armo9	Halls of Vaught	0.002808188141790735
+armo9	Worldstone Keep Level 1	0.002808188141790735
+cm1	Halls of Vaught	6.127450980392135E-4
+cm1	Worldstone Keep Level 1	6.127450980392135E-4
+cm2	Halls of Vaught	6.127450980392135E-4
+cm2	Worldstone Keep Level 1	6.127450980392135E-4
+cm3	Halls of Vaught	6.127450980392135E-4
+cm3	Worldstone Keep Level 1	6.127450980392135E-4
+cqv	Halls of Vaught	0.014062499999999978
+cqv	Worldstone Keep Level 1	0.014062499999999978
+gcb	Halls of Vaught	1.1029411764706953E-4
+gcb	Worldstone Keep Level 1	1.1029411764706953E-4
+gcg	Halls of Vaught	1.1029411764706953E-4
+gcg	Worldstone Keep Level 1	1.1029411764706953E-4
+gcr	Halls of Vaught	1.1029411764706953E-4
+gcr	Worldstone Keep Level 1	1.1029411764706953E-4
+gcv	Halls of Vaught	1.1029411764706953E-4
+gcv	Worldstone Keep Level 1	1.1029411764706953E-4
+gcw	Halls of Vaught	1.1029411764706953E-4
+gcw	Worldstone Keep Level 1	1.1029411764706953E-4
+gcy	Halls of Vaught	1.1029411764706953E-4
+gcy	Worldstone Keep Level 1	1.1029411764706953E-4
+gfb	Halls of Vaught	1.4705882352938904E-4
+gfb	Worldstone Keep Level 1	1.4705882352938904E-4
+gfg	Halls of Vaught	1.4705882352938904E-4
+gfg	Worldstone Keep Level 1	1.4705882352938904E-4
+gfr	Halls of Vaught	1.4705882352938904E-4
+gfr	Worldstone Keep Level 1	1.4705882352938904E-4
+gfv	Halls of Vaught	1.4705882352938904E-4
+gfv	Worldstone Keep Level 1	1.4705882352938904E-4
+gfw	Halls of Vaught	1.4705882352938904E-4
+gfw	Worldstone Keep Level 1	1.4705882352938904E-4
+gfy	Halls of Vaught	1.4705882352938904E-4
+gfy	Worldstone Keep Level 1	1.4705882352938904E-4
+glb	Halls of Vaught	7.352941176475003E-5
+glb	Worldstone Keep Level 1	7.352941176475003E-5
+gld	Halls of Vaught	0.11250000000000004
+gld	Worldstone Keep Level 1	0.11250000000000004
+glg	Halls of Vaught	7.352941176475003E-5
+glg	Worldstone Keep Level 1	7.352941176475003E-5
+glr	Halls of Vaught	7.352941176475003E-5
+glr	Worldstone Keep Level 1	7.352941176475003E-5
+glw	Halls of Vaught	7.352941176475003E-5
+glw	Worldstone Keep Level 1	7.352941176475003E-5
+gly	Halls of Vaught	7.352941176475003E-5
+gly	Worldstone Keep Level 1	7.352941176475003E-5
+gpl	Halls of Vaught	5.935422602076912E-6
+gpl	Worldstone Keep Level 1	5.935422602076912E-6
+gpm	Halls of Vaught	4.7483380816715215E-4
+gpm	Worldstone Keep Level 1	4.7483380816715215E-4
+gps	Halls of Vaught	0.0038461538461538325
+gps	Worldstone Keep Level 1	0.0038461538461538325
+gsb	Halls of Vaught	4.4117647058827814E-4
+gsb	Worldstone Keep Level 1	4.4117647058827814E-4
+gsg	Halls of Vaught	4.4117647058827814E-4
+gsg	Worldstone Keep Level 1	4.4117647058827814E-4
+gsr	Halls of Vaught	4.4117647058827814E-4
+gsr	Worldstone Keep Level 1	4.4117647058827814E-4
+gsv	Halls of Vaught	4.4117647058827814E-4
+gsv	Worldstone Keep Level 1	4.4117647058827814E-4
+gsw	Halls of Vaught	4.4117647058827814E-4
+gsw	Worldstone Keep Level 1	4.4117647058827814E-4
+gsy	Halls of Vaught	4.4117647058827814E-4
+gsy	Worldstone Keep Level 1	4.4117647058827814E-4
+gzv	Halls of Vaught	7.352941176475003E-5
+gzv	Worldstone Keep Level 1	7.352941176475003E-5
+hp1	Halls of Vaught	1.2279304393958412E-5
+hp1	Worldstone Keep Level 1	1.2279304393958412E-5
+hp2	Halls of Vaught	1.5111814892776465E-4
+hp2	Worldstone Keep Level 1	1.5111814892776465E-4
+hp3	Halls of Vaught	0.00874122116654974
+hp3	Worldstone Keep Level 1	0.00874122116654974
+hp4	Halls of Vaught	0.012389770723104099
+hp4	Worldstone Keep Level 1	0.012389770723104099
+hp5	Halls of Vaught	0.011904761904761862
+hp5	Worldstone Keep Level 1	0.011904761904761862
+isc	Halls of Vaught	0.02107371794871793
+isc	Worldstone Keep Level 1	0.02107371794871793
+jew	Halls of Vaught	6.127450980392135E-4
+jew	Worldstone Keep Level 1	6.127450980392135E-4
+key	Halls of Vaught	0.006490384615384648
+key	Worldstone Keep Level 1	0.006490384615384648
+mp1	Halls of Vaught	1.4288980337839874E-6
+mp1	Worldstone Keep Level 1	1.4288980337839874E-6
+mp2	Halls of Vaught	5.568092983465611E-6
+mp2	Worldstone Keep Level 1	5.568092983465611E-6
+mp3	Halls of Vaught	7.720000252853243E-5
+mp3	Worldstone Keep Level 1	7.720000252853243E-5
+mp4	Halls of Vaught	0.01159887566137563
+mp4	Worldstone Keep Level 1	0.01159887566137563
+mp5	Halls of Vaught	0.020791997354497327
+mp5	Worldstone Keep Level 1	0.020791997354497327
+opl	Halls of Vaught	5.935422602076912E-6
+opl	Worldstone Keep Level 1	5.935422602076912E-6
+opm	Halls of Vaught	4.7483380816715215E-4
+opm	Worldstone Keep Level 1	4.7483380816715215E-4
+ops	Halls of Vaught	0.0038461538461538325
+ops	Worldstone Keep Level 1	0.0038461538461538325
+r01	Halls of Vaught	2.716100018178569E-4
+r01	Worldstone Keep Level 1	2.716100018178569E-4
+r02	Halls of Vaught	1.8107333454520091E-4
+r02	Worldstone Keep Level 1	1.8107333454520091E-4
+r03	Halls of Vaught	1.508944454543526E-4
+r03	Worldstone Keep Level 1	1.508944454543526E-4
+r04	Halls of Vaught	1.005962969695684E-4
+r04	Worldstone Keep Level 1	1.005962969695684E-4
+r05	Halls of Vaught	1.0562611181808013E-4
+r05	Worldstone Keep Level 1	1.0562611181808013E-4
+r06	Halls of Vaught	7.041740787872008E-5
+r06	Worldstone Keep Level 1	7.041740787872008E-5
+r07	Halls of Vaught	8.80217598483446E-5
+r07	Worldstone Keep Level 1	8.80217598483446E-5
+r08	Halls of Vaught	5.868117323226674E-5
+r08	Worldstone Keep Level 1	5.868117323226674E-5
+r09	Halls of Vaught	6.161523189385232E-5
+r09	Worldstone Keep Level 1	6.161523189385232E-5
+r10	Halls of Vaught	4.1076821262531205E-5
+r10	Worldstone Keep Level 1	4.1076821262531205E-5
+r11	Halls of Vaught	3.76537528240517E-5
+r11	Worldstone Keep Level 1	3.76537528240517E-5
+r12	Halls of Vaught	2.5102501882701134E-5
+r12	Worldstone Keep Level 1	2.5102501882701134E-5
+r13	Halls of Vaught	1.9872813990406968E-5
+r13	Worldstone Keep Level 1	1.9872813990406968E-5
+r14	Halls of Vaught	1.3248542660271312E-5
+r14	Worldstone Keep Level 1	1.3248542660271312E-5
+rin	Halls of Vaught	0.002450980392156854
+rin	Worldstone Keep Level 1	0.002450980392156854
+rvs	Halls of Vaught	0.0020748086725287385
+rvs	Worldstone Keep Level 1	0.0020748086725287385
+skc	Halls of Vaught	7.352941176475003E-5
+skc	Worldstone Keep Level 1	7.352941176475003E-5
+skf	Halls of Vaught	9.803921568629637E-5
+skf	Worldstone Keep Level 1	9.803921568629637E-5
+skl	Halls of Vaught	4.901960784309267E-5
+skl	Worldstone Keep Level 1	4.901960784309267E-5
+sku	Halls of Vaught	2.941176470587781E-4
+sku	Worldstone Keep Level 1	2.941176470587781E-4
+tsc	Halls of Vaught	0.013782051282051233
+tsc	Worldstone Keep Level 1	0.013782051282051233
+vps	Halls of Vaught	0.0041501889042709905
+vps	Worldstone Keep Level 1	0.0041501889042709905
+weap12	Halls of Vaught	0.0070412019447853025
+weap12	Worldstone Keep Level 1	0.0070412019447853025
+weap15	Halls of Vaught	0.008023803937808216
+weap15	Worldstone Keep Level 1	0.008023803937808216
+weap18	Halls of Vaught	0.009032272924528018
+weap18	Worldstone Keep Level 1	0.009032272924528018
+weap21	Halls of Vaught	0.008981362772839119
+weap21	Worldstone Keep Level 1	0.008981362772839119
 weap24	Halls of Vaught	0.006569948364194
-weap27	Halls of Vaught	0.005131832752378
-weap3	Halls of Vaught	0.000471172507012
-weap30	Halls of Vaught	0.004742039007552
-weap33	Halls of Vaught	0.004632406045941
-weap36	Halls of Vaught	0.001310353776232
-weap6	Halls of Vaught	0.001978924529450
-weap9	Halls of Vaught	0.005616376283581
-amu	Worldstone Keep Level 1	0.001225490196078
-armo12	Worldstone Keep Level 1	0.003520600972393
-armo15	Worldstone Keep Level 1	0.004011901968904
-armo18	Worldstone Keep Level 1	0.004516136462264
-armo21	Worldstone Keep Level 1	0.004490681386420
-armo24	Worldstone Keep Level 1	0.003284974182097
-armo27	Worldstone Keep Level 1	0.002565916376189
-armo3	Worldstone Keep Level 1	0.000235586253506
-armo30	Worldstone Keep Level 1	0.001835042995745
-armo33	Worldstone Keep Level 1	0.001094749201850
-armo36	Worldstone Keep Level 1	0.000865064947817
-armo6	Worldstone Keep Level 1	0.000989462264725
-armo9	Worldstone Keep Level 1	0.002808188141791
-cm1	Worldstone Keep Level 1	0.000612745098039
-cm2	Worldstone Keep Level 1	0.000612745098039
-cm3	Worldstone Keep Level 1	0.000612745098039
-gcb	Worldstone Keep Level 1	0.000110294117647
-gcg	Worldstone Keep Level 1	0.000110294117647
-gcr	Worldstone Keep Level 1	0.000110294117647
-gcv	Worldstone Keep Level 1	0.000110294117647
-gcw	Worldstone Keep Level 1	0.000110294117647
-gcy	Worldstone Keep Level 1	0.000110294117647
-gfb	Worldstone Keep Level 1	0.000147058823529
-gfg	Worldstone Keep Level 1	0.000147058823529
-gfr	Worldstone Keep Level 1	0.000147058823529
-gfv	Worldstone Keep Level 1	0.000147058823529
-gfw	Worldstone Keep Level 1	0.000147058823529
-gfy	Worldstone Keep Level 1	0.000147058823529
-glb	Worldstone Keep Level 1	0.000073529411765
-glg	Worldstone Keep Level 1	0.000073529411765
-glr	Worldstone Keep Level 1	0.000073529411765
-glw	Worldstone Keep Level 1	0.000073529411765
-gly	Worldstone Keep Level 1	0.000073529411765
-gsb	Worldstone Keep Level 1	0.000441176470588
-gsg	Worldstone Keep Level 1	0.000441176470588
-gsr	Worldstone Keep Level 1	0.000441176470588
-gsv	Worldstone Keep Level 1	0.000441176470588
-gsw	Worldstone Keep Level 1	0.000441176470588
-gsy	Worldstone Keep Level 1	0.000441176470588
-gzv	Worldstone Keep Level 1	0.000073529411765
-jew	Worldstone Keep Level 1	0.000612745098039
-r01	Worldstone Keep Level 1	0.000271610001818
-r02	Worldstone Keep Level 1	0.000181073334545
-r03	Worldstone Keep Level 1	0.000150894445454
-r04	Worldstone Keep Level 1	0.000100596296970
-r05	Worldstone Keep Level 1	0.000105626111818
-r06	Worldstone Keep Level 1	0.000070417407879
-r07	Worldstone Keep Level 1	0.000088021759848
-r08	Worldstone Keep Level 1	0.000058681173232
-r09	Worldstone Keep Level 1	0.000061615231894
-r10	Worldstone Keep Level 1	0.000041076821263
-r11	Worldstone Keep Level 1	0.000037653752824
-r12	Worldstone Keep Level 1	0.000025102501883
-r13	Worldstone Keep Level 1	0.000019872813990
-r14	Worldstone Keep Level 1	0.000013248542660
-rin	Worldstone Keep Level 1	0.002450980392157
-skc	Worldstone Keep Level 1	0.000073529411765
-skf	Worldstone Keep Level 1	0.000098039215686
-skl	Worldstone Keep Level 1	0.000049019607843
-sku	Worldstone Keep Level 1	0.000294117647059
-weap12	Worldstone Keep Level 1	0.007041201944785
-weap15	Worldstone Keep Level 1	0.008023803937808
-weap18	Worldstone Keep Level 1	0.009032272924528
-weap21	Worldstone Keep Level 1	0.008981362772839
 weap24	Worldstone Keep Level 1	0.006569948364194
-weap27	Worldstone Keep Level 1	0.005131832752378
-weap3	Worldstone Keep Level 1	0.000471172507012
-weap30	Worldstone Keep Level 1	0.004742039007552
-weap33	Worldstone Keep Level 1	0.004632406045941
-weap36	Worldstone Keep Level 1	0.001310353776232
-weap6	Worldstone Keep Level 1	0.001978924529450
-weap9	Worldstone Keep Level 1	0.005616376283581
+weap27	Halls of Vaught	0.0051318327523776075
+weap27	Worldstone Keep Level 1	0.0051318327523776075
+weap3	Halls of Vaught	4.711725070118966E-4
+weap3	Worldstone Keep Level 1	4.711725070118966E-4
+weap30	Halls of Vaught	0.00474203900755199
+weap30	Worldstone Keep Level 1	0.00474203900755199
+weap33	Halls of Vaught	0.004632406045940729
+weap33	Worldstone Keep Level 1	0.004632406045940729
+weap36	Halls of Vaught	0.0013103537762316764
+weap36	Worldstone Keep Level 1	0.0013103537762316764
+weap6	Halls of Vaught	0.0019789245294498103
+weap6	Worldstone Keep Level 1	0.0019789245294498103
+weap9	Halls of Vaught	0.00561637628358147
+weap9	Worldstone Keep Level 1	0.00561637628358147
+wms	Halls of Vaught	0.0020745228929219817
+wms	Worldstone Keep Level 1	0.0020745228929219817
+yps	Halls of Vaught	0.004151258273122016
+yps	Worldstone Keep Level 1	0.004151258273122016

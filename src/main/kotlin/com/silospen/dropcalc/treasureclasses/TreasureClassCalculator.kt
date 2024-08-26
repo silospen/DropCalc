@@ -15,7 +15,6 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
     private val treasureClassesByGroup = treasureClasses
         .filter { it.properties.group != null && it.properties.level != null }
         .groupBy { it.properties.group }
-        .mapValues { entry -> entry.value.sortedBy { it.properties.level } }
 
     private fun generateTreasureClasses(treasureClassConfigs: List<TreasureClassConfig>): List<TreasureClass> {
         val treasureClasses = mutableListOf<TreasureClass>()
@@ -125,12 +124,15 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
     ): TreasureClass {
         if (difficulty == Difficulty.NORMAL) return baseTreasureClass
         val treasureClassGroup = treasureClassesByGroup[baseTreasureClass.properties.group] ?: return baseTreasureClass
-        var isAfterBaseTreasureClass = false
-        for (treasureClass in treasureClassGroup) {
-            if (treasureClass == baseTreasureClass) isAfterBaseTreasureClass = true
-            if (treasureClass.properties.level!! >= monsterLevel && isAfterBaseTreasureClass) return treasureClass
+        val baseTcIndex = treasureClassGroup.indexOf(baseTreasureClass)
+        var nextIndex = baseTcIndex + 1
+        var result = baseTreasureClass
+        while (nextIndex < treasureClassGroup.size) {
+            if (treasureClassGroup[nextIndex].properties.level!! > monsterLevel) break
+            result = treasureClassGroup[nextIndex]
+            nextIndex++
         }
-        return treasureClassGroup.last()
+        return result
     }
 
     fun getTreasureClass(treasureClassName: String) =

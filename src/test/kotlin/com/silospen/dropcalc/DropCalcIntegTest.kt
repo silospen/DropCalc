@@ -1,6 +1,7 @@
 package com.silospen.dropcalc
 
-import com.google.common.io.Resources
+import com.silospen.dropcalc.DropCalcIntegTest.Mode.RUN_ASSERTIONS
+import com.silospen.dropcalc.DropCalcIntegTest.Mode.WRITE_EXPECTATIONS
 import com.silospen.dropcalc.files.Line
 import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.readTsv
@@ -9,19 +10,32 @@ import com.silospen.dropcalc.resource.ApiResponse
 import org.apache.commons.math3.util.Precision
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileOutputStream
 
 @SpringBootTest
 class DropCalcIntegTest {
     @Autowired
     private lateinit var apiResource: ApiResource
 
+    private val tcTestsFolder = File("src/test/resources/integExpectations/tcTests")
+    private val monsterTestsFolder = File("src/test/resources/integExpectations/monsterTests")
+    private val itemTestsFolder = File("src/test/resources/integExpectations/itemTests")
+
     @Test
-    fun runLocalTcTests() = runLocalTests("integExpectations/tcTests") { parts, file ->
+    fun runLocalTcTests() = runLocalTcTests(RUN_ASSERTIONS)
+
+    enum class Mode {
+        RUN_ASSERTIONS,
+        WRITE_EXPECTATIONS
+    }
+
+    fun runLocalTcTests(mode: Mode) = runLocalTests(tcTestsFolder) { parts, file ->
         runAtomicTcTestWithLocalExpectations(
             parts[0],
             MonsterType.valueOf(parts[1]),
@@ -29,13 +43,16 @@ class DropCalcIntegTest {
             parts[3].toInt(),
             parts[4].toInt(),
             file,
+            mode,
             if (parts.size == 5) Version.V1_12 else Version.valueOf(parts[5].replace(" ", "_"))
         )
     }
 
     @Test
-    fun runLocalMonsterTests() =
-        runLocalTests("integExpectations/monsterTests") { parts, file ->
+    fun runLocalMonsterTests() = runLocalMonsterTests(RUN_ASSERTIONS)
+
+    fun runLocalMonsterTests(mode: Mode) =
+        runLocalTests(monsterTestsFolder) { parts, file ->
             runMonsterTestWithLocalExpectations(
                 parts[0],
                 MonsterType.valueOf(parts[1]),
@@ -44,13 +61,16 @@ class DropCalcIntegTest {
                 parts[4].toInt(),
                 ItemQuality.valueOf(parts[5]),
                 parts[6].toInt(),
-                file
+                file,
+                mode
             )
         }
 
     @Test
-    fun runLocalItemTests() =
-        runLocalTests("integExpectations/itemTests") { parts, file ->
+    fun runLocalItemTests() = runLocalItemTests(RUN_ASSERTIONS)
+
+    fun runLocalItemTests(mode: Mode) =
+        runLocalTests(itemTestsFolder) { parts, file ->
             runItemsTestWithLocalExpectations(
                 parts[0],
                 MonsterType.valueOf(parts[1]),
@@ -59,12 +79,21 @@ class DropCalcIntegTest {
                 parts[4].toInt(),
                 ItemQuality.valueOf(parts[5]),
                 parts[6].toInt(),
-                file
+                file,
+                mode
             )
         }
 
-    fun runLocalTests(resourceName: String, testToRun: (List<String>, File) -> Unit) {
-        File(Resources.getResource(resourceName).toURI()).listFiles()!!.filter { it.name.endsWith(".tsv") }.forEach {
+    @Test
+    @Disabled
+    fun generateExpectationData() {
+        runLocalTcTests(WRITE_EXPECTATIONS)
+        runLocalMonsterTests(WRITE_EXPECTATIONS)
+        runLocalItemTests(WRITE_EXPECTATIONS)
+    }
+
+    fun runLocalTests(folder: File, testToRun: (List<String>, File) -> Unit) {
+        folder.listFiles()!!.filter { it.name.endsWith(".tsv") }.forEach {
             val parts = it.name.removeSuffix(".tsv").replace("$", ":").split("_")
             testToRun(parts, it)
         }
@@ -78,7 +107,8 @@ class DropCalcIntegTest {
         partySize: Int,
         itemQuality: ItemQuality,
         magicFind: Int,
-        file: File
+        file: File,
+        mode: Mode,
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
@@ -96,6 +126,7 @@ class DropCalcIntegTest {
         },
         this::runAtomicTcAsserts,
         "$itemId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind",
+        mode,
     )
 
     fun runMonsterTestWithLocalExpectations(
@@ -106,7 +137,8 @@ class DropCalcIntegTest {
         partySize: Int,
         itemQuality: ItemQuality,
         magicFind: Int,
-        file: File
+        file: File,
+        mode: Mode,
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
@@ -124,6 +156,7 @@ class DropCalcIntegTest {
         },
         this::runAtomicTcAsserts,
         "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind",
+        mode,
     )
 
     fun runAtomicTcTestWithLocalExpectations(
@@ -133,6 +166,7 @@ class DropCalcIntegTest {
         nPlayers: Int,
         partySize: Int,
         file: File,
+        mode: Mode,
         version: Version = Version.V1_12
     ) = runTestWithLocalExpectations(
         file,
@@ -140,14 +174,16 @@ class DropCalcIntegTest {
         { apiResource.getAtomicTcs(version, monsterId, monsterType, difficulty, nPlayers, partySize) },
         this::runAtomicTcAsserts,
         "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize",
+        mode
     )
 
-    fun <T> runTestWithLocalExpectations(
+    fun runTestWithLocalExpectations(
         expectationsFile: File,
-        expectationsLineParser: LineParser<T?>,
-        actualSource: () -> List<T>,
-        assertionsRunner: (List<T>, List<T>, String) -> Unit,
-        inputsForLogging: String
+        expectationsLineParser: LineParser<ApiResponse?>,
+        actualSource: () -> List<ApiResponse>,
+        assertionsRunner: (List<ApiResponse>, List<ApiResponse>, String) -> Unit,
+        inputsForLogging: String,
+        mode: Mode,
     ) {
         val actual = actualSource()
         val expected = readTsv(
@@ -156,7 +192,13 @@ class DropCalcIntegTest {
         )
         assertTrue(expected.isNotEmpty(), "Expected is empty")
         assertTrue(actual.isNotEmpty(), "Actual is empty")
-        assertionsRunner(actual, expected, inputsForLogging)
+
+        when (mode) {
+            RUN_ASSERTIONS -> assertionsRunner(actual, expected, inputsForLogging)
+            WRITE_EXPECTATIONS -> writeExpectationsTsv(FileOutputStream(expectationsFile), actual)
+        }
+
+
     }
 
     private fun runAtomicTcAsserts(
@@ -191,6 +233,12 @@ class DropCalcIntegTest {
             ApiResponse(line[0], line[1], line[2].toDouble())
     }
 
+    private fun writeExpectationsTsv(outputStream: FileOutputStream, expectations: List<ApiResponse>) {
+        outputStream.bufferedWriter().use { writer ->
+            expectations.forEach { writer.appendLine("${it.name}\t${it.area}\t${it.prob}") }
+        }
+    }
+
     private val brokenNames = setOf(
         "cm1",
         "cm2",
@@ -223,3 +271,4 @@ class DropCalcIntegTest {
         "Warped Shaman (Colenzo the Annihilator) - fallenshaman5 (H)" to "Throne of Destruction",
     )
 }
+
