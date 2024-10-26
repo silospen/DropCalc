@@ -122,13 +122,13 @@ class TreasureClassPathsTest {
             )
         )
 
-        assertEquals(Probability(387420425, 387420489), paths.getFinalProbability(VirtualTreasureClass("tc1")))
-        assertEquals(Probability(386420489, 387420489), paths.getFinalProbability(VirtualTreasureClass("tc1")) {
+        assertEquals(Probability(531377, 531441), paths.getFinalProbability(VirtualTreasureClass("tc1")))
+        assertEquals(Probability(515816, 531441), paths.getFinalProbability(VirtualTreasureClass("tc1")) {
             Probability(
                 1,
                 2
             )
         })
-        assertEquals(Probability(16777215, 16777216), paths.getFinalProbability(VirtualTreasureClass("tc2")))
+        assertEquals(Probability(4095, 4096), paths.getFinalProbability(VirtualTreasureClass("tc2")))
     }
 }

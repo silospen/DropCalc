@@ -106,7 +106,8 @@ data class TreasureClassPathOutcome(
     private val drops: Int
 ) {
     fun getProbability(additionalFactor: Probability = Probability.ONE) =
-        applyPicks(drops, applyPicks(picks, probability.multiply(additionalFactor)))
+        applyPicks(picks * drops, probability.multiply(additionalFactor))
+
 
     private fun applyPicks(picks: Int, p: Probability): Probability {
         return when {
