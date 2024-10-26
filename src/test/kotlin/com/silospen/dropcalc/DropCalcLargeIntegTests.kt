@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import com.silospen.dropcalc.resource.ApiResource
+import com.silospen.dropcalc.resource.ApiResponse
 import com.silospen.dropcalc.resource.VersionedMetadataResource
+import org.apache.commons.math3.util.Precision
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -238,8 +240,16 @@ class DropCalcLargeIntegTests {
         numPlayers: Int,
         partySize: Int,
         magicFind: Int
-    ): ItemsTestDataExpectation {
-        val hash = Hashing.sha256().hashString(
+    ) = ItemsTestDataExpectation(
+        version,
+        itemId,
+        itemQuality,
+        monsterType,
+        difficulty,
+        numPlayers,
+        partySize,
+        magicFind,
+        generateHash(
             apiResource.getItemProbabilities(
                 version,
                 itemId,
@@ -250,22 +260,8 @@ class DropCalcLargeIntegTests {
                 partySize,
                 magicFind
             )
-                .sortedWith(compareBy({ it.name }, { it.area }))
-                .toString(),
-            Charsets.UTF_8
-        ).toString()
-        return ItemsTestDataExpectation(
-            version,
-            itemId,
-            itemQuality,
-            monsterType,
-            difficulty,
-            numPlayers,
-            partySize,
-            magicFind,
-            hash
         )
-    }
+    )
 
     private fun getMonstersExpectation(
         version: Version,
@@ -276,8 +272,16 @@ class DropCalcLargeIntegTests {
         partySize: Int,
         itemQuality: ItemQuality,
         magicFind: Int
-    ): MonstersTestDataExpectation {
-        val hash = Hashing.sha256().hashString(
+    ) = MonstersTestDataExpectation(
+        version,
+        monsterId,
+        monsterType,
+        difficulty,
+        numPlayers,
+        partySize,
+        itemQuality,
+        magicFind,
+        generateHash(
             apiResource.getMonster(
                 version,
                 monsterId,
@@ -288,22 +292,8 @@ class DropCalcLargeIntegTests {
                 itemQuality,
                 magicFind
             )
-                .sortedWith(compareBy({ it.name }, { it.area }))
-                .toString(),
-            Charsets.UTF_8
-        ).toString()
-        return MonstersTestDataExpectation(
-            version,
-            monsterId,
-            monsterType,
-            difficulty,
-            numPlayers,
-            partySize,
-            itemQuality,
-            magicFind,
-            hash
         )
-    }
+    )
 
     private fun getAtomicTcs(
         version: Version,
@@ -312,23 +302,34 @@ class DropCalcLargeIntegTests {
         difficulty: Difficulty,
         numPlayers: Int,
         partySize: Int
-    ): AtomicTcsTestDataExpectation {
-        val hash = Hashing.sha256().hashString(
-            apiResource.getAtomicTcs(version, monsterId, monsterType, difficulty, numPlayers, partySize)
-                .sortedWith(compareBy({ it.name }, { it.area }))
-                .toString(),
-            Charsets.UTF_8
-        ).toString()
-        return AtomicTcsTestDataExpectation(
-            version,
-            monsterId,
-            monsterType,
-            difficulty,
-            numPlayers,
-            partySize,
-            hash
+    ) = AtomicTcsTestDataExpectation(
+        version,
+        monsterId,
+        monsterType,
+        difficulty,
+        numPlayers,
+        partySize,
+        generateHash(
+            apiResource.getAtomicTcs(
+                version,
+                monsterId,
+                monsterType,
+                difficulty,
+                numPlayers,
+                partySize
+            )
         )
-    }
+    )
+
+    private fun generateHash(apiResponses: List<ApiResponse>) = Hashing.sha256().hashString(
+        apiResponses
+            .asSequence()
+            .map { it.copy(prob = Precision.round(it.prob, 11)) }
+            .sortedWith(compareBy({ it.name }, { it.area }))
+            .toList()
+            .toString(),
+        Charsets.UTF_8
+    ).toString()
 }
 
 
