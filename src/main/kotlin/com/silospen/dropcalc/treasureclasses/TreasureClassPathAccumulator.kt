@@ -6,10 +6,9 @@ import com.silospen.dropcalc.Probability
 
 class TreasureClassPathAccumulator(
     private val accumulator: MutableMap<OutcomeType, TreasureClassPathOutcome>,
-    private val picks: Int,
-    private val drops: Int
+    private val picks: Int
 ) {
-    constructor(picks: Int, drops: Int) : this(mutableMapOf(), picks, drops)
+    constructor(picks: Int) : this(mutableMapOf(), picks)
 
     fun accumulateProbability(
         probability: Probability,
@@ -19,7 +18,7 @@ class TreasureClassPathAccumulator(
         val old = accumulator[outcomeType]
         val newProbability = probability.add(old?.probability ?: Probability.ZERO)
         val newItemQualityRatios = (old?.itemQualityRatios ?: ItemQualityRatios.EMPTY).merge(itemQualityRatios)
-        accumulator[outcomeType] = TreasureClassPathOutcome(newProbability, newItemQualityRatios, picks, drops)
+        accumulator[outcomeType] = TreasureClassPathOutcome(newProbability, newItemQualityRatios, picks)
     }
 
     fun getOutcomes(): Map<OutcomeType, TreasureClassPathOutcome> = accumulator
@@ -102,11 +101,10 @@ class TreasureClassPaths(private val pathsByOutcomeType: Map<OutcomeType, List<T
 data class TreasureClassPathOutcome(
     internal val probability: Probability,
     val itemQualityRatios: ItemQualityRatios,
-    private val picks: Int,
-    private val drops: Int
+    private val picks: Int
 ) {
     fun getProbability(additionalFactor: Probability = Probability.ONE) =
-        applyPicks(picks * drops, probability.multiply(additionalFactor))
+        applyPicks(picks, probability.multiply(additionalFactor))
 
 
     private fun applyPicks(picks: Int, p: Probability): Probability {

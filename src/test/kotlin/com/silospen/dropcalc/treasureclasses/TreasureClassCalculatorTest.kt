@@ -27,17 +27,17 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes() {
         val expectations = listOf(
-            expectation("gld", TreasureClassPathOutcome(Probability(21, 160), EMPTY, 1, 1)),
-            expectation("weap3", TreasureClassPathOutcome(Probability(1, 20), EMPTY, 1, 1)),
-            expectation("armo3", TreasureClassPathOutcome(Probability(1, 20), EMPTY, 1, 1)),
-            expectation("Act 1 Junk", TreasureClassPathOutcome(Probability(21, 160), EMPTY, 1, 1)),
-            expectation("rin", TreasureClassPathOutcome(Probability(1, 400), EMPTY, 1, 1)),
-            expectation("amu", TreasureClassPathOutcome(Probability(1, 800), EMPTY, 1, 1)),
-            expectation("jew", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1, 1)),
-            expectation("cm3", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1, 1)),
-            expectation("cm2", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1, 1)),
-            expectation("cm1", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1, 1)),
-            expectation("Chipped Gem", TreasureClassPathOutcome(Probability(1, 160), EMPTY, 1, 1)),
+            expectation("gld", TreasureClassPathOutcome(Probability(21, 160), EMPTY, 1)),
+            expectation("weap3", TreasureClassPathOutcome(Probability(1, 20), EMPTY, 1)),
+            expectation("armo3", TreasureClassPathOutcome(Probability(1, 20), EMPTY, 1)),
+            expectation("Act 1 Junk", TreasureClassPathOutcome(Probability(21, 160), EMPTY, 1)),
+            expectation("rin", TreasureClassPathOutcome(Probability(1, 400), EMPTY, 1)),
+            expectation("amu", TreasureClassPathOutcome(Probability(1, 800), EMPTY, 1)),
+            expectation("jew", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1)),
+            expectation("cm3", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1)),
+            expectation("cm2", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1)),
+            expectation("cm1", TreasureClassPathOutcome(Probability(1, 1600), EMPTY, 1)),
+            expectation("Chipped Gem", TreasureClassPathOutcome(Probability(1, 160), EMPTY, 1)),
         )
         runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED, null))
     }
@@ -45,7 +45,7 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_withFilter() {
         val expectations = listOf(
-            expectation("Act 1 Junk", TreasureClassPathOutcome(Probability(21, 160), EMPTY, 1, 1)),
+            expectation("Act 1 Junk", TreasureClassPathOutcome(Probability(21, 160), EMPTY, 1)),
         )
         runExpectations(
             expectations,
@@ -62,22 +62,22 @@ class TreasureClassCalculatorTest {
         val expectations = listOf(
             TcExpectation(
                 weapon1,
-                listOf(TreasureClassPathOutcome(Probability(1, 30), EMPTY, 1, 1)),
+                listOf(TreasureClassPathOutcome(Probability(1, 30), EMPTY, 1)),
                 Probability(1, 30)
             ),
             TcExpectation(
                 weapon2,
-                listOf(TreasureClassPathOutcome(Probability(1, 60), EMPTY, 1, 1)),
+                listOf(TreasureClassPathOutcome(Probability(1, 60), EMPTY, 1)),
                 Probability(1, 60)
             ),
             TcExpectation(
                 armor1,
-                listOf(TreasureClassPathOutcome(Probability(1, 20), EMPTY, 1, 1)),
+                listOf(TreasureClassPathOutcome(Probability(1, 20), EMPTY, 1)),
                 Probability(1, 20)
             ),
             TcExpectation(
                 ring,
-                listOf(TreasureClassPathOutcome(Probability(1, 400), EMPTY, 1, 1)),
+                listOf(TreasureClassPathOutcome(Probability(1, 400), EMPTY, 1)),
                 Probability(1, 400)
             ),
         )
@@ -87,17 +87,17 @@ class TreasureClassCalculatorTest {
     @Test
     fun getLeafOutcomes_withPartyAndPlayersSet() {
         val expectations = listOf(
-            expectation("gld", TreasureClassPathOutcome(Probability(21, 79), EMPTY, 1, 1)),
-            expectation("weap3", TreasureClassPathOutcome(Probability(8, 79), EMPTY, 1, 1)),
-            expectation("armo3", TreasureClassPathOutcome(Probability(8, 79), EMPTY, 1, 1)),
-            expectation("Act 1 Junk", TreasureClassPathOutcome(Probability(21, 79), EMPTY, 1, 1)),
-            expectation("rin", TreasureClassPathOutcome(Probability(2, 395), EMPTY, 1, 1)),
-            expectation("amu", TreasureClassPathOutcome(Probability(1, 395), EMPTY, 1, 1)),
-            expectation("jew", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1, 1)),
-            expectation("cm3", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1, 1)),
-            expectation("cm2", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1, 1)),
-            expectation("cm1", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1, 1)),
-            expectation("Chipped Gem", TreasureClassPathOutcome(Probability(1, 79), EMPTY, 1, 1)),
+            expectation("gld", TreasureClassPathOutcome(Probability(21, 79), EMPTY, 1)),
+            expectation("weap3", TreasureClassPathOutcome(Probability(8, 79), EMPTY, 1)),
+            expectation("armo3", TreasureClassPathOutcome(Probability(8, 79), EMPTY, 1)),
+            expectation("Act 1 Junk", TreasureClassPathOutcome(Probability(21, 79), EMPTY, 1)),
+            expectation("rin", TreasureClassPathOutcome(Probability(2, 395), EMPTY, 1)),
+            expectation("amu", TreasureClassPathOutcome(Probability(1, 395), EMPTY, 1)),
+            expectation("jew", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1)),
+            expectation("cm3", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1)),
+            expectation("cm2", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1)),
+            expectation("cm1", TreasureClassPathOutcome(Probability(1, 790), EMPTY, 1)),
+            expectation("Chipped Gem", TreasureClassPathOutcome(Probability(1, 79), EMPTY, 1)),
         )
         runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 H2H A", DEFINED, null, 3, 3))
     }
@@ -108,22 +108,22 @@ class TreasureClassCalculatorTest {
         val expectations = listOf(
             expectation(
                 "gld",
-                TreasureClassPathOutcome(Probability(11, 67), radamentItemQualityRatios, 5, 1),
+                TreasureClassPathOutcome(Probability(11, 67), radamentItemQualityRatios, 5),
                 Probability(799393331, 1350125107)
             ),
             expectation(
                 "Act 3 Equip B",
-                TreasureClassPathOutcome(Probability(19, 67), radamentItemQualityRatios, 5, 1),
+                TreasureClassPathOutcome(Probability(19, 67), radamentItemQualityRatios, 5),
                 Probability(1095321139, 1350125107)
             ),
             expectation(
                 "Act 3 Junk",
-                TreasureClassPathOutcome(Probability(15, 67), radamentItemQualityRatios, 5, 1),
+                TreasureClassPathOutcome(Probability(15, 67), radamentItemQualityRatios, 5),
                 Probability(969921075, 1350125107)
             ),
             expectation(
                 "Act 3 Good",
-                TreasureClassPathOutcome(Probability(3, 67), radamentItemQualityRatios, 5, 1),
+                TreasureClassPathOutcome(Probability(3, 67), radamentItemQualityRatios, 5),
                 Probability(276383283, 1350125107)
             ),
         )
@@ -137,45 +137,45 @@ class TreasureClassCalculatorTest {
         val expectations = listOf(
             expectation(
                 "gld",
-                TreasureClassPathOutcome(Probability(60, 100), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(60, 100), topLevelQualityRatios, 1)
             ),
             expectation(
                 "weap3",
-                TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1)
             ),
             expectation(
                 "armo3",
-                TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1)
             ),
             expectation(
                 "rin",
-                TreasureClassPathOutcome(Probability(3, 500), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 500), topLevelQualityRatios, 1)
             ),
             expectation(
                 "amu",
-                TreasureClassPathOutcome(Probability(3, 1000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 1000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "jew",
-                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "cm3",
-                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "cm2",
-                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "cm1",
-                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "Chipped Gem",
-                TreasureClassPathOutcome(Probability(3, 200), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 200), topLevelQualityRatios, 1)
             ),
-            expectation("Act 1 Cpot A", TreasureClassPathOutcome(Probability.ONE, EMPTY, 1, 2)),
+            expectation("Act 1 Cpot A", TreasureClassPathOutcome(Probability.ONE, EMPTY, 2)),
         )
         runExpectations(expectations, treasureClassCalculator.getLeafOutcomes("Act 1 Champ A", DEFINED, null))
     }
@@ -187,55 +187,55 @@ class TreasureClassCalculatorTest {
         val expectations = listOf(
             expectation(
                 "gld",
-                TreasureClassPathOutcome(Probability(60, 100), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(60, 100), topLevelQualityRatios, 1)
             ),
             expectation(
                 "weap3",
                 listOf(
-                    TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1, 1),
-                    TreasureClassPathOutcome(Probability(7, 22), EMPTY, 3, 2),
+                    TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1),
+                    TreasureClassPathOutcome(Probability(7, 22), EMPTY, 6),
                 ),
                 Probability(832772357, 907039232)
             ),
             expectation(
                 "armo3",
                 listOf(
-                    TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1, 1),
-                    TreasureClassPathOutcome(Probability(7, 22), EMPTY, 3, 2),
+                    TreasureClassPathOutcome(Probability(37, 200), subLevelQualityRatios, 1),
+                    TreasureClassPathOutcome(Probability(7, 22), EMPTY, 6),
                 ),
                 Probability(832772357, 907039232)
             ),
             expectation(
                 "rin",
-                TreasureClassPathOutcome(Probability(3, 500), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 500), topLevelQualityRatios, 1)
             ),
             expectation(
                 "amu",
-                TreasureClassPathOutcome(Probability(3, 1000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 1000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "jew",
-                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "cm3",
-                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "cm2",
-                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "cm1",
-                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 2000), topLevelQualityRatios, 1)
             ),
             expectation(
                 "Chipped Gem",
-                TreasureClassPathOutcome(Probability(3, 200), topLevelQualityRatios, 1, 1)
+                TreasureClassPathOutcome(Probability(3, 200), topLevelQualityRatios, 1)
             ),//1-((1-(1-((1-(8/22))*(1-(8/22)))))^3)
             expectation(
                 "armo6",
-                TreasureClassPathOutcome(Probability(4, 11), EMPTY, 3, 2),
+                TreasureClassPathOutcome(Probability(4, 11), EMPTY, 6),
                 Probability(1653912, 1771561)
             ),
         )

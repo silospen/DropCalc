@@ -14,8 +14,7 @@ class TreasureClassPathsTest {
                 VirtualTreasureClass("tc1") to TreasureClassPathOutcome(
                     Probability(1, 3),
                     EMPTY,
-                    2,
-                    3
+                    6
                 )
             )
         )
@@ -26,8 +25,7 @@ class TreasureClassPathsTest {
                     TreasureClassPathOutcome(
                         Probability(1, 3),
                         EMPTY,
-                        2,
-                        3
+                        6
                     )
                 )
             )
@@ -43,22 +41,19 @@ class TreasureClassPathsTest {
                     VirtualTreasureClass("tc1") to TreasureClassPathOutcome(
                         Probability(1, 3),
                         EMPTY,
-                        2,
-                        3
+                        6
                     )
                 ),
                 mapOf(
                     VirtualTreasureClass("tc1") to TreasureClassPathOutcome(
                         Probability(2, 3),
                         EMPTY,
-                        3,
-                        4
+                        12
                     ),
                     VirtualTreasureClass("tc2") to TreasureClassPathOutcome(
                         Probability(3, 4),
                         EMPTY,
-                        3,
-                        4
+                        12
                     )
                 )
             )
@@ -70,22 +65,19 @@ class TreasureClassPathsTest {
                     TreasureClassPathOutcome(
                         Probability(1, 3),
                         EMPTY,
-                        2,
-                        3
+                        6
                     ),
                     TreasureClassPathOutcome(
                         Probability(2, 3),
                         EMPTY,
-                        3,
-                        4
+                        12
                     )
                 ),
                 VirtualTreasureClass("tc2") to listOf(
                     TreasureClassPathOutcome(
                         Probability(3, 4),
                         EMPTY,
-                        3,
-                        4
+                        12
                     )
                 )
             )
@@ -101,22 +93,19 @@ class TreasureClassPathsTest {
                     TreasureClassPathOutcome(
                         Probability(1, 3),
                         EMPTY,
-                        2,
-                        3
+                        6
                     ),
                     TreasureClassPathOutcome(
                         Probability(2, 3),
                         EMPTY,
-                        3,
-                        4
+                        12
                     )
                 ),
                 VirtualTreasureClass("tc2") to listOf(
                     TreasureClassPathOutcome(
                         Probability(3, 4),
                         EMPTY,
-                        3,
-                        4
+                        12
                     )
                 )
             )

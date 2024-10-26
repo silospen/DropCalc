@@ -81,7 +81,6 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
             nPlayers,
             partySize,
             picks,
-            1,
             filterToOutcomeType
         )
     )
@@ -110,8 +109,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
                         treasureClassOutcomeType,
                         nPlayers,
                         partySize,
-                        picks,
-                        outcome.probability,
+                        picks * outcome.probability,
                         filterToOutcomeType
                     )
                 }
@@ -147,10 +145,9 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         nPlayers: Int,
         partySize: Int,
         picks: Int,
-        drops: Int,
         filterToOutcomeType: OutcomeType?
     ): Map<OutcomeType, TreasureClassPathOutcome> =
-        TreasureClassPathAccumulator(picks, drops).apply {
+        TreasureClassPathAccumulator(picks).apply {
             calculatePathSumRecurse(
                 outcome,
                 pathProbabilityAccumulator,

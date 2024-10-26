@@ -10,22 +10,22 @@ class TreasureClassPathAccumulatorTest {
 
     @Test
     fun accumulate() {
-        val accumulator = TreasureClassPathAccumulator(1, 1)
+        val accumulator = TreasureClassPathAccumulator(1)
         accumulator.accumulateProbability(Probability(1, 2), EMPTY, VirtualTreasureClass("tc1"))
         assertEquals(
-            mapOf(VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability(1, 2), EMPTY, 1, 1)),
+            mapOf(VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability(1, 2), EMPTY, 1)),
             accumulator.getOutcomes()
         )
         accumulator.accumulateProbability(Probability(1, 2), EMPTY, VirtualTreasureClass("tc1"))
         assertEquals(
-            mapOf(VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability.ONE, EMPTY, 1, 1)),
+            mapOf(VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability.ONE, EMPTY, 1)),
             accumulator.getOutcomes()
         )
         accumulator.accumulateProbability(Probability(1, 4), EMPTY, VirtualTreasureClass("tc2"))
         assertEquals(
             mapOf(
-                VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability.ONE, EMPTY, 1, 1),
-                VirtualTreasureClass("tc2") to TreasureClassPathOutcome(Probability(1, 4), EMPTY, 1, 1)
+                VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability.ONE, EMPTY, 1),
+                VirtualTreasureClass("tc2") to TreasureClassPathOutcome(Probability(1, 4), EMPTY, 1)
             ), accumulator.getOutcomes()
         )
     }
