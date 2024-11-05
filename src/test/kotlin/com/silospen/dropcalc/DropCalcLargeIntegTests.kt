@@ -380,6 +380,7 @@ class TestDataExpectationWriter(private val jsonGenerator: JsonGenerator) :
 
     fun write(o: Any) {
         jsonGenerator.writeObject(o)
+        jsonGenerator.writeRaw("\n")
     }
 
     override fun close() {
