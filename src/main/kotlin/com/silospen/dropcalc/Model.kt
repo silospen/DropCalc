@@ -14,7 +14,7 @@ data class TreasureClassConfig(
 interface TreasureClass : OutcomeType {
     val probabilityDenominator: Int
     val properties: TreasureClassProperties
-    val outcomes: Set<Outcome>
+    val outcomes: Set<Outcome> //TODO this should be a list!
 }
 
 data class DefinedTreasureClass(

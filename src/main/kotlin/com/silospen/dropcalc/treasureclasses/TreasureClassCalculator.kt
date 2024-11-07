@@ -48,72 +48,25 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         partySize: Int = 1
     ): TreasureClassPaths {
         val treasureClass = getTreasureClass(treasureClassName)
-        return if (treasureClass.properties.picks > 0) getLeafOutcomesForPositivePicks(
+        val initialOutcome = Outcome(
             treasureClass,
-            treasureClassOutcomeType,
-            nPlayers,
-            partySize,
-            treasureClass.properties.picks,
-            filterToOutcomeType
-        ) else getLeafOutcomesForNegativePicks(
-            treasureClass,
-            treasureClassOutcomeType,
-            nPlayers,
-            partySize,
-            filterToOutcomeType
+            1
         )
-    }
-
-    private fun getLeafOutcomesForPositivePicks(
-        treasureClass: TreasureClass,
-        treasureClassOutcomeType: TreasureClassOutcomeType,
-        nPlayers: Int,
-        partySize: Int,
-        picks: Int,
-        filterToOutcomeType: OutcomeType?
-    ) = TreasureClassPaths.forSinglePath(
-        calculatePathSum(
-            Outcome(treasureClass, 1),
+        val leafAccumulator = TreasureClassPathAccumulator()
+        doRecursiveStuff(
+            initialOutcome,
+            Probability.ONE,
             Probability.ONE,
             treasureClass.properties.itemQualityRatios,
-            1,
+            leafAccumulator,
             treasureClassOutcomeType,
             nPlayers,
             partySize,
-            picks,
+            1,
             filterToOutcomeType
         )
-    )
-
-    private fun getLeafOutcomesForNegativePicks(
-        treasureClass: TreasureClass,
-        treasureClassOutcomeType: TreasureClassOutcomeType,
-        nPlayers: Int,
-        partySize: Int,
-        filterToOutcomeType: OutcomeType?
-    ): TreasureClassPaths =
-//        var picksCounter = treasureClass.properties.picks //TODO: Use this!
-        TreasureClassPaths.forMultiplePaths(
-            treasureClass.outcomes
-                .map { outcome ->
-                    val (picks, itemQualityRatios) = if (outcome.outcomeType is TreasureClass) {
-                        outcome.outcomeType.properties.picks to outcome.outcomeType.properties.itemQualityRatios
-                    } else {
-                        1 to ItemQualityRatios.EMPTY
-                    }
-                    calculatePathSum(
-                        outcome,
-                        Probability.ONE,
-                        treasureClass.properties.itemQualityRatios.merge(itemQualityRatios),
-                        outcome.probability,
-                        treasureClassOutcomeType,
-                        nPlayers,
-                        partySize,
-                        picks * outcome.probability,
-                        filterToOutcomeType
-                    )
-                }
-        )
+        return TreasureClassPaths.forMultiplePaths(leafAccumulator.getOutcomes())
+    }
 
     fun changeTcBasedOnLevel(
         baseTreasureClass: TreasureClass,
@@ -136,50 +89,28 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
     fun getTreasureClass(treasureClassName: String) =
         treasureClassesByName.getOrDefault(treasureClassName, VirtualTreasureClass(treasureClassName))
 
-    private fun calculatePathSum(
+    private fun doRecursiveStuff(
         outcome: Outcome,
+        outcomeChance: Probability,
         pathProbabilityAccumulator: Probability,
         itemQualityRatiosAccumulator: ItemQualityRatios,
-        tcProbabilityDenominator: Int,
-        treasureClassOutcomeType: TreasureClassOutcomeType,
-        nPlayers: Int,
-        partySize: Int,
-        picks: Int,
-        filterToOutcomeType: OutcomeType?
-    ): Map<OutcomeType, TreasureClassPathOutcome> =
-        TreasureClassPathAccumulator(picks).apply {
-            calculatePathSumRecurse(
-                outcome,
-                pathProbabilityAccumulator,
-                itemQualityRatiosAccumulator,
-                tcProbabilityDenominator,
-                this,
-                treasureClassOutcomeType,
-                nPlayers,
-                partySize,
-                filterToOutcomeType
-            )
-        }.getOutcomes()
-
-    private fun calculatePathSumRecurse(
-        outcome: Outcome,
-        pathProbabilityAccumulator: Probability,
-        itemQualityRatiosAccumulator: ItemQualityRatios,
-        tcProbabilityDenominator: Int,
         leafAccumulator: TreasureClassPathAccumulator,
         treasureClassOutcomeType: TreasureClassOutcomeType,
         nPlayers: Int,
         partySize: Int,
+        accumulatedPicks: Int,
         filterToOutcomeType: OutcomeType?
     ) {
-        val outcomeChance = Probability(outcome.probability, tcProbabilityDenominator)
         val selectionProbability = outcomeChance.multiply(pathProbabilityAccumulator)
         val outcomeType = outcome.outcomeType
+//        println("RECURSE: ${outcomeType.name}, picks: $accumulatedPicks, chance: ${outcomeChance.toDouble()}, prob: ${selectionProbability.toDouble()}")
+//        println("ACC: ${leafAccumulator.getOutcomes().map { it.mapKeys { it.key.name }.mapValues { it.value.probability.toDouble() } }}" )
         if ((outcomeType is VirtualTreasureClass && treasureClassOutcomeType == DEFINED) || (outcomeType is BaseItem && treasureClassOutcomeType == VIRTUAL)) {
             if (filterToOutcomeType == null || filterToOutcomeType == outcomeType) leafAccumulator.accumulateProbability(
                 selectionProbability,
                 itemQualityRatiosAccumulator,
-                outcomeType
+                outcomeType,
+                accumulatedPicks
             )
         } else if (outcomeType is TreasureClass) {
             val denominatorWithNoDrop = calculateDenominatorWithNoDrop(
@@ -189,17 +120,24 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
                 partySize
             )
             val itemQualityRatios = itemQualityRatiosAccumulator.merge(outcomeType.properties.itemQualityRatios)
+            val negativePicks = outcomeType.properties.picks < 0
             outcomeType.outcomes.forEach {
-                calculatePathSumRecurse(
+                val adjustedPicks =
+                    if (negativePicks) it.probability else outcomeType.properties.picks * accumulatedPicks
+                val adjustedOutcomeChance =
+                    if (negativePicks) Probability.ONE else Probability(it.probability, denominatorWithNoDrop)
+                val adjustedLeafAccumulator = if (negativePicks) leafAccumulator.forkPath() else leafAccumulator
+                doRecursiveStuff(
                     it,
+                    adjustedOutcomeChance,
                     selectionProbability,
                     itemQualityRatios,
-                    denominatorWithNoDrop,
-                    leafAccumulator,
+                    adjustedLeafAccumulator,
                     treasureClassOutcomeType,
                     nPlayers,
                     partySize,
-                    filterToOutcomeType
+                    adjustedPicks,
+                    filterToOutcomeType,
                 )
             }
         }

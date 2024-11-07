@@ -10,6 +10,7 @@ import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class TreasureClassCalculatorTest {
@@ -311,6 +312,110 @@ class TreasureClassCalculatorTest {
             treasureClassCalculator.getTreasureClass("Act 5 (H) Super Cx"),
             treasureClassCalculator.changeTcBasedOnLevel(tc3, 97, HELL)
         )
+    }
+
+    fun setupTests(p0Picks: Int, p1Picks: Int, p2Picks: Int, p3Picks: Int): TreasureClassCalculator {
+        val treasureClassConfigs = listOf(
+            TreasureClassConfig("p3", TreasureClassProperties(p3Picks, EMPTY), setOf("armo6" to 1, "armo3" to 9)),
+            TreasureClassConfig("p2", TreasureClassProperties(p2Picks, EMPTY), setOf("armo9" to 3, "armo3" to 7)),
+            TreasureClassConfig("p1", TreasureClassProperties(p1Picks, EMPTY), setOf("armo3" to 1, "p3" to 1)),
+            TreasureClassConfig("p0", TreasureClassProperties(p0Picks, EMPTY), setOf("p1" to 1, "p2" to 1)),
+        )
+        val itemLibrary = ItemLibrary(emptyList(), emptyList(), emptyList())
+        return TreasureClassCalculator(treasureClassConfigs, itemLibrary)
+    }
+
+    @Test
+    fun testPicks_withOnePick() {
+        val leafOutcomes = setupTests(1, 1, 1, 1).getLeafOutcomes("p0", DEFINED, null)
+        val expectations = listOf(
+            plainExpectation("armo3", listOf(Expectation(0.825, 1)), 0.825),
+            plainExpectation("armo6", listOf(Expectation(0.025, 1)), 0.025),
+            plainExpectation("armo9", listOf(Expectation(0.15, 1)), 0.15),
+        )
+        runExpectations(expectations, leafOutcomes)
+    }
+
+    @Test
+    fun testPicks_withThreePicks() {
+        val leafOutcomes = setupTests(3, 1, 1, 1).getLeafOutcomes("p0", DEFINED, null)
+        val expectations = listOf(
+            plainExpectation("armo3", listOf(Expectation(0.825, 3)), 0.994640625),
+            plainExpectation("armo6", listOf(Expectation(0.025, 3)), 0.073140625),
+            plainExpectation("armo9", listOf(Expectation(0.15, 3)), 0.385875),
+        )
+        runExpectations(expectations, leafOutcomes)
+    }
+
+    @Test
+    @Disabled("Need to validate the output")
+    fun testPicks_withMultiplePicks_atDifferentLayers() {
+        val leafOutcomes = setupTests(1, 3, 1, 2).getLeafOutcomes("p0", DEFINED, null)
+        val expectations = listOf(
+            plainExpectation("armo3", listOf(Expectation(0.825, 6)), 0.994640625),
+            plainExpectation("armo6", listOf(Expectation(0.025, 6)), 0.14093169897),
+            plainExpectation("armo9", listOf(Expectation(0.15, 1)), 0.15),
+        )
+        runExpectations(expectations, leafOutcomes)
+    }
+
+    @Test
+    fun testPicks_withNegativePicks() {
+        val leafOutcomes = setupTests(-1, 1, 1, 1).getLeafOutcomes("p0", DEFINED, null)
+        val expectations = listOf(
+            plainExpectation(
+                "armo3", listOf(
+                    Expectation(0.95, 1),
+                    Expectation(0.7, 1)
+                ), 0.985
+            ),
+            plainExpectation("armo6", listOf(Expectation(0.05, 1)), 0.05),
+            plainExpectation("armo9", listOf(Expectation(0.3, 1)), 0.3),
+        )
+        runExpectations(expectations, leafOutcomes)
+    }
+
+    @Test
+    @Disabled("Still don't know how this case should work")
+    fun testPicks_withNegativePicks_doubleLayered() {
+        val leafOutcomes = setupTests(-1, -1, 1, 1).getLeafOutcomes("p0", DEFINED, null)
+        val expectations = listOf(
+            plainExpectation(
+                "armo3", listOf(
+                    Expectation(0.92, 4),
+                    Expectation(0.7, 6)
+                ), 0.99999997014016
+            ),
+            plainExpectation("armo6", listOf(Expectation(0.08, 4)), 0.28360704),
+            plainExpectation("armo9", listOf(Expectation(0.3, 6)), 0.882351),
+        )
+        runExpectations(expectations, leafOutcomes)
+    }
+
+    private fun plainExpectation(tcName: String, expectations: List<Expectation>, finalProb: Double) =
+        TcExpectation(
+            VirtualTreasureClass(tcName),
+            expectations.map { TreasureClassPathOutcome(Probability(it.tcProb), EMPTY, it.picks) },
+            Probability(finalProb)
+        )
+
+    data class Expectation(val tcProb: Double, val picks: Int)
+
+    @Test
+    fun testFoo() {
+        val output: TreasureClassPaths = treasureClassCalculator.getLeafOutcomes("p0", DEFINED, null)
+
+        println(output)
+
+        output.forEach {
+            println(it.name + ": " + output.getSubPaths(it))
+        }
+
+        output.forEach {
+            val finalProbability = output.getFinalProbability(it)
+            println(finalProbability)
+            println(finalProbability.toDouble())
+        }
     }
 
     private fun runExpectations(

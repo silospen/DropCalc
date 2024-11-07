@@ -4,24 +4,43 @@ import com.silospen.dropcalc.ItemQualityRatios
 import com.silospen.dropcalc.OutcomeType
 import com.silospen.dropcalc.Probability
 
-class TreasureClassPathAccumulator(
-    private val accumulator: MutableMap<OutcomeType, TreasureClassPathOutcome>,
-    private val picks: Int
-) {
-    constructor(picks: Int) : this(mutableMapOf(), picks)
+
+class TreasureClassPathAccumulator {
+    private val outcomes: MutableList<MutableMap<OutcomeType, TreasureClassPathOutcome>> = mutableListOf()
+
+    init {
+        outcomes.add(mutableMapOf())
+    }
 
     fun accumulateProbability(
         probability: Probability,
         itemQualityRatios: ItemQualityRatios,
-        outcomeType: OutcomeType
+        outcomeType: OutcomeType,
+        picks: Int
     ) {
+        val accumulator = outcomes.last()
         val old = accumulator[outcomeType]
         val newProbability = probability.add(old?.probability ?: Probability.ZERO)
         val newItemQualityRatios = (old?.itemQualityRatios ?: ItemQualityRatios.EMPTY).merge(itemQualityRatios)
         accumulator[outcomeType] = TreasureClassPathOutcome(newProbability, newItemQualityRatios, picks)
     }
 
-    fun getOutcomes(): Map<OutcomeType, TreasureClassPathOutcome> = accumulator
+    fun forkPath(): TreasureClassPathAccumulator {
+        if (outcomes.last().isNotEmpty()) outcomes.add(mutableMapOf())
+        return this
+    }
+
+    fun getOutcomes(): List<Map<OutcomeType, TreasureClassPathOutcome>> = outcomes
+
+    fun toHumanFriendlyString(): String {
+        return outcomes.joinToString { acc ->
+            acc.entries.joinToString(
+                ",",
+                prefix = "\n[",
+                postfix = "]"
+            ) { "${it.key.name}: ${it.value.probability.toDouble()}" }
+        }
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -29,17 +48,15 @@ class TreasureClassPathAccumulator(
 
         other as TreasureClassPathAccumulator
 
-        if (accumulator != other.accumulator) return false
-
-        return true
+        return outcomes == other.outcomes
     }
 
     override fun hashCode(): Int {
-        return accumulator.hashCode()
+        return outcomes.hashCode()
     }
 
     override fun toString(): String {
-        return "TreasureClassPathAccumulator(accumulator=$accumulator)"
+        return "TreasureClassPathAccumulator(forkedPaths=$outcomes)"
     }
 }
 

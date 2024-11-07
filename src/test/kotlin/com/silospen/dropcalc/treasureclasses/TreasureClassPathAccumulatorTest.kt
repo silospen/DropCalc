@@ -10,22 +10,24 @@ class TreasureClassPathAccumulatorTest {
 
     @Test
     fun accumulate() {
-        val accumulator = TreasureClassPathAccumulator(1)
-        accumulator.accumulateProbability(Probability(1, 2), EMPTY, VirtualTreasureClass("tc1"))
+        val accumulator = TreasureClassPathAccumulator()
+        accumulator.accumulateProbability(Probability(1, 2), EMPTY, VirtualTreasureClass("tc1"), 1)
         assertEquals(
-            mapOf(VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability(1, 2), EMPTY, 1)),
+            listOf(mapOf(VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability(1, 2), EMPTY, 1))),
             accumulator.getOutcomes()
         )
-        accumulator.accumulateProbability(Probability(1, 2), EMPTY, VirtualTreasureClass("tc1"))
+        accumulator.accumulateProbability(Probability(1, 2), EMPTY, VirtualTreasureClass("tc1"), 1)
         assertEquals(
-            mapOf(VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability.ONE, EMPTY, 1)),
+            listOf(mapOf(VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability.ONE, EMPTY, 1))),
             accumulator.getOutcomes()
         )
-        accumulator.accumulateProbability(Probability(1, 4), EMPTY, VirtualTreasureClass("tc2"))
+        accumulator.accumulateProbability(Probability(1, 4), EMPTY, VirtualTreasureClass("tc2"), 1)
         assertEquals(
-            mapOf(
+            listOf(
+                mapOf(
                 VirtualTreasureClass("tc1") to TreasureClassPathOutcome(Probability.ONE, EMPTY, 1),
                 VirtualTreasureClass("tc2") to TreasureClassPathOutcome(Probability(1, 4), EMPTY, 1)
+                )
             ), accumulator.getOutcomes()
         )
     }
