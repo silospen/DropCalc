@@ -53,9 +53,11 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
             1
         )
         val leafAccumulator = TreasureClassPathAccumulator()
-        doRecursiveStuff(
+        doRecursiveStuff2(
             initialOutcome,
-            Probability.ONE,
+            1,
+            1,
+            1,
             Probability.ONE,
             treasureClass.properties.itemQualityRatios,
             leafAccumulator,
@@ -89,9 +91,11 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
     fun getTreasureClass(treasureClassName: String) =
         treasureClassesByName.getOrDefault(treasureClassName, VirtualTreasureClass(treasureClassName))
 
-    private fun doRecursiveStuff(
-        outcome: Outcome,
-        outcomeChance: Probability,
+    private fun doRecursiveStuff2(
+        currentOutcome: Outcome,
+        selectionNumerator: Int,
+        selectionDenominator: Int,
+        parentPicks: Int,
         pathProbabilityAccumulator: Probability,
         itemQualityRatiosAccumulator: ItemQualityRatios,
         leafAccumulator: TreasureClassPathAccumulator,
@@ -101,17 +105,42 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
         accumulatedPicks: Int,
         filterToOutcomeType: OutcomeType?
     ) {
-        val selectionProbability = outcomeChance.multiply(pathProbabilityAccumulator)
-        val outcomeType = outcome.outcomeType
-//        println("RECURSE: ${outcomeType.name}, picks: $accumulatedPicks, chance: ${outcomeChance.toDouble()}, prob: ${selectionProbability.toDouble()}")
-//        println("ACC: ${leafAccumulator.getOutcomes().map { it.mapKeys { it.key.name }.mapValues { it.value.probability.toDouble() } }}" )
+
+        val outcomeType = currentOutcome.outcomeType
+        val configuredPicks =
+            if (outcomeType is TreasureClass) outcomeType.properties.picks else 1
+//        println("INPUTS: ${currentOutcome.outcomeType.name}, picks:$configuredPicks, parentPicks:$parentPicks, accPicks:$accumulatedPicks, numerator: $selectionNumerator, denominator: $selectionDenominator")
+
+        val parentPicksNegative = parentPicks < 0
+        val adjustedPicks =
+            if (configuredPicks < 0) accumulatedPicks else configuredPicks
+        val updatedAccumulatedPicks =
+            if (parentPicks < 0) selectionNumerator * accumulatedPicks * adjustedPicks else accumulatedPicks * adjustedPicks
+        val selectionProbability =
+            if (parentPicksNegative) Probability.ONE else Probability(
+                selectionNumerator,
+                selectionDenominator
+            ).multiply(
+                pathProbabilityAccumulator
+            )
+        if (parentPicksNegative) leafAccumulator.forkPath()
+        val itemQualityRatios =
+            if (outcomeType is TreasureClass) itemQualityRatiosAccumulator.merge(outcomeType.properties.itemQualityRatios) else itemQualityRatiosAccumulator
+//        println("VALUES: ${currentOutcome.outcomeType.name}, actualPicks: $adjustedPicks, upAccPicks: $updatedAccumulatedPicks, actualChance: $selectionProbability")
+
         if ((outcomeType is VirtualTreasureClass && treasureClassOutcomeType == DEFINED) || (outcomeType is BaseItem && treasureClassOutcomeType == VIRTUAL)) {
             if (filterToOutcomeType == null || filterToOutcomeType == outcomeType) leafAccumulator.accumulateProbability(
                 selectionProbability,
-                itemQualityRatiosAccumulator,
+                itemQualityRatios,
                 outcomeType,
-                accumulatedPicks
+                updatedAccumulatedPicks
             )
+//            println(
+//                "ACCUMU: ${
+//                    leafAccumulator.getOutcomes()
+//                        .map { it.mapKeys { it.key.name }.mapValues { it.value.probability.toDouble() } }
+//                }\n"
+//            )
         } else if (outcomeType is TreasureClass) {
             val denominatorWithNoDrop = calculateDenominatorWithNoDrop(
                 outcomeType.probabilityDenominator,
@@ -119,24 +148,19 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
                 nPlayers,
                 partySize
             )
-            val itemQualityRatios = itemQualityRatiosAccumulator.merge(outcomeType.properties.itemQualityRatios)
-            val negativePicks = outcomeType.properties.picks < 0
             outcomeType.outcomes.forEach {
-                val adjustedPicks =
-                    if (negativePicks) it.probability else outcomeType.properties.picks * accumulatedPicks
-                val adjustedOutcomeChance =
-                    if (negativePicks) Probability.ONE else Probability(it.probability, denominatorWithNoDrop)
-                val adjustedLeafAccumulator = if (negativePicks) leafAccumulator.forkPath() else leafAccumulator
-                doRecursiveStuff(
+                doRecursiveStuff2(
                     it,
-                    adjustedOutcomeChance,
+                    it.probability,
+                    denominatorWithNoDrop,
+                    configuredPicks,
                     selectionProbability,
                     itemQualityRatios,
-                    adjustedLeafAccumulator,
+                    leafAccumulator,
                     treasureClassOutcomeType,
                     nPlayers,
                     partySize,
-                    adjustedPicks,
+                    updatedAccumulatedPicks,
                     filterToOutcomeType,
                 )
             }

@@ -360,6 +360,23 @@ class TreasureClassCalculatorTest {
     }
 
     @Test
+    fun testPicks_withNegativePicks_singleNode() {
+        val treasureClassConfigs = listOf(
+            TreasureClassConfig("p0", TreasureClassProperties(-2, EMPTY), setOf("armo3" to 2)),
+        )
+        val leafOutcomes =
+            TreasureClassCalculator(
+                treasureClassConfigs,
+                ItemLibrary(emptyList(), emptyList(), emptyList())
+            ).getLeafOutcomes("p0", DEFINED, null)
+
+        val expectations = listOf(
+            plainExpectation("armo3", listOf(Expectation(1.0, 2)), 1.0),
+        )
+        runExpectations(expectations, leafOutcomes)
+    }
+
+    @Test
     fun testPicks_withNegativePicks() {
         val leafOutcomes = setupTests(-1, 1, 1, 1).getLeafOutcomes("p0", DEFINED, null)
         val expectations = listOf(
