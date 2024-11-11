@@ -9,12 +9,14 @@ import org.junit.jupiter.api.Test
 class TreasureClassPathsTest {
     @Test
     fun forSinglePath() {
-        val actual = TreasureClassPaths.forSinglePath(
-            mapOf(
-                VirtualTreasureClass("tc1") to TreasureClassPathOutcome(
-                    Probability(1, 3),
-                    EMPTY,
-                    6
+        val actual = TreasureClassPaths.of(
+            listOf(
+                mapOf(
+                    VirtualTreasureClass("tc1") to TreasureClassPathOutcome(
+                        Probability(1, 3),
+                        EMPTY,
+                        6
+                    )
                 )
             )
         )
@@ -35,7 +37,7 @@ class TreasureClassPathsTest {
 
     @Test
     fun forMultiplePaths() {
-        val actual = TreasureClassPaths.forMultiplePaths(
+        val actual = TreasureClassPaths.of(
             listOf(
                 mapOf(
                     VirtualTreasureClass("tc1") to TreasureClassPathOutcome(

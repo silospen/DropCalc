@@ -67,7 +67,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
             1,
             filterToOutcomeType
         )
-        return TreasureClassPaths.forMultiplePaths(leafAccumulator.getOutcomes())
+        return TreasureClassPaths.of(leafAccumulator.getOutcomes())
     }
 
     fun changeTcBasedOnLevel(

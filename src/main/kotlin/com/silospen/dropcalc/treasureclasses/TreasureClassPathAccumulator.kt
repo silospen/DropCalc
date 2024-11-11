@@ -32,16 +32,6 @@ class TreasureClassPathAccumulator {
 
     fun getOutcomes(): List<Map<OutcomeType, TreasureClassPathOutcome>> = outcomes
 
-    fun toHumanFriendlyString(): String {
-        return outcomes.joinToString { acc ->
-            acc.entries.joinToString(
-                ",",
-                prefix = "\n[",
-                postfix = "]"
-            ) { "${it.key.name}: ${it.value.probability.toDouble()}" }
-        }
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -64,10 +54,7 @@ class TreasureClassPaths(private val pathsByOutcomeType: Map<OutcomeType, List<T
     Iterable<OutcomeType> {
 
     companion object {
-        fun forSinglePath(path: Map<OutcomeType, TreasureClassPathOutcome>) =
-            TreasureClassPaths(path.mapValues { listOf(it.value) })
-
-        fun forMultiplePaths(paths: List<Map<OutcomeType, TreasureClassPathOutcome>>): TreasureClassPaths {
+        fun of(paths: List<Map<OutcomeType, TreasureClassPathOutcome>>): TreasureClassPaths {
             return TreasureClassPaths(paths.asSequence().flatMap { path ->
                 path.entries.asSequence().map { it.key to it.value }
             }.groupBy({ it.first }) { it.second })
@@ -83,7 +70,7 @@ class TreasureClassPaths(private val pathsByOutcomeType: Map<OutcomeType, List<T
         return not(outcomes
             .map { it.getProbability(additionalFactorGenerator(it.itemQualityRatios)) }
             .map { not(it) }
-            .reduce { acc, Probability -> acc.multiply(Probability) }
+            .reduce { acc, probability -> acc.multiply(probability) }
         )
     }
 
@@ -95,15 +82,14 @@ class TreasureClassPaths(private val pathsByOutcomeType: Map<OutcomeType, List<T
     ) = mergeFinals(pathsByOutcomeType.getOrDefault(outcomeType, emptyList()), additionalFactorGenerator)
 
     override fun iterator() = pathsByOutcomeType.keys.iterator()
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
         other as TreasureClassPaths
 
-        if (pathsByOutcomeType != other.pathsByOutcomeType) return false
-
-        return true
+        return pathsByOutcomeType == other.pathsByOutcomeType
     }
 
     override fun hashCode(): Int {
