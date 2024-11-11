@@ -393,18 +393,18 @@ class TreasureClassCalculatorTest {
     }
 
     @Test
-    @Disabled("Still don't know how this case should work")
     fun testPicks_withNegativePicks_doubleLayered() {
         val leafOutcomes = setupTests(-1, -1, 1, 1).getLeafOutcomes("p0", DEFINED, null)
         val expectations = listOf(
             plainExpectation(
                 "armo3", listOf(
-                    Expectation(0.92, 4),
-                    Expectation(0.7, 6)
-                ), 0.99999997014016
+                    Expectation(1.0, 1),
+                    Expectation(0.9, 1),
+                    Expectation(0.7, 1)
+                ), 1.0
             ),
-            plainExpectation("armo6", listOf(Expectation(0.08, 4)), 0.28360704),
-            plainExpectation("armo9", listOf(Expectation(0.3, 6)), 0.882351),
+            plainExpectation("armo6", listOf(Expectation(0.1, 1)), 0.1),
+            plainExpectation("armo9", listOf(Expectation(0.3, 1)), 0.3),
         )
         runExpectations(expectations, leafOutcomes)
     }
