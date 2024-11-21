@@ -418,23 +418,6 @@ class TreasureClassCalculatorTest {
 
     data class Expectation(val tcProb: Double, val picks: Int)
 
-    @Test
-    fun testFoo() {
-        val output: TreasureClassPaths = treasureClassCalculator.getLeafOutcomes("p0", DEFINED, null)
-
-        println(output)
-
-        output.forEach {
-            println(it.name + ": " + output.getSubPaths(it))
-        }
-
-        output.forEach {
-            val finalProbability = output.getFinalProbability(it)
-            println(finalProbability)
-            println(finalProbability.toDouble())
-        }
-    }
-
     private fun runExpectations(
         expectations: List<TcExpectation>,
         accumulator: TreasureClassPaths

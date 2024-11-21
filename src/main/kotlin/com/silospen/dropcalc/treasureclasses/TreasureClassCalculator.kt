@@ -53,7 +53,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
             1
         )
         val leafAccumulator = TreasureClassPathAccumulator()
-        doRecursiveStuff2(
+        recurseToLeaves(
             initialOutcome,
             1,
             1,
@@ -91,7 +91,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
     fun getTreasureClass(treasureClassName: String) =
         treasureClassesByName.getOrDefault(treasureClassName, VirtualTreasureClass(treasureClassName))
 
-    private fun doRecursiveStuff2(
+    private fun recurseToLeaves(
         currentOutcome: Outcome,
         selectionNumerator: Int,
         selectionDenominator: Int,
@@ -149,7 +149,7 @@ class TreasureClassCalculator(treasureClassConfigs: List<TreasureClassConfig>, p
                 partySize
             )
             outcomeType.outcomes.forEach {
-                doRecursiveStuff2(
+                recurseToLeaves(
                     it,
                     it.probability,
                     denominatorWithNoDrop,
