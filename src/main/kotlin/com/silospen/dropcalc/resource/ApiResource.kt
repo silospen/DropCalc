@@ -13,6 +13,7 @@ import com.silospen.dropcalc.treasureclasses.TreasureClassPaths
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.text.DecimalFormat
 
 @RestController
 class ApiResource(private val versionedApiResources: Map<Version, VersionedApiResource>) {
@@ -26,6 +27,25 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("party", required = true) partySize: Int
     ) = versionedApiResources[version]?.getAtomicTcs(monsterId, monsterType, difficulty, nPlayers, partySize)
         ?: emptyList()
+
+    @GetMapping("/tabularAtomicTcs")
+    fun getTabularAtomicTcs(
+        @RequestParam("version", required = true) version: Version,
+        @RequestParam("monsterId", required = true) monsterId: String,
+        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+        @RequestParam("difficulty", required = true) difficulty: Difficulty,
+        @RequestParam("players", required = true) nPlayers: Int,
+        @RequestParam("party", required = true) partySize: Int,
+        @RequestParam("decMode", required = true) decimalMode: Boolean,
+    ): TabularApiResponse = toTable(
+        versionedApiResources[version]?.getAtomicTcs(
+            monsterId,
+            monsterType,
+            difficulty,
+            nPlayers,
+            partySize
+        ), decimalMode
+    )
 
     @GetMapping("/monster")
     fun getMonster(
@@ -47,6 +67,29 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         magicFind
     ) ?: emptyList()
 
+    @GetMapping("/tabularMonster")
+    fun getTabularMonster(
+        @RequestParam("version", required = true) version: Version,
+        @RequestParam("monsterId", required = true) monsterId: String,
+        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+        @RequestParam("difficulty", required = true) difficulty: Difficulty,
+        @RequestParam("players", required = true) nPlayers: Int,
+        @RequestParam("party", required = true) partySize: Int,
+        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("magicFind", required = true) magicFind: Int,
+        @RequestParam("decMode", required = true) decimalMode: Boolean,
+    ) = toTable(
+        versionedApiResources[version]?.getMonster(
+            monsterId,
+            monsterType,
+            difficulty,
+            nPlayers,
+            partySize,
+            itemQuality,
+            magicFind
+        ), decimalMode
+    )
+
     @GetMapping("/item")
     fun getItemProbabilities(
         @RequestParam("version", required = true) version: Version,
@@ -66,6 +109,45 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         partySize,
         magicFind
     ) ?: emptyList()
+
+    @GetMapping("/tabularItem")
+    fun getTabularItemProbabilities(
+        @RequestParam("version", required = true) version: Version,
+        @RequestParam("itemId", required = true) itemId: String,
+        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("difficulty", required = false) difficulty: Difficulty?,
+        @RequestParam("players", required = true) nPlayers: Int,
+        @RequestParam("party", required = true) partySize: Int,
+        @RequestParam("magicFind", required = true) magicFind: Int,
+        @RequestParam("decMode", required = true) decimalMode: Boolean,
+    ) = toTable(
+        versionedApiResources[version]?.getItemProbabilities(
+            itemId,
+            monsterType,
+            itemQuality,
+            difficulty,
+            nPlayers,
+            partySize,
+            magicFind
+        ), decimalMode
+    )
+
+    private val decimalFormat = DecimalFormat("#.###########")
+
+    private fun toTable(apiResponse: List<ApiResponse>?, decimalMode: Boolean) =
+        TabularApiResponse(
+            listOf("Name", "Area", "Prob"),
+            apiResponse
+                ?.map { listOf(it.name, it.area, formatProbability(decimalMode, it.prob)) }
+                ?: emptyList()
+        )
+
+    private fun formatProbability(decimalMode: Boolean, prob: Double): String = if (decimalMode) {
+        decimalFormat.format(prob)
+    } else {
+        "1:${(1 / prob).toInt()}"
+    }
 }
 
 class VersionedApiResource(
@@ -194,3 +276,4 @@ class VersionedApiResource(
 }
 
 data class ApiResponse(val name: String, val area: String, val prob: Double)
+data class TabularApiResponse(val columns: List<String>, val rows: List<List<String>>)
