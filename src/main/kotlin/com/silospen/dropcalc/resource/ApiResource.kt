@@ -133,7 +133,8 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         ), decimalMode
     )
 
-    private val decimalFormat = DecimalFormat("#.###########")
+    private val decimalModeFormat = DecimalFormat("#.###########")
+    private val fractionModeFormat = DecimalFormat("#,###")
 
     private fun toTable(apiResponse: List<ApiResponse>?, decimalMode: Boolean) =
         TabularApiResponse(
@@ -144,9 +145,9 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         )
 
     private fun formatProbability(decimalMode: Boolean, prob: Double): String = if (decimalMode) {
-        decimalFormat.format(prob)
+        decimalModeFormat.format(prob)
     } else {
-        "1:${(1 / prob).toInt()}"
+        if (1 / prob >= 10000) "1:${fractionModeFormat.format((1 / prob).toInt())}" else "1:${(1 / prob).toInt()}"
     }
 }
 
