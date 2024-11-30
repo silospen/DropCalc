@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import com.silospen.dropcalc.resource.ApiResource
-import com.silospen.dropcalc.resource.ApiResponse
+import com.silospen.dropcalc.resource.ApiResponseEntry
 import com.silospen.dropcalc.resource.VersionedMetadataResource
 import org.apache.commons.math3.util.Precision
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -321,8 +321,8 @@ class DropCalcLargeIntegTests {
         )
     )
 
-    private fun generateHash(apiResponses: List<ApiResponse>) = Hashing.sha256().hashString(
-        apiResponses
+    private fun generateHash(apiResponseEntries: List<ApiResponseEntry>) = Hashing.sha256().hashString(
+        apiResponseEntries
             .asSequence()
             .map { it.copy(prob = Precision.round(it.prob, 11)) }
             .sortedWith(compareBy({ it.name }, { it.area }))

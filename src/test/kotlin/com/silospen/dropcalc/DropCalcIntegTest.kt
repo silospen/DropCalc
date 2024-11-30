@@ -6,7 +6,7 @@ import com.silospen.dropcalc.files.Line
 import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.resource.ApiResource
-import com.silospen.dropcalc.resource.ApiResponse
+import com.silospen.dropcalc.resource.ApiResponseEntry
 import org.apache.commons.math3.util.Precision
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
@@ -179,9 +179,9 @@ class DropCalcIntegTest {
 
     fun runTestWithLocalExpectations(
         expectationsFile: File,
-        expectationsLineParser: LineParser<ApiResponse?>,
-        actualSource: () -> List<ApiResponse>,
-        assertionsRunner: (List<ApiResponse>, List<ApiResponse>, String) -> Unit,
+        expectationsLineParser: LineParser<ApiResponseEntry?>,
+        actualSource: () -> List<ApiResponseEntry>,
+        assertionsRunner: (List<ApiResponseEntry>, List<ApiResponseEntry>, String) -> Unit,
         inputsForLogging: String,
         mode: Mode,
     ) {
@@ -202,11 +202,11 @@ class DropCalcIntegTest {
     }
 
     private fun runAtomicTcAsserts(
-        actual: List<ApiResponse>,
-        expected: List<ApiResponse>,
+        actual: List<ApiResponseEntry>,
+        expected: List<ApiResponseEntry>,
         testInput: String
     ) {
-        val actualsByTcAndArea: Map<Pair<String, String>, List<ApiResponse>> =
+        val actualsByTcAndArea: Map<Pair<String, String>, List<ApiResponseEntry>> =
             actual.groupBy { it.name.lowercase() to it.area }
         val outcomes = expected
             .filterNot { brokenNames.contains(it.name) }
@@ -228,12 +228,12 @@ class DropCalcIntegTest {
         }
     }
 
-    private val tcExpectationDataLineParser = object : LineParser<ApiResponse?> {
-        override fun parseLine(line: Line): ApiResponse =
-            ApiResponse(line[0], line[1], line[2].toDouble())
+    private val tcExpectationDataLineParser = object : LineParser<ApiResponseEntry?> {
+        override fun parseLine(line: Line): ApiResponseEntry =
+            ApiResponseEntry(line[0], line[1], line[2].toDouble())
     }
 
-    private fun writeExpectationsTsv(outputStream: FileOutputStream, expectations: List<ApiResponse>) {
+    private fun writeExpectationsTsv(outputStream: FileOutputStream, expectations: List<ApiResponseEntry>) {
         outputStream.bufferedWriter().use { writer ->
             expectations.forEach { writer.appendLine("${it.name}\t${it.area}\t${it.prob}") }
         }

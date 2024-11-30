@@ -1,11 +1,13 @@
 package com.silospen.dropcalc.resource
 
+import com.fasterxml.jackson.annotation.JsonValue
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.ItemQuality.SET
 import com.silospen.dropcalc.ItemQuality.UNIQUE
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
+import com.silospen.dropcalc.resource.ApiResponseContext.*
 import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
@@ -25,7 +27,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int
-    ) = versionedApiResources[version]?.getAtomicTcs(monsterId, monsterType, difficulty, nPlayers, partySize)
+    ) = versionedApiResources[version]?.getAtomicTcs(monsterId, monsterType, difficulty, nPlayers, partySize)?.entries
         ?: emptyList()
 
     @GetMapping("/tabularAtomicTcs")
@@ -65,7 +67,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         partySize,
         itemQuality,
         magicFind
-    ) ?: emptyList()
+    )?.entries ?: emptyList()
 
     @GetMapping("/tabularMonster")
     fun getTabularMonster(
@@ -108,7 +110,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         nPlayers,
         partySize,
         magicFind
-    ) ?: emptyList()
+    )?.entries ?: emptyList()
 
     @GetMapping("/tabularItem")
     fun getTabularItemProbabilities(
@@ -136,12 +138,14 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
     private val decimalModeFormat = DecimalFormat("#.###########")
     private val fractionModeFormat = DecimalFormat("#,###")
 
-    private fun toTable(apiResponse: List<ApiResponse>?, decimalMode: Boolean) =
+    private fun toTable(apiResponse: ApiResponse?, decimalMode: Boolean) =
         TabularApiResponse(
             listOf("Name", "Area", "Prob"),
             apiResponse
+                ?.entries
                 ?.map { listOf(it.name, it.area, formatProbability(decimalMode, it.prob)) }
-                ?: emptyList()
+                ?: emptyList(),
+            apiResponse?.context ?: EmptyApiResponseContext
         )
 
     private fun formatProbability(decimalMode: Boolean, prob: Double): String = if (decimalMode) {
@@ -162,23 +166,46 @@ class VersionedApiResource(
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int
-    ): List<ApiResponse> = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
-        .asSequence()
-        .flatMap { monster ->
-            val treasureClassPaths: TreasureClassPaths =
-                treasureClassCalculator.getLeafOutcomes(monster.treasureClass, DEFINED, null, nPlayers, partySize)
-            treasureClassPaths
+    ): ApiResponse {
+        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
+        return ApiResponse(
+            monsters
                 .asSequence()
-                .map {
-                    ApiResponse(
-                        it.name,
-                        monster.area.name,
-                        treasureClassPaths.getFinalProbability(it).toDouble()
-                    )
+                .flatMap { monster ->
+                    val treasureClassPaths: TreasureClassPaths =
+                        treasureClassCalculator.getLeafOutcomes(
+                            monster.treasureClass,
+                            DEFINED,
+                            null,
+                            nPlayers,
+                            partySize
+                        )
+                    treasureClassPaths
+                        .asSequence()
+                        .map {
+                            ApiResponseEntry(
+                                it.name,
+                                monster.area.name,
+                                treasureClassPaths.getFinalProbability(it).toDouble()
+                            )
+                        }
                 }
-        }
-        .sortedBy { it.name }
-        .toList()
+                .sortedBy { it.name }
+                .toList(),
+            createApiResponseContext(monsters)
+        )
+    }
+
+    private fun createApiResponseContext(monsters: Set<Monster>) =
+        MonsterApiResponseContext(monsters.map {
+            MonsterApiResponseDetails(
+                it.id,
+                it.area.id,
+                it.area.name,
+                it.level,
+                it.treasureClass
+            )
+        })
 
     fun getMonster(
         monsterId: String,
@@ -188,20 +215,29 @@ class VersionedApiResource(
         partySize: Int,
         itemQuality: ItemQuality,
         magicFind: Int,
-    ): List<ApiResponse> = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
-        .asSequence()
-        .flatMap { monster ->
-            val treasureClassPaths: TreasureClassPaths =
-                treasureClassCalculator.getLeafOutcomes(monster.treasureClass, VIRTUAL, null, nPlayers, partySize)
-            treasureClassPaths
-                .asSequence()
-                .flatMap {
-                    generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it, null)
-                    { item, monster, prob -> ApiResponse(item.name, monster.area.name, prob) }
-                }
-        }
-        .sortedBy { it.name }
-        .toList()
+    ): ApiResponse {
+        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
+        return ApiResponse(monsters
+            .asSequence()
+            .flatMap { monster ->
+                val treasureClassPaths: TreasureClassPaths =
+                    treasureClassCalculator.getLeafOutcomes(
+                        monster.treasureClass,
+                        VIRTUAL,
+                        null,
+                        nPlayers,
+                        partySize
+                    )
+                treasureClassPaths
+                    .asSequence()
+                    .flatMap {
+                        generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it, null)
+                        { item, monster, prob -> ApiResponseEntry(item.name, monster.area.name, prob) }
+                    }
+            }
+            .sortedBy { it.name }
+            .toList(), createApiResponseContext(monsters))
+    }
 
     private fun generateItemQualityResponse(
         itemQuality: ItemQuality,
@@ -210,8 +246,8 @@ class VersionedApiResource(
         monster: Monster,
         outcomeType: OutcomeType,
         itemToFilterTo: Item?,
-        responseGenerator: (Item, Monster, Double) -> ApiResponse
-    ): Sequence<ApiResponse> {
+        responseGenerator: (Item, Monster, Double) -> ApiResponseEntry
+    ): Sequence<ApiResponseEntry> {
         val baseItem = outcomeType as BaseItem
         val eligibleItems = itemLibrary.getItemsForBaseId(itemQuality, baseItem.id)
             .asSequence()
@@ -238,13 +274,13 @@ class VersionedApiResource(
         nPlayers: Int,
         partySize: Int,
         magicFind: Int,
-    ): List<ApiResponse> {
-        val item: Item = itemLibrary.getItem(itemQuality, itemId) ?: return emptyList()
+    ): ApiResponse {
+        val item: Item = itemLibrary.getItem(itemQuality, itemId) ?: return emptyApiResponse
         val treasureClassPathsCache = mutableMapOf<String, TreasureClassPaths>()
-        return (difficulty?.let { monsterLibrary.getMonsters(difficulty, monsterType) } ?: monsterLibrary.getMonsters(
-            monsterType
-        ))
-            .asSequence()
+        return ApiResponse((difficulty?.let { monsterLibrary.getMonsters(difficulty, monsterType) }
+            ?: monsterLibrary.getMonsters(
+                monsterType
+            )).asSequence()
             .flatMap { monster ->
                 val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
                     monster.treasureClass
@@ -262,7 +298,7 @@ class VersionedApiResource(
                     .flatMap {
                         generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it, item)
                         { _, monster, prob ->
-                            ApiResponse(
+                            ApiResponseEntry(
                                 "${monster.name} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
                                 monster.area.name,
                                 prob
@@ -272,9 +308,50 @@ class VersionedApiResource(
             }
             .toSet()
             .sortedBy { it.name }
-            .toList()
+            .toList(), ItemApiResponseContext(
+            item.id,
+            item.level,
+            item.baseItem.id,
+            item.baseItem.name,
+            item.baseItem.itemType.id,
+            item.baseItem.itemType.name,
+            item.baseItem.level,
+        ))
     }
 }
 
-data class ApiResponse(val name: String, val area: String, val prob: Double)
-data class TabularApiResponse(val columns: List<String>, val rows: List<List<String>>)
+sealed interface ApiResponseContext {
+    object EmptyApiResponseContext : ApiResponseContext
+
+    data class ItemApiResponseContext(
+        val id: String,
+        val level: Int,
+        val baseItemId: String,
+        val baseItemName: String,
+        val baseItemTypeId: String,
+        val baseItemTypeName: String,
+        val baseItemLevel: Int
+    ) :
+        ApiResponseContext
+
+    data class MonsterApiResponseContext(
+        val monsters: List<MonsterApiResponseDetails>
+    ) : ApiResponseContext {
+        @JsonValue
+        fun getMonstersAsList() = monsters
+    }
+
+    data class MonsterApiResponseDetails(
+        val monsterId: String,
+        val areaId: String,
+        val areaName: String,
+        val monsterLevel: Int,
+        val treasureClass: String
+    )
+}
+
+private val emptyApiResponse = ApiResponse(emptyList(), EmptyApiResponseContext)
+
+data class ApiResponse(val entries: List<ApiResponseEntry>, val context: ApiResponseContext)
+data class ApiResponseEntry(val name: String, val area: String, val prob: Double)
+data class TabularApiResponse(val columns: List<String>, val rows: List<List<String>>, val context: ApiResponseContext)
