@@ -9,14 +9,12 @@ import com.silospen.dropcalc.resource.ApiResource
 import com.silospen.dropcalc.resource.ApiResponseEntry
 import com.silospen.dropcalc.resource.VersionedMetadataResource
 import org.apache.commons.math3.util.Precision
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.io.File
 import java.util.concurrent.Callable
-import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
 
 private val mapper = ObjectMapper()
@@ -26,13 +24,15 @@ class DropCalcLargeIntegTests {
     @Autowired
     private lateinit var jacksonObjectMapper: ObjectMapper
 
+    private val largeIntegTestRunner by lazy {
+        LargeIntegTestRunner(jacksonObjectMapper)
+    }
+
     @Autowired
     private lateinit var apiResource: ApiResource
 
     @Autowired
     private lateinit var versionedMetadataResources: Map<Version, VersionedMetadataResource>
-
-    private val threadPool = Executors.newFixedThreadPool(6)
 
     private val bigTcTestFile = File("src/test/resources/integExpectations/bigTcTests")
     private val bigMonstersTestFile = File("src/test/resources/integExpectations/bigMonstersTests")
@@ -40,7 +40,7 @@ class DropCalcLargeIntegTests {
 
     @Test
     fun runItemsTest() {
-        runTests(bigItemsTestFile, { expected ->
+        largeIntegTestRunner.runTests(bigItemsTestFile, { expected ->
             getItemExpectation(
                 expected.version,
                 expected.itemId,
@@ -56,7 +56,7 @@ class DropCalcLargeIntegTests {
 
     @Test
     fun runMonstersTest() {
-        runTests(bigMonstersTestFile, { expected ->
+        largeIntegTestRunner.runTests(bigMonstersTestFile, { expected ->
             getMonstersExpectation(
                 expected.version,
                 expected.monsterId,
@@ -72,7 +72,7 @@ class DropCalcLargeIntegTests {
 
     @Test
     fun runAtomicTcsTest() {
-        runTests(bigTcTestFile, { expected ->
+        largeIntegTestRunner.runTests(bigTcTestFile, { expected ->
             getAtomicTcs(
                 expected.version,
                 expected.monsterId,
@@ -84,45 +84,22 @@ class DropCalcLargeIntegTests {
         }, object : TypeReference<List<AtomicTcsTestDataExpectation>>() {})
     }
 
-    private fun <T> runTests(file: File, actualGenerator: (T) -> T, typeReference: TypeReference<List<T>>) {
-        val counter = Counter()
-        val tests = jacksonObjectMapper.readValue(file, typeReference)
-            .map { expected ->
-                Callable {
-                    assertEquals(
-                        expected,
-                        actualGenerator(expected)
-                    )
-                    counter.incrementAndPossiblyPrint()
-                }
-            }
-        threadPool.invokeAll(tests).forEach { it.get() }
-    }
-
     @Test
     @Disabled
     fun generateItemsTestData() {
-        generateTestData(bigItemsTestFile, ::generateItemsTestDataInputs)
+        largeIntegTestRunner.generateTestData(bigItemsTestFile, ::generateItemsTestDataInputs)
     }
 
     @Test
     @Disabled
     fun generateMonstersTestData() {
-        generateTestData(bigMonstersTestFile, ::generateMonstersTestDataInputs)
+        largeIntegTestRunner.generateTestData(bigMonstersTestFile, ::generateMonstersTestDataInputs)
     }
 
     @Test
     @Disabled
     fun generateAtomicTcsTestData() {
-        generateTestData(bigTcTestFile, ::generateAtomicTcsTestDataInputs)
-    }
-
-    private fun <T : Any> generateTestData(file: File, dataGenerator: (Counter) -> List<Callable<T>>) {
-        val counter = Counter()
-        TestDataExpectationWriter.init(file).use { writer ->
-            threadPool.invokeAll(dataGenerator(counter))
-                .forEach { writer.write(it.get()) }
-        }
+        largeIntegTestRunner.generateTestData(bigTcTestFile, ::generateAtomicTcsTestDataInputs)
     }
 
     fun generateAtomicTcsTestDataInputs(counter: Counter): List<Callable<AtomicTcsTestDataExpectation>> {
