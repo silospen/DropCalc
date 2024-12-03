@@ -68,7 +68,7 @@ class VersionedMetadataResource(val monsterLibrary: MonsterLibrary, val itemLibr
                     desecratedMonstersByRawId[Triple(key.first, key.second, metadataResponse.id)]
                         ?: metadataResponse
                 }
-                result[Triple(key.first, key.second, true)] = updatedList
+                result[Triple(key.first, key.second, true)] = updatedList.sortedBy { it.name }
             }
         }
         return result
