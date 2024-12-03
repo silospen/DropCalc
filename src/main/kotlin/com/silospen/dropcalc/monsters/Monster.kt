@@ -1,17 +1,18 @@
 package com.silospen.dropcalc.monsters
 
-import com.silospen.dropcalc.Area
-import com.silospen.dropcalc.Difficulty
-import com.silospen.dropcalc.MonsterClass
-import com.silospen.dropcalc.MonsterType
+import com.silospen.dropcalc.*
 
 data class Monster(
     val id: String,
+    val rawId: String,
     val name: String,
     val monsterClass: MonsterClass,
     val area: Area,
     val difficulty: Difficulty,
     val type: MonsterType,
     val treasureClass: String,
-    val level: Int
+    val isDesecrated: Boolean,
+    val level: Int,
+    val hasMinions: Boolean,
+    val treasureClassType: TreasureClassType,
 )

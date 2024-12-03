@@ -21,27 +21,23 @@ class MonsterLibrary(val monsters: Set<Monster>) {
             monsterFactory: MonsterFactory
         ): MonsterLibrary {
             val monsterClassConfigsById = monsterClassConfigs.associateBy { it.id }
-            val superUniqueConfigsById = superUniqueMonsterConfigs.associateBy { it.id }
             val monstersFromClassConfigs = monsterClassConfigs.flatMap { monsterClass ->
                 monsterClass.monsterClassTreasureClasses.cellSet().flatMap {
                     monsterFactory.createMonster(monsterClass, it.rowKey!!, it.columnKey!!)
                 }
             }
             val monstersFromSuperUniqueMonsterConfigs = superUniqueMonsterConfigs.flatMap { superUniqueMonsterConfig ->
-                superUniqueMonsterConfig.treasureClasses.map { (difficulty, treasureClass) ->
+                superUniqueMonsterConfig.treasureClasses.cellSet().map {
                     monsterFactory.createSuperUniqueMonster(
                         superUniqueMonsterConfig,
                         monsterClassConfigsById.getValue(superUniqueMonsterConfig.monsterClassId),
-                        difficulty,
-                        treasureClass
+                        it.rowKey!!,
+                        it.columnKey!!
                     )
                 }
             }
             val minions = (monstersFromSuperUniqueMonsterConfigs + monstersFromClassConfigs)
-                .filter {
-                    it.type == MonsterType.UNIQUE ||
-                            (it.type == SUPERUNIQUE && superUniqueConfigsById.getValue(it.id).hasMinions)
-                }
+                .filter { it.hasMinions }
                 .flatMap { parentMonster ->
                     parentMonster.monsterClass.minionIds.map { minionId ->
                         val monsterClass = monsterClassConfigsById.getValue(minionId)
@@ -99,6 +95,7 @@ class MonsterFactory(
         val level = constructLevel(parentMonster.monsterClass, difficulty, MINION, parentMonster.area)
         return Monster(
             "$minionId:${parentMonster.id}",
+            "$minionId:${parentMonster.rawId}",
             "${monsterClass.name} (${parentMonster.name})",
             monsterClass,
             parentMonster.area,
@@ -110,7 +107,10 @@ class MonsterFactory(
                     TreasureClassType.REGULAR
                 ), level, difficulty
             ),
-            level
+            parentMonster.isDesecrated,
+            level,
+            false,
+            TreasureClassType.REGULAR
         )
     }
 
@@ -118,19 +118,28 @@ class MonsterFactory(
         superUniqueMonsterConfig: SuperUniqueMonsterConfig,
         monsterClass: MonsterClass,
         difficulty: Difficulty,
-        treasureClass: String
+        treasureClassType: TreasureClassType
     ): Monster {
         val area = areasLibrary.getArea(superUniqueMonsterConfig.areaName)
         val level = constructLevel(monsterClass, difficulty, SUPERUNIQUE, area)
         return Monster(
+            "${superUniqueMonsterConfig.id}${treasureClassType.idSuffix}",
             superUniqueMonsterConfig.id,
-            superUniqueMonsterConfig.name,
+            superUniqueMonsterConfig.name + if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else "",
             monsterClass,
             area,
             difficulty,
             SUPERUNIQUE,
-            treasureClassLibrary.changeTcBasedOnLevel(treasureClass, level, difficulty),
-            level
+            treasureClassLibrary.changeTcBasedOnLevel(
+                superUniqueMonsterConfig.treasureClasses.getValue(
+                    difficulty,
+                    treasureClassType
+                ), level, difficulty
+            ),
+            treasureClassType.isDesecrated,
+            level,
+            superUniqueMonsterConfig.hasMinions,
+            treasureClassType
         )
     }
 
@@ -144,6 +153,7 @@ class MonsterFactory(
                 val level = constructLevel(monsterClass, difficulty, monsterType, it)
                 Monster(
                     "${monsterClass.id}${treasureClassType.idSuffix}",
+                    monsterClass.id,
                     monsterClass.name + if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else "",
                     monsterClass,
                     it,
@@ -154,7 +164,10 @@ class MonsterFactory(
                         level,
                         difficulty
                     ),
-                    level
+                    treasureClassType.isDesecrated,
+                    level,
+                    monsterType == MonsterType.UNIQUE,
+                    treasureClassType
                 )
             }
         }

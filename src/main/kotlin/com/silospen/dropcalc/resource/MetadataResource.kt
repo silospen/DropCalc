@@ -21,7 +21,8 @@ class MetadataResource(private val versionedMetadataResources: Map<Version, Vers
         @RequestParam("version", required = true) version: Version,
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("monsterType", required = true) monsterType: MonsterType,
-    ) = versionedMetadataResources[version]?.getMonsters(difficulty, monsterType) ?: emptyList()
+        @RequestParam("desecrated", required = true) desecrated: Boolean,
+    ) = versionedMetadataResources[version]?.getMonsters(difficulty, monsterType, desecrated) ?: emptyList()
 
     @GetMapping("items")
     fun getItems(
@@ -34,11 +35,9 @@ class MetadataResource(private val versionedMetadataResources: Map<Version, Vers
     fun getVersions() = versionsResponses
 }
 
-class VersionedMetadataResource(val monsterLibrary: MonsterLibrary, val itemLibrary: ItemLibrary) {
-    private val monstersResponsesByDifficultyType =
-        monsterLibrary.monsters.groupBy({ it.difficulty to it.type }) { MetadataResponse(it.name, it.id) }
-            .mapValues { it.value.toSet() }
-            .mapValues { it.value.sortedBy { monstersResponse -> monstersResponse.name } }
+class VersionedMetadataResource(val monsterLibrary: MonsterLibrary, val itemLibrary: ItemLibrary, version: Version) {
+    private val monstersResponsesByDifficultyType: Map<Triple<Difficulty, MonsterType, Boolean>, List<MetadataResponse>> =
+        processMonsters(version)
 
     private val itemsResponsesByQualityVersion =
         ImmutableTable.builder<ItemQuality, ItemVersion, Set<MetadataResponse>>().apply {
@@ -49,11 +48,38 @@ class VersionedMetadataResource(val monsterLibrary: MonsterLibrary, val itemLibr
                 }
         }.build()
 
+    private fun processMonsters(version: Version): Map<Triple<Difficulty, MonsterType, Boolean>, List<MetadataResponse>> {
+        val nonDesecratedTcs: Map<Triple<Difficulty, MonsterType, Boolean>, List<MetadataResponse>> =
+            monsterLibrary.monsters.filter { !it.isDesecrated }
+                .groupBy({ Triple(it.difficulty, it.type, false) }) { MetadataResponse(it.name, it.id) }
+                .mapValues { it.value.toSet() }
+                .mapValues { it.value.sortedBy { monstersResponse -> monstersResponse.name } }
+
+        val desecratedMonstersByRawId = monsterLibrary.monsters
+            .filter { it.isDesecrated }
+            .associateBy { Triple(it.difficulty, it.type, it.rawId) }
+            .mapValues { MetadataResponse(it.value.name, it.value.id) }
+
+        val result = nonDesecratedTcs.toMutableMap()
+
+        if (version == Version.D2R_V1_0) {
+            nonDesecratedTcs.forEach { (key, nonDesecratedList) ->
+                val updatedList = nonDesecratedList.map { metadataResponse ->
+                    desecratedMonstersByRawId[Triple(key.first, key.second, metadataResponse.id)]
+                        ?: metadataResponse
+                }
+                result[Triple(key.first, key.second, true)] = updatedList
+            }
+        }
+        return result
+    }
+
     fun getMonsters(
         difficulty: Difficulty,
         monsterType: MonsterType,
+        desecrated: Boolean,
     ): List<MetadataResponse> {
-        return monstersResponsesByDifficultyType.getOrDefault(difficulty to monsterType, emptyList())
+        return monstersResponsesByDifficultyType.getOrDefault(Triple(difficulty, monsterType, desecrated), emptyList())
     }
 
     fun getItems(

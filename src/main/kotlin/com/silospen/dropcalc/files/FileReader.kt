@@ -36,4 +36,6 @@ data class Line(
         .mapNotNull { header[it] }
         .map { line[it] }
         .first()
+
+    fun getIfColExistsOrNull(s: String) = header[s]?.let { line[it] }
 }

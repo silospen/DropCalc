@@ -26,7 +26,10 @@ class MonsterLibraryTest {
                     "bonebreak's area",
                     "skeleton1",
                     true,
-                    mapOf(NORMAL to "Bonebreak TC", HELL to "Bonebreak TC(H)")
+                    ImmutableTable.builder<Difficulty, TreasureClassType, String>()
+                        .put(NORMAL, TreasureClassType.REGULAR, "Bonebreak TC")
+                        .put(HELL, TreasureClassType.REGULAR, "Bonebreak TC(H)")
+                        .build()
                 )
             ),
             MonsterFactory(areasLibrary, mockTreasureClassLibrary())
@@ -63,25 +66,34 @@ class MonsterLibraryTest {
             setOf(
                 Monster(
                     "duriel",
+                    "duriel",
                     "Duriel-name",
                     durielMonsterClass,
                     durielArea,
                     NORMAL,
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
-                    22
+                    false,
+                    22,
+                    false,
+                    TreasureClassType.REGULAR
                 ),
                 Monster(
                     "durielq",
+                    "duriel",
                     "Duriel-name (q)",
                     durielMonsterClass,
                     durielArea,
                     NORMAL,
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.QUEST),
-                    22
+                    false,
+                    22,
+                    false,
+                    TreasureClassType.QUEST
                 ),
                 Monster(
+                    "duriel",
                     "duriel",
                     "Duriel-name",
                     durielMonsterClass,
@@ -89,19 +101,27 @@ class MonsterLibraryTest {
                     NIGHTMARE,
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.REGULAR),
-                    55
+                    false,
+                    55,
+                    false,
+                    TreasureClassType.REGULAR
                 ),
                 Monster(
                     "durielq",
+                    "duriel",
                     "Duriel-name (q)",
                     durielMonsterClass,
                     durielArea,
                     NIGHTMARE,
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.QUEST),
-                    55
+                    false,
+                    55,
+                    false,
+                    TreasureClassType.QUEST
                 ),
                 Monster(
+                    "duriel",
                     "duriel",
                     "Duriel-name",
                     durielMonsterClass,
@@ -109,17 +129,24 @@ class MonsterLibraryTest {
                     HELL,
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.REGULAR),
-                    88
+                    false,
+                    88,
+                    false,
+                    TreasureClassType.REGULAR
                 ),
                 Monster(
                     "durielq",
+                    "duriel",
                     "Duriel-name (q)",
                     durielMonsterClass,
                     durielArea,
                     HELL,
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.QUEST),
-                    88
+                    false,
+                    88,
+                    false,
+                    TreasureClassType.QUEST
                 ),
             )
         )

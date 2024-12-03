@@ -193,16 +193,21 @@ val areasTestData = listOf(
 
 val skeletonMonster = Monster(
     skeletonMonsterClass.id,
+    skeletonMonsterClass.id,
     "Skeleton-name",
     skeletonMonsterClass,
     area1Data,
     NORMAL,
     REGULAR,
     skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
-    2
+    false,
+    2,
+    false,
+    TreasureClassType.REGULAR
 )
 val monstersTestData = setOf(
     Monster(
+        "skeleton1:Bonebreak",
         "skeleton1:Bonebreak",
         "Skeleton-name (Bonebreak-name)",
         skeletonMonsterClass,
@@ -210,9 +215,13 @@ val monstersTestData = setOf(
         NORMAL,
         MINION,
         skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
-        5
+        false,
+        5,
+        false,
+        TreasureClassType.REGULAR
     ),
     Monster(
+        "skeleton1:Bonebreak",
         "skeleton1:Bonebreak",
         "Skeleton-name (Bonebreak-name)",
         skeletonMonsterClass,
@@ -220,9 +229,13 @@ val monstersTestData = setOf(
         HELL,
         MINION,
         skeletonMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.REGULAR),
-        58
+        false,
+        58,
+        false,
+        TreasureClassType.REGULAR
     ),
     Monster(
+        "skeleton1:skeleton1",
         "skeleton1:skeleton1",
         "Skeleton-name (Skeleton-name)",
         skeletonMonsterClass,
@@ -230,9 +243,13 @@ val monstersTestData = setOf(
         NORMAL,
         MINION,
         skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
-        5
+        false,
+        5,
+        false,
+        TreasureClassType.REGULAR
     ),
     Monster(
+        "Bonebreak",
         "Bonebreak",
         "Bonebreak-name",
         skeletonMonsterClass,
@@ -240,9 +257,13 @@ val monstersTestData = setOf(
         NORMAL,
         SUPERUNIQUE,
         "Bonebreak TC",
-        5
+        false,
+        5,
+        true,
+        TreasureClassType.REGULAR
     ),
     Monster(
+        "Bonebreak",
         "Bonebreak",
         "Bonebreak-name",
         skeletonMonsterClass,
@@ -250,10 +271,14 @@ val monstersTestData = setOf(
         HELL,
         SUPERUNIQUE,
         "Bonebreak TC(H)",
-        58
+        false,
+        58,
+        true,
+        TreasureClassType.REGULAR
     ),
     skeletonMonster,
     Monster(
+        skeletonMonsterClass.id,
         skeletonMonsterClass.id,
         "Skeleton-name",
         skeletonMonsterClass,
@@ -261,9 +286,13 @@ val monstersTestData = setOf(
         NORMAL,
         UNIQUE,
         skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.UNIQUE),
-        5
+        false,
+        5,
+        true,
+        TreasureClassType.UNIQUE
     ),
     Monster(
+        fetishShamanMonsterClass.id,
         fetishShamanMonsterClass.id,
         "FetishShaman-name",
         fetishShamanMonsterClass,
@@ -271,9 +300,13 @@ val monstersTestData = setOf(
         NORMAL,
         REGULAR,
         fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
-        22
+        false,
+        22,
+        false,
+        TreasureClassType.REGULAR
     ),
     Monster(
+        fetishShamanMonsterClass.id,
         fetishShamanMonsterClass.id,
         "FetishShaman-name",
         fetishShamanMonsterClass,
@@ -281,9 +314,13 @@ val monstersTestData = setOf(
         NORMAL,
         REGULAR,
         fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
-        22
+        false,
+        22,
+        false,
+        TreasureClassType.REGULAR
     ),
     Monster(
+        fetishShamanMonsterClass.id,
         fetishShamanMonsterClass.id,
         "FetishShaman-name",
         fetishShamanMonsterClass,
@@ -291,7 +328,10 @@ val monstersTestData = setOf(
         HELL,
         CHAMPION,
         fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.CHAMPION),
-        85
+        false,
+        85,
+        false,
+        TreasureClassType.CHAMPION
     )
 )
 

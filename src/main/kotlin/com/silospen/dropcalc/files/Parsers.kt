@@ -185,43 +185,62 @@ class MonstatsLineParser(
         val treasureClassChamp: String = line["TreasureClass2", "TreasureClassChamp"]
         val treasureClassUnique: String = line["TreasureClass3", "TreasureClassUnique"]
         val treasureClassQuest: String = line["TreasureClass4", "TreasureClassQuest"]
+        val treasureClassDesecrated: String? = line.getIfColExistsOrNull("TreasureClassDesecrated")
+        val treasureClassDesecratedChamp: String? = line.getIfColExistsOrNull("TreasureClassDesecratedChamp")
+        val treasureClassDesecratedUnique: String? = line.getIfColExistsOrNull("TreasureClassDesecratedUnique")
         val treasureClassN: String = line["TreasureClass1(N)", "TreasureClass(N)"]
         val treasureClassChampN: String = line["TreasureClass2(N)", "TreasureClassChamp(N)"]
         val treasureClassUniqueN: String = line["TreasureClass3(N)", "TreasureClassUnique(N)"]
         val treasureClassQuestN: String = line["TreasureClass4(N)", "TreasureClassQuest(N)"]
+        val treasureClassDesecratedN: String? = line.getIfColExistsOrNull("TreasureClassDesecrated(N)")
+        val treasureClassDesecratedChampN: String? = line.getIfColExistsOrNull("TreasureClassDesecratedChamp(N)")
+        val treasureClassDesecratedUniqueN: String? = line.getIfColExistsOrNull("TreasureClassDesecratedUnique(N)")
         val treasureClassH: String = line["TreasureClass1(H)", "TreasureClass(H)"]
         val treasureClassChampH: String = line["TreasureClass2(H)", "TreasureClassChamp(H)"]
         val treasureClassUniqueH: String = line["TreasureClass3(H)", "TreasureClassUnique(H)"]
         val treasureClassQuestH: String = line["TreasureClass4(H)", "TreasureClassQuest(H)"]
+        val treasureClassDesecratedH: String? = line.getIfColExistsOrNull("TreasureClassDesecrated(H)")
+        val treasureClassDesecratedChampH: String? = line.getIfColExistsOrNull("TreasureClassDesecratedChamp(H)")
+        val treasureClassDesecratedUniqueH: String? = line.getIfColExistsOrNull("TreasureClassDesecratedUnique(H)")
         val monsterClassProperties = HashBasedTable.create<Difficulty, TreasureClassType, String>()
-        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.REGULAR, treasureClass)
-        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.CHAMPION, treasureClassChamp)
-        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.UNIQUE, treasureClassUnique)
-        addIfNotBlank(monsterClassProperties, NORMAL, TreasureClassType.QUEST, treasureClassQuest)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.REGULAR, treasureClassN)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.CHAMPION, treasureClassChampN)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.UNIQUE, treasureClassUniqueN)
-        addIfNotBlank(monsterClassProperties, NIGHTMARE, TreasureClassType.QUEST, treasureClassQuestN)
-        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.REGULAR, treasureClassH)
-        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.CHAMPION, treasureClassChampH)
-        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.UNIQUE, treasureClassUniqueH)
-        addIfNotBlank(monsterClassProperties, HELL, TreasureClassType.QUEST, treasureClassQuestH)
+        monsterClassProperties.addIfNotBlank(NORMAL, TreasureClassType.REGULAR, treasureClass)
+        monsterClassProperties.addIfNotBlank(NORMAL, TreasureClassType.CHAMPION, treasureClassChamp)
+        monsterClassProperties.addIfNotBlank(NORMAL, TreasureClassType.UNIQUE, treasureClassUnique)
+        monsterClassProperties.addIfNotBlank(NORMAL, TreasureClassType.QUEST, treasureClassQuest)
+        monsterClassProperties.addIfNotBlank(NORMAL, TreasureClassType.DESECRATED_REGULAR, treasureClassDesecrated)
+        monsterClassProperties.addIfNotBlank(
+            NORMAL,
+            TreasureClassType.DESECRATED_CHAMPION,
+            treasureClassDesecratedChamp
+        )
+        monsterClassProperties.addIfNotBlank(
+            NORMAL,
+            TreasureClassType.DESECRATED_UNIQUE,
+            treasureClassDesecratedUnique
+        )
+        monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.REGULAR, treasureClassN)
+        monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.CHAMPION, treasureClassChampN)
+        monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.UNIQUE, treasureClassUniqueN)
+        monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.QUEST, treasureClassQuestN)
+        monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.DESECRATED_REGULAR, treasureClassDesecratedN)
+        monsterClassProperties.addIfNotBlank(
+            NIGHTMARE,
+            TreasureClassType.DESECRATED_CHAMPION,
+            treasureClassDesecratedChampN
+        )
+        monsterClassProperties.addIfNotBlank(
+            NIGHTMARE,
+            TreasureClassType.DESECRATED_UNIQUE,
+            treasureClassDesecratedUniqueN
+        )
+        monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.REGULAR, treasureClassH)
+        monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.CHAMPION, treasureClassChampH)
+        monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.UNIQUE, treasureClassUniqueH)
+        monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.QUEST, treasureClassQuestH)
+        monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.DESECRATED_REGULAR, treasureClassDesecratedH)
+        monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.DESECRATED_CHAMPION, treasureClassDesecratedChampH)
+        monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.DESECRATED_UNIQUE, treasureClassDesecratedUniqueH)
         return monsterClassProperties
-    }
-
-    private fun addIfNotBlank(
-        monsterClassProperties: HashBasedTable<Difficulty, TreasureClassType, String>,
-        difficulty: Difficulty,
-        treasureClassType: TreasureClassType,
-        treasureClassName: String
-    ) {
-        if (treasureClassName.isNotBlank()) {
-            monsterClassProperties.put(
-                difficulty,
-                treasureClassType,
-                treasureClassName
-            )
-        }
     }
 
     private fun parseMinions(id: String, line: Line): Set<String> {
@@ -229,6 +248,20 @@ class MonstatsLineParser(
         val minion2Id: String = line["minion2"]
         return if (minion1Id.isBlank() && minion2Id.isBlank()) setOf(id)
         else sequenceOf(minion1Id, minion2Id).filter { it.isNotBlank() }.toSet()
+    }
+}
+
+private fun HashBasedTable<Difficulty, TreasureClassType, String>.addIfNotBlank(
+    difficulty: Difficulty,
+    treasureClassType: TreasureClassType,
+    treasureClassName: String?
+) {
+    if (!treasureClassName.isNullOrBlank()) {
+        put(
+            difficulty,
+            treasureClassType,
+            treasureClassName
+        )
     }
 }
 
@@ -246,17 +279,32 @@ class SuperUniqueLineParser(
         val normalTc = line["TC"]
         val areaName = areasBySuperUniqueId[id]
         if (name.isBlank() || monsterClass.isBlank() || normalTc.isBlank() || areaName.isNullOrBlank()) return null
+        val superUniqueTreasureClasses = parseSuperUniqueTreasureClasses(line)
         return SuperUniqueMonsterConfig(
             id,
             translations.getTranslation(name),
             areaName,
             monsterClass,
             hasMinions,
-            EnumMap<Difficulty, String>(Difficulty::class.java).apply {
-                put(NORMAL, normalTc)
-                put(NIGHTMARE, line["TC(N)"])
-                put(HELL, line["TC(H)"])
-            })
+            superUniqueTreasureClasses
+        )
+    }
+
+    private fun parseSuperUniqueTreasureClasses(line: Line): HashBasedTable<Difficulty, TreasureClassType, String> {
+        val tc = line["TC"]
+        val tcN = line["TC(N)"]
+        val tcH = line["TC(H)"]
+        val desecratedTc: String? = line.getIfColExistsOrNull("TC Desecrated")
+        val desecratedTcN: String? = line.getIfColExistsOrNull("TC(N) Desecrated")
+        val desecratedTcH: String? = line.getIfColExistsOrNull("TC(H) Desecrated")
+        val monsterClassProperties = HashBasedTable.create<Difficulty, TreasureClassType, String>()
+        monsterClassProperties.addIfNotBlank(NORMAL, TreasureClassType.REGULAR, tc)
+        monsterClassProperties.addIfNotBlank(NORMAL, TreasureClassType.DESECRATED_REGULAR, desecratedTc)
+        monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.REGULAR, tcN)
+        monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.DESECRATED_REGULAR, desecratedTcN)
+        monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.REGULAR, tcH)
+        monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.DESECRATED_REGULAR, desecratedTcH)
+        return monsterClassProperties
     }
 }
 

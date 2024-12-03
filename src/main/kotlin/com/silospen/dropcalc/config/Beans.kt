@@ -35,7 +35,7 @@ class Beans {
     @Bean
     fun getVersionedMetadataResources(configLoaders: Map<Version, ConfigLoader>): Map<Version, VersionedMetadataResource> =
         configLoaders.map { (version, configLoader) ->
-            version to configLoader.createVersionedMetadataResource()
+            version to configLoader.createVersionedMetadataResource(version)
         }.toMap()
 
 }
@@ -179,7 +179,7 @@ class ConfigLoader(private val version: Version) {
         )
     }
 
-    fun createVersionedMetadataResource(): VersionedMetadataResource {
-        return VersionedMetadataResource(monsterLibrary, itemLibrary)
+    fun createVersionedMetadataResource(version: Version): VersionedMetadataResource {
+        return VersionedMetadataResource(monsterLibrary, itemLibrary, version)
     }
 }

@@ -24,6 +24,7 @@ class DropCalcMetadataIntegTest {
     }
 
     private val monstersMetadataTestFile = File("src/test/resources/integExpectations/monstersMetadataTest")
+    private val monstersDescMetadataTestFile = File("src/test/resources/integExpectations/monstersDescMetadataTest")
     private val itemsMetadataTestFile = File("src/test/resources/integExpectations/itemsMetadataTest")
 
     @Test
@@ -33,6 +34,20 @@ class DropCalcMetadataIntegTest {
                 expected.version,
                 expected.monsterType,
                 expected.difficulty,
+                false,
+            )
+        }, object : TypeReference<List<MonstersMetadataTestDataExpectation>>() {})
+    }
+
+    @Test
+    fun monstersMetadataTest_desc() {
+        //TODO, combine
+        largeIntegTestRunner.runTests(monstersDescMetadataTestFile, { expected ->
+            getMonstersMetadataExpectation(
+                expected.version,
+                expected.monsterType,
+                expected.difficulty,
+                true,
             )
         }, object : TypeReference<List<MonstersMetadataTestDataExpectation>>() {})
     }
@@ -52,6 +67,15 @@ class DropCalcMetadataIntegTest {
     @Disabled
     fun generateMonstersTestData() {
         largeIntegTestRunner.generateTestData(monstersMetadataTestFile, ::generateMonstersMetadataTestDataInputs)
+    }
+
+    @Test
+    @Disabled
+    fun generateDescMonstersTestData() {
+        largeIntegTestRunner.generateTestData(
+            monstersDescMetadataTestFile,
+            ::generateDescMonstersMetadataTestDataInputs
+        )
     }
 
     @Test
@@ -101,13 +125,38 @@ class DropCalcMetadataIntegTest {
         for (version in Version.values()) {
             for (monsterType in MonsterType.values()) {
                 for (difficulty in Difficulty.values()) {
+//                    for(desecrated in listOf(true, false)) {}
                     result.add(
                         Callable {
                             counter.incrementAndPossiblyPrint()
                             getMonstersMetadataExpectation(
                                 version,
                                 monsterType,
-                                difficulty
+                                difficulty,
+                                false,
+                            )
+                        }
+                    )
+                }
+            }
+        }
+        return result
+    }
+
+    fun generateDescMonstersMetadataTestDataInputs(counter: Counter): List<Callable<MonstersMetadataTestDataExpectation>> {
+        val result = mutableListOf<Callable<MonstersMetadataTestDataExpectation>>()
+        for (version in Version.values()) {
+            for (monsterType in MonsterType.values()) {
+                for (difficulty in Difficulty.values()) {
+//                    for(desecrated in listOf(true, false)) {}
+                    result.add(
+                        Callable {
+                            counter.incrementAndPossiblyPrint()
+                            getMonstersMetadataExpectation(
+                                version,
+                                monsterType,
+                                difficulty,
+                                true,
                             )
                         }
                     )
@@ -121,6 +170,7 @@ class DropCalcMetadataIntegTest {
         version: Version,
         monsterType: MonsterType,
         difficulty: Difficulty,
+        desecrated: Boolean
     ) = MonstersMetadataTestDataExpectation(
         version,
         monsterType,
@@ -129,6 +179,7 @@ class DropCalcMetadataIntegTest {
             version,
             difficulty,
             monsterType,
+            desecrated,
         )
     )
 

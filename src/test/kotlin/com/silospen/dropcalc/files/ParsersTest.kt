@@ -207,6 +207,14 @@ class SuperUniqueLineParserTest {
                 ), stubTranslations
             )
         ).toSet()
+        val haphestoTcs = HashBasedTable.create<Difficulty, TreasureClassType, String>()
+        haphestoTcs.put(NORMAL, TreasureClassType.REGULAR, "Haphesto")
+        haphestoTcs.put(NIGHTMARE, TreasureClassType.REGULAR, "Haphesto (N)")
+        haphestoTcs.put(HELL, TreasureClassType.REGULAR, "Haphesto (H)")
+        val corpsefireTcs = HashBasedTable.create<Difficulty, TreasureClassType, String>()
+        corpsefireTcs.put(NORMAL, TreasureClassType.REGULAR, "Act 1 Super A")
+        corpsefireTcs.put(NIGHTMARE, TreasureClassType.REGULAR, "Act 1 (N) Super A")
+        corpsefireTcs.put(HELL, TreasureClassType.REGULAR, "Act 1 (H) Super A")
         val expected = setOf(
             SuperUniqueMonsterConfig(
                 "The Feature Creep",
@@ -214,11 +222,7 @@ class SuperUniqueLineParserTest {
                 "Act 4 - Lava 1",
                 "hephasto",
                 false,
-                mapOf(
-                    NORMAL to "Haphesto",
-                    NIGHTMARE to "Haphesto (N)",
-                    HELL to "Haphesto (H)",
-                )
+                haphestoTcs
             ),
             SuperUniqueMonsterConfig(
                 "Corpsefire",
@@ -226,11 +230,7 @@ class SuperUniqueLineParserTest {
                 "Act 1 - Cave 1",
                 "zombie1",
                 true,
-                mapOf(
-                    NORMAL to "Act 1 Super A",
-                    NIGHTMARE to "Act 1 (N) Super A",
-                    HELL to "Act 1 (H) Super A",
-                )
+                corpsefireTcs
             ),
         )
         assertEquals(expected, actual)

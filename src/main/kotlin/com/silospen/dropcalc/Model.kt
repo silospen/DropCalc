@@ -69,7 +69,7 @@ data class SuperUniqueMonsterConfig(
     val areaName: String,
     val monsterClassId: String,
     val hasMinions: Boolean,
-    val treasureClasses: Map<Difficulty, String>
+    val treasureClasses: Table<Difficulty, TreasureClassType, String>
 )
 
 data class Area(
@@ -183,11 +183,19 @@ enum class MonsterType {
     SUPERUNIQUE
 }
 
-enum class TreasureClassType(val validMonsterTypes: List<MonsterType>, val idSuffix: String) {
-    REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS), ""),
-    CHAMPION(listOf(MonsterType.CHAMPION), ""),
-    UNIQUE(listOf(MonsterType.UNIQUE), ""),
-    QUEST(listOf(MonsterType.REGULAR, MonsterType.BOSS), "q")
+enum class TreasureClassType(
+    val validMonsterTypes: List<MonsterType>,
+    val idSuffix: String,
+    val isDesecrated: Boolean
+) {
+    REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS, MonsterType.SUPERUNIQUE), "", false),
+    CHAMPION(listOf(MonsterType.CHAMPION), "", false),
+    UNIQUE(listOf(MonsterType.UNIQUE), "", false),
+    QUEST(listOf(MonsterType.REGULAR, MonsterType.BOSS), "q", false),
+    DESECRATED_REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS, MonsterType.SUPERUNIQUE), "d", true),
+    DESECRATED_CHAMPION(listOf(MonsterType.CHAMPION), "d", true),
+    DESECRATED_UNIQUE(listOf(MonsterType.UNIQUE), "d", true),
+
 }
 
 fun <R, C, V> Table<R, C, V>.getValue(rowKey: R, columnKey: C) =

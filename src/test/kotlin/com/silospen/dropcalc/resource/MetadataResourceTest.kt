@@ -13,15 +13,20 @@ class MetadataResourceTest {
             setOf(
                 Monster(
                     "1",
+                    "1",
                     "1-name",
                     skeletonMonsterClass,
                     area1Data,
                     Difficulty.NORMAL,
                     MonsterType.SUPERUNIQUE,
                     "foo",
-                    1
+                    false,
+                    1,
+                    false,
+                    TreasureClassType.REGULAR
                 ),
                 Monster(
+                    "1",
                     "1",
                     "1-name",
                     skeletonMonsterClass,
@@ -29,9 +34,13 @@ class MetadataResourceTest {
                     Difficulty.NORMAL,
                     MonsterType.SUPERUNIQUE,
                     "foo",
-                    2
+                    false,
+                    2,
+                    false,
+                    TreasureClassType.REGULAR
                 ),
                 Monster(
+                    "2",
                     "2",
                     "2-name",
                     skeletonMonsterClass,
@@ -39,9 +48,27 @@ class MetadataResourceTest {
                     Difficulty.NORMAL,
                     MonsterType.SUPERUNIQUE,
                     "foo",
-                    3
+                    false,
+                    3,
+                    false,
+                    TreasureClassType.REGULAR
                 ),
                 Monster(
+                    "2d",
+                    "2",
+                    "2-name(d)",
+                    skeletonMonsterClass,
+                    area2Data,
+                    Difficulty.NORMAL,
+                    MonsterType.SUPERUNIQUE,
+                    "foo",
+                    true,
+                    3,
+                    false,
+                    TreasureClassType.DESECRATED_REGULAR
+                ),
+                Monster(
+                    "1",
                     "1",
                     "1-name",
                     skeletonMonsterClass,
@@ -49,7 +76,10 @@ class MetadataResourceTest {
                     Difficulty.NORMAL,
                     MonsterType.BOSS,
                     "foo",
-                    4
+                    false,
+                    4,
+                    false,
+                    TreasureClassType.REGULAR
                 )
             )
         ),
@@ -60,18 +90,23 @@ class MetadataResourceTest {
                 Item("item1", "item_1", ItemQuality.UNIQUE, armor1, 1, 1),
                 Item("item2", "item_2", ItemQuality.WHITE, weapon2, 1, 1)
             )
-        )
+        ),
+        Version.D2R_V1_0
     )
 
     @Test
     fun monsters() {
         assertEquals(
             listOf(MetadataResponse("1-name", "1"), MetadataResponse("2-name", "2")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false)
+        )
+        assertEquals(
+            listOf(MetadataResponse("1-name", "1"), MetadataResponse("2-name(d)", "2d")),
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, true)
         )
         assertEquals(
             listOf(MetadataResponse("1-name", "1")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false)
         )
     }
 
