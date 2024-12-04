@@ -1,6 +1,5 @@
 package com.silospen.dropcalc
 
-import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Charsets
@@ -15,9 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.io.File
 import java.util.concurrent.Callable
-import java.util.concurrent.atomic.AtomicLong
-
-private val mapper = ObjectMapper()
 
 @SpringBootTest
 class DropCalcLargeIntegTests {
@@ -107,7 +103,8 @@ class DropCalcLargeIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monsterId in monsterLibrary.getMonsters(monsterType).asSequence().map { it.id }.distinct()) {
+                for (monsterId in monsterLibrary.getMonsters(monsterType, false).asSequence().map { it.id }
+                    .distinct()) {
                     for (difficulty in Difficulty.values()) {
                         for (nPlayers in listOf(3, 7)) {
                             for (nGroup in listOf(5, 8)) {
@@ -138,7 +135,8 @@ class DropCalcLargeIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monsterId in monsterLibrary.getMonsters(monsterType).asSequence().map { it.id }.distinct()) {
+                for (monsterId in monsterLibrary.getMonsters(monsterType, false).asSequence().map { it.id }
+                    .distinct()) {
                     for (difficulty in Difficulty.values()) {
                         for (nPlayers in listOf(7)) {
                             for (nGroup in listOf(5)) {
@@ -307,68 +305,38 @@ class DropCalcLargeIntegTests {
             .toString(),
         Charsets.UTF_8
     ).toString()
-}
 
+    data class AtomicTcsTestDataExpectation(
+        val version: Version,
+        val monsterId: String,
+        val monsterType: MonsterType,
+        val difficulty: Difficulty,
+        val numPlayers: Int,
+        val partySize: Int,
+        val hash: String
+    )
 
-data class AtomicTcsTestDataExpectation(
-    val version: Version,
-    val monsterId: String,
-    val monsterType: MonsterType,
-    val difficulty: Difficulty,
-    val numPlayers: Int,
-    val partySize: Int,
-    val hash: String
-)
+    data class MonstersTestDataExpectation(
+        val version: Version,
+        val monsterId: String,
+        val monsterType: MonsterType,
+        val difficulty: Difficulty,
+        val numPlayers: Int,
+        val partySize: Int,
+        val itemQuality: ItemQuality,
+        val magicFind: Int,
+        val hash: String
+    )
 
-data class MonstersTestDataExpectation(
-    val version: Version,
-    val monsterId: String,
-    val monsterType: MonsterType,
-    val difficulty: Difficulty,
-    val numPlayers: Int,
-    val partySize: Int,
-    val itemQuality: ItemQuality,
-    val magicFind: Int,
-    val hash: String
-)
-
-data class ItemsTestDataExpectation(
-    val version: Version,
-    val itemId: String,
-    val itemQuality: ItemQuality,
-    val monsterType: MonsterType,
-    val difficulty: Difficulty,
-    val numPlayers: Int,
-    val partySize: Int,
-    val magicFind: Int,
-    val hash: String
-)
-
-class TestDataExpectationWriter(private val jsonGenerator: JsonGenerator) :
-    AutoCloseable {
-
-    companion object {
-        fun init(file: File): TestDataExpectationWriter {
-            val jsonGenerator = mapper.createGenerator(file.bufferedWriter())
-            jsonGenerator.writeStartArray()
-            return TestDataExpectationWriter(jsonGenerator)
-        }
-    }
-
-    fun write(o: Any) {
-        jsonGenerator.writeObject(o)
-        jsonGenerator.writeRaw("\n")
-    }
-
-    override fun close() {
-        jsonGenerator.writeEndArray()
-        jsonGenerator.close()
-    }
-}
-
-data class Counter(private val counter: AtomicLong = AtomicLong(0L)) {
-    fun incrementAndPossiblyPrint() {
-        val value = counter.incrementAndGet()
-        if (value % 1000 == 0L) println(value)
-    }
+    data class ItemsTestDataExpectation(
+        val version: Version,
+        val itemId: String,
+        val itemQuality: ItemQuality,
+        val monsterType: MonsterType,
+        val difficulty: Difficulty,
+        val numPlayers: Int,
+        val partySize: Int,
+        val magicFind: Int,
+        val hash: String
+    )
 }

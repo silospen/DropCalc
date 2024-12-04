@@ -193,7 +193,7 @@ class VersionedApiResource(
         desecrated: Boolean,
         desecratedLevel: Int
     ): ApiResponse {
-        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
+        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType, desecrated)
         return ApiResponse(
             monsters
                 .asSequence()
@@ -244,7 +244,7 @@ class VersionedApiResource(
         desecrated: Boolean,
         desecratedLevel: Int
     ): ApiResponse {
-        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType)
+        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType, desecrated)
         return ApiResponse(monsters
             .asSequence()
             .flatMap { monster ->
@@ -307,11 +307,10 @@ class VersionedApiResource(
     ): ApiResponse {
         val item: Item = itemLibrary.getItem(itemQuality, itemId) ?: return emptyApiResponse
         val treasureClassPathsCache = mutableMapOf<String, TreasureClassPaths>()
-        return ApiResponse((difficulty?.let { monsterLibrary.getMonsters(difficulty, monsterType) }
+        return ApiResponse((difficulty?.let { monsterLibrary.getMonsters(difficulty, monsterType, desecrated) }
             ?: monsterLibrary.getMonsters(
-                monsterType
+                monsterType, desecrated
             )).asSequence()
-            .filter { it.isDesecrated == desecrated } //TODO - need more subtle filtering
             .flatMap { monster ->
                 val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
                     monster.treasureClass

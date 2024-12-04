@@ -90,8 +90,7 @@ class MetadataResourceTest {
                 Item("item1", "item_1", ItemQuality.UNIQUE, armor1, 1, 1),
                 Item("item2", "item_2", ItemQuality.WHITE, weapon2, 1, 1)
             )
-        ),
-        Version.D2R_V1_0
+        )
     )
 
     @Test

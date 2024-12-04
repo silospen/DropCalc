@@ -6,13 +6,60 @@ import com.silospen.dropcalc.MonsterType.SUPERUNIQUE
 import com.silospen.dropcalc.areas.AreasLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassLibrary
 
+data class MonsterLibraryTypeKey(val type: MonsterType, val desecrated: Boolean)
+data class MonsterLibraryDifficultyTypeKey(val difficulty: Difficulty, val type: MonsterType, val desecrated: Boolean)
+data class MonsterLibraryIdDifficultyTypeKey(
+    val id: String,
+    val difficulty: Difficulty,
+    val type: MonsterType,
+    val desecrated: Boolean
+)
+
 class MonsterLibrary(val monsters: Set<Monster>) {
-    private val monstersByIdDifficultyType =
-        monsters.groupBy { Triple(it.id, it.difficulty, it.type) }.mapValues { it.value.toSet() }
-    private val monstersByDifficultyType =
-        monsters.groupBy { it.difficulty to it.type }.mapValues { it.value.toSet() }
-    private val monstersByType =
-        monsters.groupBy { it.type }.mapValues { it.value.toSet() }
+    private val monstersByType: Map<MonsterLibraryTypeKey, Set<Monster>> =
+        constructMonsterMap { monster, isDesecrated -> MonsterLibraryTypeKey(monster.type, isDesecrated) }
+    val monstersByDifficultyType: Map<MonsterLibraryDifficultyTypeKey, Set<Monster>> =
+        constructMonsterMap { monster, isDesecrated ->
+            MonsterLibraryDifficultyTypeKey(
+                monster.difficulty,
+                monster.type,
+                isDesecrated
+            )
+        }
+    private val monstersByIdDifficultyType: Map<MonsterLibraryIdDifficultyTypeKey, Set<Monster>> =
+        constructMonsterMap { monster, isDesecrated ->
+            MonsterLibraryIdDifficultyTypeKey(
+                monster.id,
+                monster.difficulty,
+                monster.type,
+                isDesecrated
+            )
+        }
+
+    private fun <T> constructMonsterMap(keyCreator: (Monster, Boolean) -> T): Map<T, Set<Monster>> {
+        val nonDesecratedSpawns = monsters.filter { !it.isDesecrated }.toSet()
+
+        val desecratedSpawnsWithoutIdAndName = monsters
+            .filter { it.isDesecrated }
+            .associateBy {
+                Triple(it.rawId, it.difficulty, it.type)
+            }
+
+        val possibleDesecratedSpawns = if (desecratedSpawnsWithoutIdAndName.isEmpty()) emptySet() else {
+            (desecratedSpawnsWithoutIdAndName.values + nonDesecratedSpawns.filter {
+                it.treasureClassType == TreasureClassType.QUEST || !desecratedSpawnsWithoutIdAndName.contains(
+                    Triple(
+                        it.rawId,
+                        it.difficulty,
+                        it.type
+                    )
+                )
+            }).toSet()
+        }
+
+        return (nonDesecratedSpawns.groupBy { keyCreator(it, false) } +
+                possibleDesecratedSpawns.groupBy { keyCreator(it, true) }).mapValues { it.value.toSet() }
+    }
 
     companion object {
         fun fromConfig(
@@ -51,13 +98,24 @@ class MonsterLibrary(val monsters: Set<Monster>) {
         }
     }
 
-    fun getMonsters(monsterClassId: String, difficulty: Difficulty, monsterType: MonsterType) =
-        monstersByIdDifficultyType.getOrDefault(Triple(monsterClassId, difficulty, monsterType), emptySet())
+    fun getMonsters(monsterClassId: String, difficulty: Difficulty, monsterType: MonsterType, desecrated: Boolean) =
+        monstersByIdDifficultyType.getOrDefault(
+            MonsterLibraryIdDifficultyTypeKey(
+                monsterClassId,
+                difficulty,
+                monsterType,
+                desecrated
+            ), emptySet()
+        )
 
-    fun getMonsters(difficulty: Difficulty, monsterType: MonsterType) =
-        monstersByDifficultyType.getOrDefault(difficulty to monsterType, emptySet())
+    fun getMonsters(difficulty: Difficulty, monsterType: MonsterType, desecrated: Boolean) =
+        monstersByDifficultyType.getOrDefault(
+            MonsterLibraryDifficultyTypeKey(difficulty, monsterType, desecrated),
+            emptySet()
+        )
 
-    fun getMonsters(monsterType: MonsterType) = monstersByType.getOrDefault(monsterType, emptySet())
+    fun getMonsters(monsterType: MonsterType, desecrated: Boolean) =
+        monstersByType.getOrDefault(MonsterLibraryTypeKey(monsterType, desecrated), emptySet())
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
