@@ -1,8 +1,14 @@
 package com.silospen.dropcalc.translations
 
+import com.fasterxml.jackson.module.kotlin.jsonMapper
+import com.fasterxml.jackson.module.kotlin.kotlinModule
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder.LITTLE_ENDIAN
+
+private val mapper = jsonMapper {
+    addModule(kotlinModule())
+}
 
 interface Translations {
     fun getTranslationOrNull(key: String): String?
@@ -12,7 +18,7 @@ interface Translations {
 
 class CompositeTranslations(private vararg val translations: Translations) : Translations {
     override fun getTranslationOrNull(key: String): String? =
-        translations.asSequence().firstNotNullOfOrNull { it.getTranslationOrNull(key) }
+        translations.firstNotNullOfOrNull { it.getTranslationOrNull(key) }
 }
 
 class MapBasedTranslations(private val translationData: Map<String, String>) : Translations {
@@ -24,6 +30,14 @@ class MapBasedTranslations(private val translationData: Map<String, String>) : T
             val hashTableBuffer =
                 buffer.sliceKeepEndian(21 + (header.numElements * 2), header.hashTableSize.toInt() * 17)
             return MapBasedTranslations(readDataTable(readHashTable(hashTableBuffer), buffer))
+        }
+
+        fun loadTranslationsFromJsonFile(inputStream: InputStream): Translations {
+            return MapBasedTranslations(
+                mapper.readTree(inputStream).associateBy(
+                    { it.get("Key").textValue() },
+                    { it.get("enUS").textValue() })
+            )
         }
 
         private fun readDataTable(hashTable: List<TableFileHashEntries>, buffer: ByteBuffer): Map<String, String> =

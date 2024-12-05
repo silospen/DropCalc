@@ -92,11 +92,21 @@ class ConfigLoader(private val version: Version) {
     }
 
     private fun loadTranslations(): Translations {
-        return CompositeTranslations(
-            MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/${version.pathName}/patchstring.tbl")),
-            expansionTranslations,
-            coreTranslations
-        )
+        return if (version == Version.D2R_V1_0) {
+            CompositeTranslations(
+                MapBasedTranslations.loadTranslationsFromJsonFile(getResource("d2Files/tbl/${version.pathName}/item-names.json")),
+                MapBasedTranslations.loadTranslationsFromJsonFile(getResource("d2Files/tbl/${version.pathName}/item-runes.json")),
+                MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/${version.pathName}/patchstring.tbl")),
+                expansionTranslations,
+                coreTranslations
+            )
+        } else {
+            CompositeTranslations(
+                MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/${version.pathName}/patchstring.tbl")),
+                expansionTranslations,
+                coreTranslations
+            )
+        }
     }
 
     private fun loadBaseItems(translations: Translations, itemTypes: List<ItemType>): List<BaseItem> = readTsv(
