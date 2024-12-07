@@ -120,4 +120,24 @@ class ItemLibrary(
 
     private fun calculateEffectiveMf(magicFind: Int, magicFindFactor: Int) =
         if (magicFind <= 10) magicFind else magicFind * magicFindFactor / (magicFind + magicFindFactor)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ItemLibrary
+
+        if (baseItems != other.baseItems) return false
+        if (itemRatios != other.itemRatios) return false
+        if (items != other.items) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = baseItems.hashCode()
+        result = 31 * result + itemRatios.hashCode()
+        result = 31 * result + items.hashCode()
+        return result
+    }
 }

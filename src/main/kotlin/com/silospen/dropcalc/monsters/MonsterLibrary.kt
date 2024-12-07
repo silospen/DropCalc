@@ -15,7 +15,7 @@ data class MonsterLibraryIdDifficultyTypeKey(
     val desecrated: Boolean
 )
 
-class MonsterLibrary(val monsters: Set<Monster>) {
+class MonsterLibrary(val monsters: Set<Monster>, private val treasureClassLibrary: TreasureClassLibrary) {
     private val monstersByType: Map<MonsterLibraryTypeKey, Set<Monster>> =
         constructMonsterMap { monster, isDesecrated -> MonsterLibraryTypeKey(monster.type, isDesecrated) }
     val monstersByDifficultyType: Map<MonsterLibraryDifficultyTypeKey, Set<Monster>> =
@@ -65,7 +65,8 @@ class MonsterLibrary(val monsters: Set<Monster>) {
         fun fromConfig(
             monsterClassConfigs: List<MonsterClass>,
             superUniqueMonsterConfigs: List<SuperUniqueMonsterConfig>,
-            monsterFactory: MonsterFactory
+            monsterFactory: MonsterFactory,
+            treasureClassLibrary: TreasureClassLibrary,
         ): MonsterLibrary {
             val monsterClassConfigsById = monsterClassConfigs.associateBy { it.id }
             val monstersFromClassConfigs = monsterClassConfigs.flatMap { monsterClass ->
@@ -93,12 +94,19 @@ class MonsterLibrary(val monsters: Set<Monster>) {
                 }
 
             return MonsterLibrary(
-                (minions + monstersFromSuperUniqueMonsterConfigs + monstersFromClassConfigs).toSet()
+                (minions + monstersFromSuperUniqueMonsterConfigs + monstersFromClassConfigs).toSet(),
+                treasureClassLibrary
             )
         }
     }
 
-    fun getMonsters(monsterClassId: String, difficulty: Difficulty, monsterType: MonsterType, desecrated: Boolean) =
+    fun getMonsters(
+        monsterClassId: String,
+        difficulty: Difficulty,
+        monsterType: MonsterType,
+        desecrated: Boolean,
+        desecratedLevel: Int
+    ) =
         monstersByIdDifficultyType.getOrDefault(
             MonsterLibraryIdDifficultyTypeKey(
                 monsterClassId,
@@ -106,13 +114,29 @@ class MonsterLibrary(val monsters: Set<Monster>) {
                 monsterType,
                 desecrated
             ), emptySet()
-        )
+        ).map { upgradeIfDesecrated(desecrated, it, desecratedLevel) }
 
-    fun getMonsters(difficulty: Difficulty, monsterType: MonsterType, desecrated: Boolean) =
+    fun getMonsters(difficulty: Difficulty, monsterType: MonsterType, desecrated: Boolean, desecratedLevel: Int) =
         monstersByDifficultyType.getOrDefault(
             MonsterLibraryDifficultyTypeKey(difficulty, monsterType, desecrated),
             emptySet()
+        ).map { upgradeIfDesecrated(desecrated, it, desecratedLevel) }
+
+    private fun upgradeIfDesecrated(desecrated: Boolean, monster: Monster, desecratedLevel: Int): Monster =
+        if (desecrated) upgradeMonsterToDesecrated(monster, desecratedLevel) else monster
+
+    fun upgradeMonsterToDesecrated(monster: Monster, characterLevel: Int): Monster {
+        val newMonsterLevel = monster.getDesecratedMonsterLevel(characterLevel)
+        return monster.copy(
+            level = newMonsterLevel,
+            treasureClass = treasureClassLibrary.changeTcBasedOnLevel(
+                monster.treasureClass,
+                newMonsterLevel,
+                monster.difficulty,
+                true
+            )
         )
+    }
 
     fun getMonsters(monsterType: MonsterType, desecrated: Boolean) =
         monstersByType.getOrDefault(MonsterLibraryTypeKey(monsterType, desecrated), emptySet())
@@ -124,20 +148,21 @@ class MonsterLibrary(val monsters: Set<Monster>) {
         other as MonsterLibrary
 
         if (monsters != other.monsters) return false
-        if (monstersByIdDifficultyType != other.monstersByIdDifficultyType) return false
+        if (treasureClassLibrary != other.treasureClassLibrary) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = monsters.hashCode()
-        result = 31 * result + monstersByIdDifficultyType.hashCode()
+        result = 31 * result + treasureClassLibrary.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "MonsterLibrary(monsters=$monsters, monstersByIdDifficultyType=$monstersByIdDifficultyType)"
+        return "MonsterLibrary(monsters=$monsters, treasureClassLibrary=$treasureClassLibrary)"
     }
+
 }
 
 class MonsterFactory(
@@ -162,8 +187,8 @@ class MonsterFactory(
             treasureClassLibrary.changeTcBasedOnLevel(
                 monsterClass.monsterClassTreasureClasses.getValue(
                     difficulty,
-                    TreasureClassType.REGULAR
-                ), level, difficulty
+                    TreasureClassType.REGULAR,
+                ), level, difficulty, false
             ),
             parentMonster.isDesecrated,
             level,
@@ -192,7 +217,7 @@ class MonsterFactory(
                 superUniqueMonsterConfig.treasureClasses.getValue(
                     difficulty,
                     treasureClassType
-                ), level, difficulty
+                ), level, difficulty, false
             ),
             treasureClassType.isDesecrated,
             level,
@@ -220,7 +245,8 @@ class MonsterFactory(
                     treasureClassLibrary.changeTcBasedOnLevel(
                         monsterClass.monsterClassTreasureClasses.getValue(difficulty, treasureClassType),
                         level,
-                        difficulty
+                        difficulty,
+                        false
                     ),
                     treasureClassType.isDesecrated,
                     level,

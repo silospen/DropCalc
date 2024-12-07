@@ -15,4 +15,12 @@ data class Monster(
     val level: Int,
     val hasMinions: Boolean,
     val treasureClassType: TreasureClassType,
-)
+) {
+    fun getDesecratedMonsterLevel(characterLevel: Int): Int {
+        if (characterLevel < level) return level //TODO: Validate if this should be a pre or post upgrade check
+        val newLevel = characterLevel + type.desecratedLevelAdjustment
+        val desecratedLevelLimit = type.getDesecratedLevelLimit(difficulty)
+        if (newLevel > desecratedLevelLimit) return desecratedLevelLimit
+        return newLevel
+    }
+}

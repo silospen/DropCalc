@@ -74,7 +74,8 @@ class DropCalcLargeDesecratedIntegTests {
                 expected.monsterType,
                 expected.difficulty,
                 expected.numPlayers,
-                expected.partySize
+                expected.partySize,
+                expected.desecratedLevel,
             )
         }, object : TypeReference<List<DesecratedAtomicTcsTestDataExpectation>>() {})
     }
@@ -104,19 +105,22 @@ class DropCalcLargeDesecratedIntegTests {
             for (monsterType in MonsterType.values()) {
                 for (monster in monsterLibrary.getMonsters(monsterType, true)) {
                     for ((nPlayers, nGroup) in listOf(3 to 5, 3 to 8, 7 to 8)) {
-                        result.add(
-                            Callable {
-                                counter.incrementAndPossiblyPrint()
-                                getAtomicTcs(
-                                    version,
-                                    monster.id,
-                                    monsterType,
-                                    monster.difficulty,
-                                    nPlayers,
-                                    nGroup
-                                )
-                            }
-                        )
+                        for (desecratedLevel in listOf(0, 45, 99)) {
+                            result.add(
+                                Callable {
+                                    counter.incrementAndPossiblyPrint()
+                                    getAtomicTcs(
+                                        version,
+                                        monster.id,
+                                        monsterType,
+                                        monster.difficulty,
+                                        nPlayers,
+                                        nGroup,
+                                        desecratedLevel
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -269,7 +273,8 @@ class DropCalcLargeDesecratedIntegTests {
         monsterType: MonsterType,
         difficulty: Difficulty,
         numPlayers: Int,
-        partySize: Int
+        partySize: Int,
+        desecratedLevel: Int
     ) = DesecratedAtomicTcsTestDataExpectation(
         version,
         monsterId,
@@ -277,6 +282,7 @@ class DropCalcLargeDesecratedIntegTests {
         difficulty,
         numPlayers,
         partySize,
+        desecratedLevel,
         generateHash(
             apiResource.getTabularAtomicTcs(
                 version,
@@ -287,7 +293,7 @@ class DropCalcLargeDesecratedIntegTests {
                 partySize,
                 false,
                 true,
-                0
+                desecratedLevel
             )
         )
     )
@@ -304,6 +310,7 @@ data class DesecratedAtomicTcsTestDataExpectation(
     val difficulty: Difficulty,
     val numPlayers: Int,
     val partySize: Int,
+    val desecratedLevel: Int,
     val hash: String
 )
 

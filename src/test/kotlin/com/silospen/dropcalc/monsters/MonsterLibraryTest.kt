@@ -13,29 +13,33 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
 
 class MonsterLibraryTest {
+
+    private val treasureClassLibrary = mockTreasureClassLibrary()
+    private val monsterClassConfigs = monsterClassTestData.toList()
+    private val areasLibrary: AreasLibrary = AreasLibrary.fromAreas(areasTestData)
+
+    private fun createMonsterLibrary(library: TreasureClassLibrary) = MonsterLibrary.fromConfig(
+        monsterClassConfigs,
+        listOf(
+            SuperUniqueMonsterConfig(
+                "Bonebreak",
+                "Bonebreak-name",
+                "bonebreak's area",
+                "skeleton1",
+                true,
+                ImmutableTable.builder<Difficulty, TreasureClassType, String>()
+                    .put(NORMAL, TreasureClassType.REGULAR, "Bonebreak TC")
+                    .put(HELL, TreasureClassType.REGULAR, "Bonebreak TC(H)")
+                    .build()
+            )
+        ),
+        MonsterFactory(areasLibrary, library),
+        library
+    )
+
     @Test
-    fun test() {
-        val monsterClassConfigs = monsterClassTestData.toList()
-        val areasLibrary: AreasLibrary = AreasLibrary.fromAreas(areasTestData)
-        val actual = MonsterLibrary.fromConfig(
-            monsterClassConfigs,
-            listOf(
-                SuperUniqueMonsterConfig(
-                    "Bonebreak",
-                    "Bonebreak-name",
-                    "bonebreak's area",
-                    "skeleton1",
-                    true,
-                    ImmutableTable.builder<Difficulty, TreasureClassType, String>()
-                        .put(NORMAL, TreasureClassType.REGULAR, "Bonebreak TC")
-                        .put(HELL, TreasureClassType.REGULAR, "Bonebreak TC(H)")
-                        .build()
-                )
-            ),
-            MonsterFactory(areasLibrary, mockTreasureClassLibrary())
-        )
-        val expected = MonsterLibrary(monstersTestData)
-        assertEquals(expected, actual)
+    fun testConstruction() {
+        assertEquals(MonsterLibrary(monstersTestData, treasureClassLibrary), createMonsterLibrary(treasureClassLibrary))
     }
 
     @Test
@@ -60,7 +64,8 @@ class MonsterLibraryTest {
                     )
                 ),
                 mockTreasureClassLibrary("u")
-            )
+            ),
+            treasureClassLibrary
         )
         val expected = MonsterLibrary(
             setOf(
@@ -148,14 +153,24 @@ class MonsterLibraryTest {
                     false,
                     TreasureClassType.QUEST
                 ),
-            )
+            ),
+            treasureClassLibrary
         )
         assertEquals(expected, actual)
+    }
+
+    @Test
+    fun upgradeMonsterToDesecrated() {
+        val monsterLibrary = createMonsterLibrary(mockTreasureClassLibrary("u"))
+        assertEquals(
+            skeletonMonster.copy(level = 45, treasureClass = "uAct 1 H2H A"),
+            monsterLibrary.upgradeMonsterToDesecrated(skeletonMonster, 99)
+        )
     }
 }
 
 private fun mockTreasureClassLibrary(prefix: String = ""): TreasureClassLibrary = mock {
-    on { changeTcBasedOnLevel(any<String>(), any(), any()) } doAnswer {
+    on { changeTcBasedOnLevel(any<String>(), any(), any(), any()) } doAnswer {
         "$prefix${it.getArgument<String>(0)}"
     }
     on { getTreasureClass(any()) } doAnswer { VirtualTreasureClass(it.getArgument(0)) }

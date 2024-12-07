@@ -193,7 +193,7 @@ class VersionedApiResource(
         desecrated: Boolean,
         desecratedLevel: Int
     ): ApiResponse {
-        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType, desecrated)
+        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType, desecrated, desecratedLevel)
         return ApiResponse(
             monsters
                 .asSequence()
@@ -222,7 +222,7 @@ class VersionedApiResource(
         )
     }
 
-    private fun createApiResponseContext(monsters: Set<Monster>) =
+    private fun createApiResponseContext(monsters: List<Monster>) =
         MonsterApiResponseContext(monsters.map {
             MonsterApiResponseDetails(
                 it.id,
@@ -244,7 +244,7 @@ class VersionedApiResource(
         desecrated: Boolean,
         desecratedLevel: Int
     ): ApiResponse {
-        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType, desecrated)
+        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType, desecrated, desecratedLevel)
         return ApiResponse(monsters
             .asSequence()
             .flatMap { monster ->
@@ -347,10 +347,16 @@ class VersionedApiResource(
     ): ApiResponse {
         val item: Item = itemLibrary.getItem(itemQuality, itemId) ?: return emptyApiResponse
         val treasureClassPathsCache = mutableMapOf<String, TreasureClassPaths>()
-        return ApiResponse((difficulty?.let { monsterLibrary.getMonsters(difficulty, monsterType, desecrated) }
-            ?: monsterLibrary.getMonsters(
-                monsterType, desecrated
-            )).asSequence()
+        return ApiResponse((difficulty?.let {
+            monsterLibrary.getMonsters(
+                difficulty,
+                monsterType,
+                desecrated,
+                desecratedLevel
+            )
+        } ?: monsterLibrary.getMonsters(
+            monsterType, desecrated
+        )).asSequence()
             .flatMap { monster ->
                 val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
                     monster.treasureClass

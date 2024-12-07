@@ -51,7 +51,8 @@ class ConfigLoader(private val version: Version) {
     private val monsterLibrary = loadMonsterLibrary(
         loadMonsterClassConfigs(translations),
         loadSuperUniqueMonsterConfigs(translations),
-        MonsterFactory(loadAreasLibrary(loadAreas(translations)), treasureClassLibrary)
+        MonsterFactory(loadAreasLibrary(loadAreas(translations)), treasureClassLibrary),
+        treasureClassLibrary
     )
 
     companion object {
@@ -88,9 +89,15 @@ class ConfigLoader(private val version: Version) {
     private fun loadMonsterLibrary(
         monsterClassConfigs: List<MonsterClass>,
         superUniqueMonsterConfigs: List<SuperUniqueMonsterConfig>,
-        monsterFactory: MonsterFactory
+        monsterFactory: MonsterFactory,
+        treasureClassLibrary: TreasureClassLibrary
     ): MonsterLibrary {
-        return MonsterLibrary.fromConfig(monsterClassConfigs, superUniqueMonsterConfigs, monsterFactory)
+        return MonsterLibrary.fromConfig(
+            monsterClassConfigs,
+            superUniqueMonsterConfigs,
+            monsterFactory,
+            treasureClassLibrary
+        )
     }
 
     private fun loadTranslations(): Translations {

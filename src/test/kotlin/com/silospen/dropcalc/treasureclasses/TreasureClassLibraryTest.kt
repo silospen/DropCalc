@@ -25,17 +25,17 @@ class TreasureClassLibraryTest {
     fun treasureClassUpgrades() {
         val levelTwoTc = treasureClassLibrary.getTreasureClass("Act 1 Equip A")
         val levelNineTc = treasureClassLibrary.getTreasureClass("Act 1 Equip B")
-        assertEquals(levelTwoTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 1, HELL))
-        assertEquals(levelTwoTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 2, HELL))
-        assertEquals(levelTwoTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 3, HELL))
-        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 8, HELL))
-        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 9, HELL))
-        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 15, HELL))
-        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 15, HELL))
-
-        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 15, NIGHTMARE))
-        assertEquals(levelTwoTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 15, NORMAL))
-        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 1, HELL))
+        assertEquals(levelTwoTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 1, HELL, false))
+        assertEquals(levelTwoTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 2, HELL, false))
+        assertEquals(levelTwoTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 3, HELL, false))
+        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 8, HELL, false))
+        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 9, HELL, false))
+        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 15, HELL, false))
+        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 15, HELL, false))
+        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 15, NIGHTMARE, false))
+        assertEquals(levelTwoTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 15, NORMAL, false))
+        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 15, NORMAL, true))
+        assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 1, HELL, false))
     }
 
     @Test
@@ -53,31 +53,31 @@ class TreasureClassLibraryTest {
 
         assertEquals(
             treasureClassLibrary.getTreasureClass("Act 4 (H) Super Bx"),
-            treasureClassLibrary.changeTcBasedOnLevel(tc1, 86, HELL)
+            treasureClassLibrary.changeTcBasedOnLevel(tc1, 86, HELL, false)
         )
         assertEquals(
             treasureClassLibrary.getTreasureClass("Act 4 (H) Super Bx"),
-            treasureClassLibrary.changeTcBasedOnLevel(tc2, 86, HELL)
+            treasureClassLibrary.changeTcBasedOnLevel(tc2, 86, HELL, false)
         )
         assertEquals(
             treasureClassLibrary.getTreasureClass("Act 1 Super Cx"),
-            treasureClassLibrary.changeTcBasedOnLevel(tc2, 10, HELL)
+            treasureClassLibrary.changeTcBasedOnLevel(tc2, 10, HELL, false)
         )
         assertEquals(
             treasureClassLibrary.getTreasureClass("Act 5 (H) Super B"),
-            treasureClassLibrary.changeTcBasedOnLevel(tc3, 93, HELL)
+            treasureClassLibrary.changeTcBasedOnLevel(tc3, 93, HELL, false)
         )
         assertEquals(
             treasureClassLibrary.getTreasureClass("Act 5 (H) Super B"),
-            treasureClassLibrary.changeTcBasedOnLevel(tc3, 94, HELL)
+            treasureClassLibrary.changeTcBasedOnLevel(tc3, 94, HELL, false)
         )
         assertEquals(
             treasureClassLibrary.getTreasureClass("Act 5 (H) Super Cx"),
-            treasureClassLibrary.changeTcBasedOnLevel(tc3, 96, HELL)
+            treasureClassLibrary.changeTcBasedOnLevel(tc3, 96, HELL, false)
         )
         assertEquals(
             treasureClassLibrary.getTreasureClass("Act 5 (H) Super Cx"),
-            treasureClassLibrary.changeTcBasedOnLevel(tc3, 97, HELL)
+            treasureClassLibrary.changeTcBasedOnLevel(tc3, 97, HELL, false)
         )
     }
 

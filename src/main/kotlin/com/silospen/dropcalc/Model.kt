@@ -175,13 +175,18 @@ enum class Difficulty(val displayString: String) {
     HELL("H")
 }
 
-enum class MonsterType {
-    REGULAR,
-    CHAMPION,
-    UNIQUE,
-    MINION,
-    BOSS,
-    SUPERUNIQUE
+enum class MonsterType(
+    val desecratedLevelAdjustment: Int,
+    private val desecratedLevelLimit: Map<Difficulty, Int>
+) {
+    REGULAR(2, mapOf(Difficulty.NORMAL to 45, Difficulty.NIGHTMARE to 71, Difficulty.HELL to 96)),
+    CHAMPION(4, mapOf(Difficulty.NORMAL to 47, Difficulty.NIGHTMARE to 73, Difficulty.HELL to 98)),
+    UNIQUE(5, mapOf(Difficulty.NORMAL to 48, Difficulty.NIGHTMARE to 74, Difficulty.HELL to 99)),
+    MINION(5, mapOf(Difficulty.NORMAL to 48, Difficulty.NIGHTMARE to 74, Difficulty.HELL to 99)),
+    BOSS(5, mapOf(Difficulty.NORMAL to 48, Difficulty.NIGHTMARE to 74, Difficulty.HELL to 99)),
+    SUPERUNIQUE(5, mapOf(Difficulty.NORMAL to 48, Difficulty.NIGHTMARE to 74, Difficulty.HELL to 99));
+
+    fun getDesecratedLevelLimit(difficulty: Difficulty): Int = desecratedLevelLimit.getValue(difficulty)
 }
 
 enum class TreasureClassType(
