@@ -5,7 +5,7 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.BOSS
 import com.silospen.dropcalc.areas.AreasLibrary
-import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
+import com.silospen.dropcalc.treasureclasses.TreasureClassLibrary
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -29,7 +29,7 @@ class MonsterLibraryTest {
                     mapOf(NORMAL to "Bonebreak TC", HELL to "Bonebreak TC(H)")
                 )
             ),
-            MonsterFactory(areasLibrary, mockTreasureClassCalculator())
+            MonsterFactory(areasLibrary, mockTreasureClassLibrary())
         )
         val expected = MonsterLibrary(monstersTestData)
         assertEquals(expected, actual)
@@ -56,7 +56,7 @@ class MonsterLibraryTest {
                         durielArea
                     )
                 ),
-                mockTreasureClassCalculator("u")
+                mockTreasureClassLibrary("u")
             )
         )
         val expected = MonsterLibrary(
@@ -127,9 +127,9 @@ class MonsterLibraryTest {
     }
 }
 
-private fun mockTreasureClassCalculator(prefix: String = ""): TreasureClassCalculator = mock {
-    on { changeTcBasedOnLevel(any(), any(), any()) } doAnswer {
-        VirtualTreasureClass("$prefix${it.getArgument<TreasureClass>(0).name}")
+private fun mockTreasureClassLibrary(prefix: String = ""): TreasureClassLibrary = mock {
+    on { changeTcBasedOnLevel(any<String>(), any(), any()) } doAnswer {
+        "$prefix${it.getArgument<String>(0)}"
     }
     on { getTreasureClass(any()) } doAnswer { VirtualTreasureClass(it.getArgument(0)) }
 }

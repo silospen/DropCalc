@@ -16,6 +16,7 @@ import com.silospen.dropcalc.translations.CompositeTranslations
 import com.silospen.dropcalc.translations.MapBasedTranslations
 import com.silospen.dropcalc.translations.Translations
 import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
+import com.silospen.dropcalc.treasureclasses.TreasureClassLibrary
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -45,11 +46,12 @@ class ConfigLoader(private val version: Version) {
     private val baseItems = loadBaseItems(translations, itemTypes)
     private val itemLibrary = ItemLibrary(baseItems, loadItemRatio(), loadItems(translations, baseItems))
     private val treasureClassConfigs = loadTreasureClassConfigs()
-    private val treasureClassCalculator = TreasureClassCalculator(treasureClassConfigs, itemLibrary)
+    private val treasureClassLibrary = TreasureClassLibrary(treasureClassConfigs, itemLibrary)
+    private val treasureClassCalculator = TreasureClassCalculator(treasureClassLibrary)
     private val monsterLibrary = loadMonsterLibrary(
         loadMonsterClassConfigs(translations),
         loadSuperUniqueMonsterConfigs(translations),
-        MonsterFactory(loadAreasLibrary(loadAreas(translations)), treasureClassCalculator)
+        MonsterFactory(loadAreasLibrary(loadAreas(translations)), treasureClassLibrary)
     )
 
     companion object {

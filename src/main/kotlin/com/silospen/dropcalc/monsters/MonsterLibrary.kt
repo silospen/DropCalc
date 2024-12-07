@@ -4,7 +4,7 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.MonsterType.MINION
 import com.silospen.dropcalc.MonsterType.SUPERUNIQUE
 import com.silospen.dropcalc.areas.AreasLibrary
-import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
+import com.silospen.dropcalc.treasureclasses.TreasureClassLibrary
 
 class MonsterLibrary(val monsters: Set<Monster>) {
     private val monstersByIdDifficultyType =
@@ -88,7 +88,7 @@ class MonsterLibrary(val monsters: Set<Monster>) {
 
 class MonsterFactory(
     private val areasLibrary: AreasLibrary,
-    private val treasureClassCalculator: TreasureClassCalculator
+    private val treasureClassLibrary: TreasureClassLibrary
 ) {
     fun createMinionMonster(
         minionId: String,
@@ -104,7 +104,7 @@ class MonsterFactory(
             parentMonster.area,
             difficulty,
             MINION,
-            getUpgradedTc(
+            treasureClassLibrary.changeTcBasedOnLevel(
                 monsterClass.monsterClassTreasureClasses.getValue(
                     difficulty,
                     TreasureClassType.REGULAR
@@ -129,7 +129,7 @@ class MonsterFactory(
             area,
             difficulty,
             SUPERUNIQUE,
-            getUpgradedTc(treasureClass, level, difficulty),
+            treasureClassLibrary.changeTcBasedOnLevel(treasureClass, level, difficulty),
             level
         )
     }
@@ -149,7 +149,7 @@ class MonsterFactory(
                     it,
                     difficulty,
                     monsterType,
-                    getUpgradedTc(
+                    treasureClassLibrary.changeTcBasedOnLevel(
                         monsterClass.monsterClassTreasureClasses.getValue(difficulty, treasureClassType),
                         level,
                         difficulty
@@ -159,13 +159,6 @@ class MonsterFactory(
             }
         }
     }
-
-    private fun getUpgradedTc(treasureClassName: String, monsterLevel: Int, difficulty: Difficulty) =
-        treasureClassCalculator.changeTcBasedOnLevel(
-            treasureClassCalculator.getTreasureClass(treasureClassName),
-            monsterLevel,
-            difficulty
-        ).name
 
     private fun constructLevel(
         monsterClass: MonsterClass,

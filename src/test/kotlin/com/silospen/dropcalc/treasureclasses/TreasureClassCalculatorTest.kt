@@ -1,7 +1,6 @@
 package com.silospen.dropcalc.treasureclasses
 
 import com.silospen.dropcalc.*
-import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.ItemQualityRatios.Companion.EMPTY
 import com.silospen.dropcalc.files.TreasureClassesLineParser
 import com.silospen.dropcalc.files.getResource
@@ -22,7 +21,7 @@ class TreasureClassCalculatorTest {
 
     private val itemLibrary = ItemLibrary(listOf(armor1, weapon1, weapon2, ring), emptyList(), emptyList())
     private val treasureClassCalculator = TreasureClassCalculator(
-        treasureClassConfigs, itemLibrary
+        TreasureClassLibrary(treasureClassConfigs, itemLibrary)
     )
 
     @Test
@@ -254,66 +253,6 @@ class TreasureClassCalculatorTest {
         assertEquals(0, calculateNoDrop(60, null, 8, 8))
     }
 
-    @Test
-    fun treasureClassUpgrades() {
-        val levelTwoTc = treasureClassCalculator.getTreasureClass("Act 1 Equip A")
-        val levelNineTc = treasureClassCalculator.getTreasureClass("Act 1 Equip B")
-        assertEquals(levelTwoTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 1, HELL))
-        assertEquals(levelTwoTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 2, HELL))
-        assertEquals(levelTwoTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 3, HELL))
-        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 8, HELL))
-        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 9, HELL))
-        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 15, HELL))
-        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 15, HELL))
-
-        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 15, NIGHTMARE))
-        assertEquals(levelTwoTc, treasureClassCalculator.changeTcBasedOnLevel(levelTwoTc, 15, NORMAL))
-        assertEquals(levelNineTc, treasureClassCalculator.changeTcBasedOnLevel(levelNineTc, 1, HELL))
-    }
-
-    @Test
-    fun tcUpgradeGroup18Example() {
-        val treasureClassConfigs = readTsv(
-            getResource("treasureClassCalculatorTestData/group18tcs.txt"),
-            TreasureClassesLineParser()
-        ).toList()
-        val itemLibrary = ItemLibrary(emptyList(), emptyList(), emptyList())
-        val treasureClassCalculator = TreasureClassCalculator(treasureClassConfigs, itemLibrary)
-
-        val tc1 = treasureClassCalculator.getTreasureClass("Act 4 (N) Super Cx")
-        val tc2 = treasureClassCalculator.getTreasureClass("Act 5 (H) Super C")
-        val tc3 = treasureClassCalculator.getTreasureClass("Act 5 (H) Super B")
-
-        assertEquals(
-            treasureClassCalculator.getTreasureClass("Act 4 (H) Super Bx"),
-            treasureClassCalculator.changeTcBasedOnLevel(tc1, 86, HELL)
-        )
-        assertEquals(
-            treasureClassCalculator.getTreasureClass("Act 4 (H) Super Bx"),
-            treasureClassCalculator.changeTcBasedOnLevel(tc2, 86, HELL)
-        )
-        assertEquals(
-            treasureClassCalculator.getTreasureClass("Act 1 Super Cx"),
-            treasureClassCalculator.changeTcBasedOnLevel(tc2, 10, HELL)
-        )
-        assertEquals(
-            treasureClassCalculator.getTreasureClass("Act 5 (H) Super B"),
-            treasureClassCalculator.changeTcBasedOnLevel(tc3, 93, HELL)
-        )
-        assertEquals(
-            treasureClassCalculator.getTreasureClass("Act 5 (H) Super B"),
-            treasureClassCalculator.changeTcBasedOnLevel(tc3, 94, HELL)
-        )
-        assertEquals(
-            treasureClassCalculator.getTreasureClass("Act 5 (H) Super Cx"),
-            treasureClassCalculator.changeTcBasedOnLevel(tc3, 96, HELL)
-        )
-        assertEquals(
-            treasureClassCalculator.getTreasureClass("Act 5 (H) Super Cx"),
-            treasureClassCalculator.changeTcBasedOnLevel(tc3, 97, HELL)
-        )
-    }
-
     fun setupTests(p0Picks: Int, p1Picks: Int, p2Picks: Int, p3Picks: Int): TreasureClassCalculator {
         val treasureClassConfigs = listOf(
             TreasureClassConfig("p3", TreasureClassProperties(p3Picks, EMPTY), setOf("armo6" to 1, "armo3" to 9)),
@@ -322,7 +261,7 @@ class TreasureClassCalculatorTest {
             TreasureClassConfig("p0", TreasureClassProperties(p0Picks, EMPTY), setOf("p1" to 1, "p2" to 1)),
         )
         val itemLibrary = ItemLibrary(emptyList(), emptyList(), emptyList())
-        return TreasureClassCalculator(treasureClassConfigs, itemLibrary)
+        return TreasureClassCalculator(TreasureClassLibrary(treasureClassConfigs, itemLibrary))
     }
 
     @Test
@@ -366,8 +305,10 @@ class TreasureClassCalculatorTest {
         )
         val leafOutcomes =
             TreasureClassCalculator(
-                treasureClassConfigs,
-                ItemLibrary(emptyList(), emptyList(), emptyList())
+                TreasureClassLibrary(
+                    treasureClassConfigs,
+                    ItemLibrary(emptyList(), emptyList(), emptyList())
+                )
             ).getLeafOutcomes("p0", DEFINED, null)
 
         val expectations = listOf(
