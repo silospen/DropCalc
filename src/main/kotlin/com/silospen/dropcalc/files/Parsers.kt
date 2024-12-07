@@ -102,7 +102,8 @@ class ItemTypeCodesParser : LineParser<SingleItemTypeCodeEntry?> {
 
 class UniqueItemLineParser(
     private val translations: Translations,
-    baseItems: List<BaseItem>
+    baseItems: List<BaseItem>,
+    private val version: Version
 ) : LineParser<Item?> {
 
     private val baseItemsById = baseItems.associateBy { it.id }
@@ -110,7 +111,8 @@ class UniqueItemLineParser(
     override fun parseLine(line: Line): Item? {
         val level = line["lvl"].toIntOrNull() ?: 0
         val enabled = parseNumericBoolean(line["enabled"])
-        if (!enabled || level == 0) return null
+        if (level == 0) return null
+        if (version != Version.D2R_V1_0 && !enabled) return null
         val id = line["index"].trim()
         val rarity = line["rarity"].toInt()
         return Item(
@@ -119,7 +121,8 @@ class UniqueItemLineParser(
             ItemQuality.UNIQUE,
             baseItemsById.getValue(line["code"]),
             level,
-            rarity
+            rarity,
+            !enabled
         )
     }
 }
@@ -142,7 +145,8 @@ class SetItemLineParser(
             SET,
             baseItemsById.getValue(line["item"]),
             level,
-            rarity
+            rarity,
+            false
         )
     }
 }

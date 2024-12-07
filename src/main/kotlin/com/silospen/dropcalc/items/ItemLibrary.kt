@@ -36,7 +36,8 @@ class ItemLibrary(
     fun getOrConstructVirtualTreasureClass(name: String): VirtualTreasureClass {
         val virtualTreasureClass = itemTreasureClassesByName[name]
         if (virtualTreasureClass != null) return virtualTreasureClass
-        val outcomes = baseItemsById[name]?.let { setOf(Outcome(it, 1)) } ?: emptySet()
+        val outcomes = (baseItemsById[name] ?: ItemQuality.values().firstNotNullOfOrNull { getItem(it, name) })
+            ?.let { setOf(Outcome(it, 1)) } ?: emptySet()
         return VirtualTreasureClass(name, outcomes = outcomes)
     }
 
@@ -65,6 +66,7 @@ class ItemLibrary(
                 itemQualityRatios,
                 magicFind
             )
+
             MAGIC -> getProbQualitySequentially(
                 MAGIC,
                 listOf(UNIQUE, SET, RARE),
@@ -73,6 +75,7 @@ class ItemLibrary(
                 itemQualityRatios,
                 magicFind
             )
+
             WHITE -> Probability.ONE
         }
     }

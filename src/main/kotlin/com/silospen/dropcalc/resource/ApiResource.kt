@@ -173,7 +173,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         )
 
     private fun formatProbability(decimalMode: Boolean, prob: Double): String = if (decimalMode) {
-        decimalModeFormat.format(prob)
+        decimalModeFormat.format(prob) //TODO: Black cleft should be 1:8000 instead of 7999
     } else {
         if (1 / prob >= 10000) "1:${fractionModeFormat.format((1 / prob).toInt())}" else "1:${(1 / prob).toInt()}"
     }
@@ -267,7 +267,7 @@ class VersionedApiResource(
             .toList(), createApiResponseContext(monsters))
     }
 
-    private fun generateItemQualityResponse(
+    private fun generateItemQualityResponseForBaseItem(
         itemQuality: ItemQuality,
         magicFind: Int,
         treasureClassPaths: TreasureClassPaths,
@@ -280,6 +280,7 @@ class VersionedApiResource(
         val eligibleItems = itemLibrary.getItemsForBaseId(itemQuality, baseItem.id)
             .asSequence()
             .filter { if (itemQuality == UNIQUE || itemQuality == SET) it.level <= monster.level else true }
+            .filter { !it.onlyDropsDirectly }
         val raritySum = eligibleItems.sumOf { it.rarity }
         return eligibleItems.filter { itemToFilterTo == null || itemToFilterTo == it }.map { item ->
             val additionalFactorGenerator: (ItemQualityRatios) -> Probability = {
@@ -291,6 +292,45 @@ class VersionedApiResource(
                 monster,
                 treasureClassPaths.getFinalProbability(outcomeType, additionalFactorGenerator).toDouble()
             )
+        }
+    }
+
+    private fun generateItemQualityResponse(
+        itemQuality: ItemQuality,
+        magicFind: Int,
+        treasureClassPaths: TreasureClassPaths,
+        monster: Monster,
+        outcomeType: OutcomeType,
+        itemToFilterTo: Item?,
+        responseGenerator: (Item, Monster, Double) -> ApiResponseEntry
+    ): Sequence<ApiResponseEntry> {
+        when (outcomeType) {
+            is BaseItem -> {
+                return generateItemQualityResponseForBaseItem(
+                    itemQuality,
+                    magicFind,
+                    treasureClassPaths,
+                    monster,
+                    outcomeType,
+                    itemToFilterTo,
+                    responseGenerator
+                )
+            }
+
+            is Item -> {
+                if ((itemQuality == UNIQUE || itemQuality == SET) && outcomeType.level > monster.level) return emptySequence()
+                return sequenceOf(
+                    responseGenerator(
+                        outcomeType,
+                        monster,
+                        treasureClassPaths.getFinalProbability(outcomeType).toDouble()
+                    )
+                )
+            }
+
+            else -> {
+                throw RuntimeException("Unexpected outcomeType $outcomeType")
+            }
         }
     }
 
@@ -318,7 +358,7 @@ class VersionedApiResource(
                     treasureClassCalculator.getLeafOutcomes(
                         monster.treasureClass,
                         VIRTUAL,
-                        item.baseItem,
+                        if (item.onlyDropsDirectly) item else item.baseItem,
                         nPlayers,
                         partySize
                     )

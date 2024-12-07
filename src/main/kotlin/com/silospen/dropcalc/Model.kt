@@ -81,12 +81,13 @@ data class Area(
 
 data class Item(
     val id: String,
-    val name: String,
+    override val name: String,
     val quality: ItemQuality,
     val baseItem: BaseItem,
     val level: Int,
-    val rarity: Int
-)
+    val rarity: Int,
+    val onlyDropsDirectly: Boolean,
+) : OutcomeType
 
 data class BaseItem(
     val id: String,

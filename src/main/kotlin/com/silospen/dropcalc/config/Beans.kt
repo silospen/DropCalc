@@ -143,7 +143,7 @@ class ConfigLoader(private val version: Version) {
     private fun loadItems(translations: Translations, baseItems: List<BaseItem>): List<Item> {
         val uniqueItems = readTsv(
             getResource("d2Files/${version.pathName}/uniqueitems.txt"),
-            UniqueItemLineParser(translations, baseItems)
+            UniqueItemLineParser(translations, baseItems, version)
         )
         val setItems = readTsv(
             getResource("d2Files/${version.pathName}/setitems.txt"),
@@ -168,7 +168,8 @@ class ConfigLoader(private val version: Version) {
                     itemQuality,
                     it,
                     it.level,
-                    it.itemType.rarity
+                    it.itemType.rarity,
+                    false
                 )
             }
 
@@ -180,6 +181,6 @@ class ConfigLoader(private val version: Version) {
     }
 
     fun createVersionedMetadataResource(): VersionedMetadataResource {
-        return VersionedMetadataResource(monsterLibrary, itemLibrary)
+        return VersionedMetadataResource(monsterLibrary, itemLibrary, treasureClassLibrary)
     }
 }

@@ -6,6 +6,7 @@ import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.mock
 
 class MetadataResourceTest {
     private val metadataResource = VersionedMetadataResource(
@@ -87,10 +88,10 @@ class MetadataResourceTest {
             emptyList(),
             emptyList(),
             listOf(
-                Item("item1", "item_1", ItemQuality.UNIQUE, armor1, 1, 1),
-                Item("item2", "item_2", ItemQuality.WHITE, weapon2, 1, 1)
+                Item("item1", "item_1", ItemQuality.UNIQUE, armor1, 1, 1, false),
+                Item("item2", "item_2", ItemQuality.WHITE, weapon2, 1, 1, false)
             )
-        )
+        ), mock()
     )
 
     @Test

@@ -77,7 +77,7 @@ class TreasureClassCalculator(private val treasureClassLibrary: TreasureClassLib
             if (outcomeType is TreasureClass) itemQualityRatiosAccumulator.merge(outcomeType.properties.itemQualityRatios) else itemQualityRatiosAccumulator
 //        println("VALUES: ${currentOutcome.outcomeType.name}, actualPicks: $adjustedPicks, upAccPicks: $updatedAccumulatedPicks, actualChance: $selectionProbability")
 
-        if ((outcomeType is VirtualTreasureClass && treasureClassOutcomeType == DEFINED) || (outcomeType is BaseItem && treasureClassOutcomeType == VIRTUAL)) {
+        if ((outcomeType is VirtualTreasureClass && treasureClassOutcomeType == DEFINED) || ((outcomeType is BaseItem || outcomeType is Item) && treasureClassOutcomeType == VIRTUAL)) {
             if (filterToOutcomeType == null || filterToOutcomeType == outcomeType) leafAccumulator.accumulateProbability(
                 selectionProbability,
                 itemQualityRatios,

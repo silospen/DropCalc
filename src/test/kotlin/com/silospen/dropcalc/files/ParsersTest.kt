@@ -68,13 +68,13 @@ class UniqueItemsLineParserTest {
                     haxBaseItem,
                     axeBaseItem,
                     jewelBaseItem
-                )
+                ), Version.V1_12
             )
         )
         val expected = listOf(
-            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1),
-            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1),
-            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1),
+            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false),
+            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false),
+            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false),
         )
         assertEquals(expected, actual)
     }
@@ -94,7 +94,7 @@ class SetItemsLineParserTest {
             )
         )
         val expected = listOf(
-            Item("Civerb's Ward", "Civerb's Ward-name", ItemQuality.SET, shieldBaseItem, 13, 7),
+            Item("Civerb's Ward", "Civerb's Ward-name", ItemQuality.SET, shieldBaseItem, 13, 7, false),
         )
         assertEquals(expected, actual)
     }

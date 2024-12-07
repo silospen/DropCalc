@@ -4,7 +4,7 @@ import com.silospen.dropcalc.*
 import com.silospen.dropcalc.items.ItemLibrary
 
 class TreasureClassLibrary(treasureClassConfigs: List<TreasureClassConfig>, private val itemLibrary: ItemLibrary) {
-    private val treasureClasses: List<TreasureClass> = generateTreasureClasses(treasureClassConfigs)
+    val treasureClasses: List<TreasureClass> = generateTreasureClasses(treasureClassConfigs)
     private val treasureClassesByName: Map<String, TreasureClass> = treasureClasses.associateBy { it.name }
     private val treasureClassesByGroup = treasureClasses
         .filter { it.properties.group != null && it.properties.level != null }
