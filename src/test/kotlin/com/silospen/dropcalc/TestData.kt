@@ -367,6 +367,15 @@ val ring = BaseItem(
     2,
     setOf("misc3")
 )
+val uniqueRing = Item(
+    "MyUniqueRing",
+    "MyUniqueRing",
+    ItemQuality.UNIQUE,
+    ring,
+    10,
+    3,
+    true
+)
 
 val stubTranslations = object : Translations {
     override fun getTranslationOrNull(key: String): String {

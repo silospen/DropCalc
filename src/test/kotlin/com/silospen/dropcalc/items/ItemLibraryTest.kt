@@ -20,7 +20,7 @@ class ItemLibraryTest {
                 )
             )
         ),
-        emptyList()
+        listOf(uniqueRing)
     )
 
     private val itemQualityRatios = ItemQualityRatios(400, 300, 200, 100)
@@ -46,6 +46,10 @@ class ItemLibraryTest {
         assertEquals(
             VirtualTreasureClass("a-random-not-listed-item", 1, emptySet()),
             itemLibrary.getOrConstructVirtualTreasureClass("a-random-not-listed-item")
+        )
+        assertEquals(
+            VirtualTreasureClass("MyUniqueRing", 1, setOf(Outcome(uniqueRing, 1))),
+            itemLibrary.getOrConstructVirtualTreasureClass("MyUniqueRing")
         )
     }
 
