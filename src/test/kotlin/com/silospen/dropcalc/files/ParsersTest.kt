@@ -47,20 +47,44 @@ class ItemRatioLineParserTest {
 }
 
 class UniqueItemsLineParserTest {
+
+    private val axeItemType = ItemType("axe", "Axe", false, 3, setOf("weap"))
+    private val haxBaseItem = BaseItem("hax", "hax-name", axeItemType, ItemVersion.NORMAL, 1, setOf("weap3"))
+    private val axeBaseItem = BaseItem("axe", "axe-name", axeItemType, ItemVersion.NORMAL, 2, setOf("weap3"))
+    private val jewelBaseItem =
+        BaseItem(
+            "jew",
+            "jew-name",
+            ItemType("jew", "Jewel", false, 3, setOf("misc", "jewl")),
+            ItemVersion.NORMAL,
+            3,
+            setOf("misc3", "jewl3")
+        )
+
     @Test
     fun uniqueItemsParser() {
-        val axeItemType = ItemType("axe", "Axe", false, 3, setOf("weap"))
-        val haxBaseItem = BaseItem("hax", "hax-name", axeItemType, ItemVersion.NORMAL, 1, setOf("weap3"))
-        val axeBaseItem = BaseItem("axe", "axe-name", axeItemType, ItemVersion.NORMAL, 2, setOf("weap3"))
-        val jewelBaseItem =
-            BaseItem(
-                "jew",
-                "jew-name",
-                ItemType("jew", "Jewel", false, 3, setOf("misc", "jewl")),
-                ItemVersion.NORMAL,
-                3,
-                setOf("misc3", "jewl3")
-            )
+        val actual = parseItems(Version.V1_12)
+        val expected = listOf(
+            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false),
+            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false),
+            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false),
+        )
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun uniqueItemsParser_d2rEnabledFlag() {
+        val actual = parseItems(Version.D2R_V1_0)
+        val expected = listOf(
+            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false),
+            Item("The Gnasherv2", "The Gnasherv2-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, true),
+            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false),
+            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false),
+        )
+        assertEquals(expected, actual)
+    }
+
+    private fun parseItems(version: Version): List<Item> {
         val actual = readTsv(
             getResource("parsersTestData/uniqueItems.txt"),
             UniqueItemLineParser(
@@ -68,15 +92,10 @@ class UniqueItemsLineParserTest {
                     haxBaseItem,
                     axeBaseItem,
                     jewelBaseItem
-                ), Version.V1_12
+                ), version
             )
         )
-        val expected = listOf(
-            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false),
-            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false),
-            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false),
-        )
-        assertEquals(expected, actual)
+        return actual
     }
 }
 
