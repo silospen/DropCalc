@@ -213,6 +213,80 @@ class MonstatsLineParserTest {
         ).toSet()
         assertEquals(monsterClassTestData, actual)
     }
+
+    @Test
+    fun monstatsParser_desecrated() {
+
+        fun skeletonClassProperties(): HashBasedTable<Difficulty, TreasureClassType, String> {
+            val properties = HashBasedTable.create<Difficulty, TreasureClassType, String>()
+            properties.put(NORMAL, TreasureClassType.REGULAR, "Act 1 H2H A")
+            properties.put(NORMAL, TreasureClassType.CHAMPION, "Act 1 Champ A")
+            properties.put(NORMAL, TreasureClassType.UNIQUE, "Act 1 Unique A")
+
+            properties.put(NIGHTMARE, TreasureClassType.REGULAR, "Act 1 (N) H2H A")
+            properties.put(NIGHTMARE, TreasureClassType.CHAMPION, "Act 1 (N) Champ A")
+            properties.put(NIGHTMARE, TreasureClassType.UNIQUE, "Act 1 (N) Unique A")
+
+            properties.put(HELL, TreasureClassType.REGULAR, "Act 1 (H) H2H A")
+            properties.put(HELL, TreasureClassType.CHAMPION, "Act 1 (H) Champ A")
+            properties.put(HELL, TreasureClassType.UNIQUE, "Act 1 (H) Unique A")
+            properties.put(HELL, TreasureClassType.DESECRATED_CHAMPION, "Act 1 (H) Champ A Desecrated")
+            properties.put(HELL, TreasureClassType.DESECRATED_UNIQUE, "Act 1 (H) Unique A Desecrated")
+            return properties
+        }
+
+        fun durielClassProperties(): HashBasedTable<Difficulty, TreasureClassType, String> {
+            val properties = HashBasedTable.create<Difficulty, TreasureClassType, String>()
+            properties.put(NORMAL, TreasureClassType.REGULAR, "Duriel")
+            properties.put(NORMAL, TreasureClassType.CHAMPION, "Duriel")
+            properties.put(NORMAL, TreasureClassType.UNIQUE, "Duriel")
+            properties.put(NORMAL, TreasureClassType.QUEST, "Durielq")
+            properties.put(NORMAL, TreasureClassType.DESECRATED_REGULAR, "Duriel Desecrated A")
+            properties.put(NORMAL, TreasureClassType.DESECRATED_CHAMPION, "Duriel Desecrated A")
+            properties.put(NORMAL, TreasureClassType.DESECRATED_UNIQUE, "Duriel Desecrated A")
+
+            properties.put(NIGHTMARE, TreasureClassType.REGULAR, "Duriel (N)")
+            properties.put(NIGHTMARE, TreasureClassType.CHAMPION, "Duriel (N)")
+            properties.put(NIGHTMARE, TreasureClassType.UNIQUE, "Duriel (N)")
+            properties.put(NIGHTMARE, TreasureClassType.QUEST, "Durielq (N)")
+            properties.put(NIGHTMARE, TreasureClassType.DESECRATED_REGULAR, "Duriel (N) Desecrated A")
+            properties.put(NIGHTMARE, TreasureClassType.DESECRATED_CHAMPION, "Duriel (N) Desecrated A")
+            properties.put(NIGHTMARE, TreasureClassType.DESECRATED_UNIQUE, "Duriel (N) Desecrated A")
+
+            properties.put(HELL, TreasureClassType.REGULAR, "Duriel (H)")
+            properties.put(HELL, TreasureClassType.CHAMPION, "Duriel (H)")
+            properties.put(HELL, TreasureClassType.UNIQUE, "Duriel (H)")
+            properties.put(HELL, TreasureClassType.QUEST, "Durielq (H)")
+            properties.put(HELL, TreasureClassType.DESECRATED_REGULAR, "Duriel (H) Desecrated A")
+            properties.put(HELL, TreasureClassType.DESECRATED_CHAMPION, "Duriel (H) Desecrated A")
+            properties.put(HELL, TreasureClassType.DESECRATED_UNIQUE, "Duriel (H) Desecrated A")
+            return properties
+        }
+
+        val actual = readTsv(
+            getResource("parsersTestData/monstats_desecrated.txt"),
+            MonstatsLineParser(stubTranslations)
+        ).toSet()
+        assertEquals(
+            setOf(
+                MonsterClass(
+                    "skeleton1",
+                    "Skeleton-name",
+                    minionIds = setOf("skeleton1"),
+                    monsterClassTreasureClasses = skeletonClassProperties(),
+                    monsterLevels = levelsPerDifficulty(2, 37, 68)
+                ),
+                MonsterClass(
+                    "duriel",
+                    "Duriel-name",
+                    minionIds = setOf("duriel"),
+                    isBoss = true,
+                    monsterClassTreasureClasses = durielClassProperties(),
+                    monsterLevels = levelsPerDifficulty(22, 55, 88)
+                ),
+            ), actual
+        )
+    }
 }
 
 class SuperUniqueLineParserTest {
