@@ -2,6 +2,7 @@ package com.silospen.dropcalc.files
 
 import com.google.common.collect.HashBasedTable
 import com.google.common.collect.ImmutableTable
+import com.google.common.collect.Table
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.ItemQualityRatios.Companion.EMPTY
@@ -217,23 +218,41 @@ class MonstatsLineParserTest {
 class SuperUniqueLineParserTest {
     @Test
     fun superUniquesParser() {
-        val actual = readTsv(
-            getResource("parsersTestData/superuniques.txt"),
-            SuperUniqueLineParser(
-                mapOf(
-                    "Corpsefire" to "Act 1 - Cave 1",
-                    "The Feature Creep" to "Act 4 - Lava 1",
-                ), stubTranslations
-            )
-        ).toSet()
+        val actual = parseSuperuniqueConfigs("superuniques")
+        val expected = generatedExpected(HashBasedTable.create(), HashBasedTable.create())
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun superUniquesParser_desecrated() {
+        val actual = parseSuperuniqueConfigs("superuniques_desecrated")
+        val expected = generatedExpected(
+            HashBasedTable.create<Difficulty, TreasureClassType, String>().apply {
+                put(NORMAL, TreasureClassType.DESECRATED_REGULAR, "Haphesto Desecrated A")
+                put(NIGHTMARE, TreasureClassType.DESECRATED_REGULAR, "Haphesto (N) Desecrated A")
+                put(HELL, TreasureClassType.DESECRATED_REGULAR, "Haphesto (H) Desecrated A")
+            },
+            HashBasedTable.create<Difficulty, TreasureClassType, String>().apply {
+                put(HELL, TreasureClassType.DESECRATED_REGULAR, "Act 1 (H) Super A Desecrated")
+            }
+        )
+        assertEquals(expected, actual)
+    }
+
+    private fun generatedExpected(
+        additionalHaphestoTcs: Table<Difficulty, TreasureClassType, String>,
+        additionalCorpsefireTcs: Table<Difficulty, TreasureClassType, String>
+    ): Set<SuperUniqueMonsterConfig> {
         val haphestoTcs = HashBasedTable.create<Difficulty, TreasureClassType, String>()
         haphestoTcs.put(NORMAL, TreasureClassType.REGULAR, "Haphesto")
         haphestoTcs.put(NIGHTMARE, TreasureClassType.REGULAR, "Haphesto (N)")
         haphestoTcs.put(HELL, TreasureClassType.REGULAR, "Haphesto (H)")
+        haphestoTcs.putAll(additionalHaphestoTcs)
         val corpsefireTcs = HashBasedTable.create<Difficulty, TreasureClassType, String>()
         corpsefireTcs.put(NORMAL, TreasureClassType.REGULAR, "Act 1 Super A")
         corpsefireTcs.put(NIGHTMARE, TreasureClassType.REGULAR, "Act 1 (N) Super A")
         corpsefireTcs.put(HELL, TreasureClassType.REGULAR, "Act 1 (H) Super A")
+        corpsefireTcs.putAll(additionalCorpsefireTcs)
         val expected = setOf(
             SuperUniqueMonsterConfig(
                 "The Feature Creep",
@@ -252,7 +271,20 @@ class SuperUniqueLineParserTest {
                 corpsefireTcs
             ),
         )
-        assertEquals(expected, actual)
+        return expected
+    }
+
+    private fun parseSuperuniqueConfigs(filename: String): Set<SuperUniqueMonsterConfig> {
+        val actual = readTsv(
+            getResource("parsersTestData/$filename.txt"),
+            SuperUniqueLineParser(
+                mapOf(
+                    "Corpsefire" to "Act 1 - Cave 1",
+                    "The Feature Creep" to "Act 4 - Lava 1",
+                ), stubTranslations
+            )
+        ).toSet()
+        return actual
     }
 }
 

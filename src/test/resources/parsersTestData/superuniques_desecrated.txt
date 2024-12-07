@@ -1,0 +1,4 @@
+Superunique	Name	Class	hcIdx	MonSound	Mod1	Mod2	Mod3	MinGrp	MaxGrp	AutoPos	Stacks	Replaceable	Utrans	Utrans(N)	Utrans(H)	TC	TC Desecrated	TC(N)	TC(N) Desecrated	TC(H)	TC(H) Desecrated	*eol
+The Feature Creep	The Feature Creep	hephasto	41	smithdemon	27	30	0	0	0	1	0		20	20	20	Haphesto	Haphesto Desecrated A	Haphesto (N)	Haphesto (N) Desecrated A	Haphesto (H)	Haphesto (H) Desecrated A	0
+Expansion																						0
+Corpsefire	Corpsefire	zombie1	40		27	0	0	5	5	1	0		25	25	25	Act 1 Super A		Act 1 (N) Super A		Act 1 (H) Super A	Act 1 (H) Super A Desecrated	0
