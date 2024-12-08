@@ -103,7 +103,7 @@ class DropCalcLargeDesecratedIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monster in monsterLibrary.getMonsters(monsterType, true)) {
+                for (monster in monsterLibrary.getMonsters(monsterType, true, 0)) {
                     for ((nPlayers, nGroup) in listOf(3 to 5, 3 to 8, 7 to 8)) {
                         for (desecratedLevel in listOf(0, 45, 99)) {
                             result.add(
@@ -133,7 +133,7 @@ class DropCalcLargeDesecratedIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monster in monsterLibrary.getMonsters(monsterType, true)) {
+                for (monster in monsterLibrary.getMonsters(monsterType, true, 0)) {
                     for ((nPlayers, nGroup) in listOf(7 to 5)) {
                         for (itemQuality in ItemQuality.values()) {
                             for (magicFind in listOf(0, 975)) {
@@ -169,7 +169,7 @@ class DropCalcLargeDesecratedIntegTests {
                 for (itemQuality in ItemQuality.values()) {
                     for (itemId in itemLibrary.items.asSequence().filter { it.quality == itemQuality }.map { it.id }
                         .distinct()) {
-                        for (difficulty in Difficulty.values()) {
+                        for (difficulty in listOf<Difficulty?>(null) + Difficulty.values()) {
                             for ((nPlayers, nGroup) in listOf(7 to 5)) {
                                 for (magicFind in listOf(0, 975)) {
                                     result.add(
@@ -202,7 +202,7 @@ class DropCalcLargeDesecratedIntegTests {
         itemId: String,
         itemQuality: ItemQuality,
         monsterType: MonsterType,
-        difficulty: Difficulty,
+        difficulty: Difficulty?,
         numPlayers: Int,
         partySize: Int,
         magicFind: Int
@@ -331,7 +331,7 @@ data class DesecratedItemsTestDataExpectation(
     val itemId: String,
     val itemQuality: ItemQuality,
     val monsterType: MonsterType,
-    val difficulty: Difficulty,
+    val difficulty: Difficulty?,
     val numPlayers: Int,
     val partySize: Int,
     val magicFind: Int,

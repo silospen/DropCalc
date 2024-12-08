@@ -1,5 +1,6 @@
 package com.silospen.dropcalc.monsters
 
+import com.google.common.collect.HashBasedTable
 import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
@@ -19,28 +20,32 @@ class MonsterLibraryTest {
     private val monsterClassConfigs = monsterClassTestData.toList()
     private val areasLibrary: AreasLibrary = AreasLibrary.fromAreas(areasTestData)
 
-    private fun createMonsterLibrary(library: TreasureClassLibrary) = MonsterLibrary.fromConfig(
-        monsterClassConfigs,
-        listOf(
-            SuperUniqueMonsterConfig(
-                "Bonebreak",
-                "Bonebreak-name",
-                "bonebreak's area",
-                "skeleton1",
-                true,
-                ImmutableTable.builder<Difficulty, TreasureClassType, String>()
-                    .put(NORMAL, TreasureClassType.REGULAR, "Bonebreak TC")
-                    .put(HELL, TreasureClassType.REGULAR, "Bonebreak TC(H)")
-                    .build()
-            )
-        ),
-        MonsterFactory(areasLibrary, library),
-        library
-    )
+    private fun createMonsterLibrary(library: TreasureClassLibrary, monsterClassConfigs: List<MonsterClass>) =
+        MonsterLibrary.fromConfig(
+            monsterClassConfigs,
+            listOf(
+                SuperUniqueMonsterConfig(
+                    "Bonebreak",
+                    "Bonebreak-name",
+                    "bonebreak's area",
+                    "skeleton1",
+                    true,
+                    ImmutableTable.builder<Difficulty, TreasureClassType, String>()
+                        .put(NORMAL, TreasureClassType.REGULAR, "Bonebreak TC")
+                        .put(HELL, TreasureClassType.REGULAR, "Bonebreak TC(H)")
+                        .build()
+                )
+            ),
+            MonsterFactory(areasLibrary, library),
+            library
+        )
 
     @Test
     fun testConstruction() {
-        assertEquals(MonsterLibrary(monstersTestData, treasureClassLibrary), createMonsterLibrary(treasureClassLibrary))
+        assertEquals(
+            MonsterLibrary(monstersTestData, treasureClassLibrary),
+            createMonsterLibrary(treasureClassLibrary, monsterClassConfigs)
+        )
     }
 
     @Test
@@ -53,12 +58,12 @@ class MonsterLibraryTest {
         val baseExpectedMonsters =
             monstersTestData.filter { it.id == fetishShamanMonsterClass.id && it.type == REGULAR }
         assertEquals(
-            setOf(desecratedSkeleton) + baseExpectedMonsters,
-            monsterLibrary.getMonsters(REGULAR, true)
+            listOf(desecratedSkeleton) + baseExpectedMonsters,
+            monsterLibrary.getMonsters(REGULAR, true, 0)
         )
         assertEquals(
-            setOf(skeletonMonster) + baseExpectedMonsters,
-            monsterLibrary.getMonsters(REGULAR, false)
+            listOf(skeletonMonster) + baseExpectedMonsters,
+            monsterLibrary.getMonsters(REGULAR, false, 0)
         )
     }
 
@@ -181,10 +186,78 @@ class MonsterLibraryTest {
 
     @Test
     fun upgradeMonsterToDesecrated() {
-        val monsterLibrary = createMonsterLibrary(mockTreasureClassLibrary("u"))
+        val monsterClassTreasureClasses =
+            HashBasedTable.create(skeletonMonsterClass.monsterClassTreasureClasses).apply {
+                put(NORMAL, TreasureClassType.DESECRATED_REGULAR, "Desecrated Act 1 H2H A")
+            }
+        val desecratedSkeletonMonsterClass =
+            skeletonMonsterClass.copy(
+                monsterClassTreasureClasses = monsterClassTreasureClasses,
+            )
+        val monsterLibrary = createMonsterLibrary(
+            mockTreasureClassLibrary("u"),
+            listOf(
+                desecratedSkeletonMonsterClass,
+                durielMonsterClass,
+                putridDefilerMonsterClass,
+                fetishShamanMonsterClass,
+                radamentMonsterClass
+            )
+        )
+        val expectedRegularSkeletonMonster =
+            skeletonMonster.copy(monsterClass = desecratedSkeletonMonsterClass, treasureClass = "uAct 1 H2H A")
+        val expectedDesecratedSkeletonMonster = skeletonMonster.copy(
+            id = "skeleton1d",
+            name = "Skeleton-name (d)",
+            level = 45,
+            treasureClass = "uuDesecrated Act 1 H2H A",
+            monsterClass = desecratedSkeletonMonsterClass,
+            isDesecrated = true,
+            treasureClassType = TreasureClassType.DESECRATED_REGULAR,
+        )
+        val expectedDesecrated = listOf(
+            expectedDesecratedSkeletonMonster,
+            fetishShamanMonster1.copy(level = 45, treasureClass = "uuAct 3 Cast A"),
+            fetishShamanMonster2.copy(level = 45, treasureClass = "uuAct 3 Cast A"),
+        )
         assertEquals(
-            skeletonMonster.copy(level = 45, treasureClass = "uAct 1 H2H A"),
-            monsterLibrary.upgradeMonsterToDesecrated(skeletonMonster, 99)
+            expectedDesecrated,
+            monsterLibrary.getMonsters(NORMAL, REGULAR, true, 99)
+        )
+        assertEquals(
+            expectedDesecrated,
+            monsterLibrary.getMonsters(REGULAR, true, 99)
+        )
+        assertEquals(
+            listOf(expectedDesecratedSkeletonMonster),
+            monsterLibrary.getMonsters("skeleton1d", NORMAL, REGULAR, true, 99)
+        )
+        assertEquals(
+            emptyList<Monster>(),
+            monsterLibrary.getMonsters("skeleton1", NORMAL, REGULAR, true, 99)
+        )
+
+
+        val expectedNormal = listOf(
+            expectedRegularSkeletonMonster,
+            fetishShamanMonster1.copy(treasureClass = "uAct 3 Cast A"),
+            fetishShamanMonster2.copy(treasureClass = "uAct 3 Cast A"),
+        )
+        assertEquals(
+            expectedNormal,
+            monsterLibrary.getMonsters(NORMAL, REGULAR, false, 99)
+        )
+        assertEquals(
+            expectedNormal,
+            monsterLibrary.getMonsters(REGULAR, false, 99)
+        )
+        assertEquals(
+            emptyList<Monster>(),
+            monsterLibrary.getMonsters("skeleton1d", NORMAL, REGULAR, false, 99)
+        )
+        assertEquals(
+            listOf(expectedRegularSkeletonMonster),
+            monsterLibrary.getMonsters("skeleton1", NORMAL, REGULAR, false, 99)
         )
     }
 }

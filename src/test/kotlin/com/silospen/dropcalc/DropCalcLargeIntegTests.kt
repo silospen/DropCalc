@@ -103,7 +103,7 @@ class DropCalcLargeIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monsterId in monsterLibrary.getMonsters(monsterType, false).asSequence().map { it.id }
+                for (monsterId in monsterLibrary.getMonsters(monsterType, false, 0).asSequence().map { it.id }
                     .distinct()) {
                     for (difficulty in Difficulty.values()) {
                         for (nPlayers in listOf(3, 7)) {
@@ -135,7 +135,7 @@ class DropCalcLargeIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monsterId in monsterLibrary.getMonsters(monsterType, false).asSequence().map { it.id }
+                for (monsterId in monsterLibrary.getMonsters(monsterType, false, 0).asSequence().map { it.id }
                     .distinct()) {
                     for (difficulty in Difficulty.values()) {
                         for (nPlayers in listOf(7)) {
@@ -176,7 +176,7 @@ class DropCalcLargeIntegTests {
                 for (itemQuality in ItemQuality.values()) {
                     for (itemId in itemLibrary.items.asSequence().filter { it.quality == itemQuality }.map { it.id }
                         .distinct()) {
-                        for (difficulty in Difficulty.values()) {
+                        for (difficulty in listOf<Difficulty?>(null) + Difficulty.values()) {
                             for (nPlayers in listOf(7)) {
                                 for (nGroup in listOf(5)) {
                                     for (magicFind in listOf(0, 975)) {
@@ -211,7 +211,7 @@ class DropCalcLargeIntegTests {
         itemId: String,
         itemQuality: ItemQuality,
         monsterType: MonsterType,
-        difficulty: Difficulty,
+        difficulty: Difficulty?,
         numPlayers: Int,
         partySize: Int,
         magicFind: Int
@@ -333,7 +333,7 @@ class DropCalcLargeIntegTests {
         val itemId: String,
         val itemQuality: ItemQuality,
         val monsterType: MonsterType,
-        val difficulty: Difficulty,
+        val difficulty: Difficulty?,
         val numPlayers: Int,
         val partySize: Int,
         val magicFind: Int,

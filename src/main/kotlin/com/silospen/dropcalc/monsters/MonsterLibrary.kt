@@ -101,7 +101,7 @@ class MonsterLibrary(val monsters: Set<Monster>, private val treasureClassLibrar
     }
 
     fun getMonsters(
-        monsterClassId: String,
+        monsterId: String,
         difficulty: Difficulty,
         monsterType: MonsterType,
         desecrated: Boolean,
@@ -109,7 +109,7 @@ class MonsterLibrary(val monsters: Set<Monster>, private val treasureClassLibrar
     ) =
         monstersByIdDifficultyType.getOrDefault(
             MonsterLibraryIdDifficultyTypeKey(
-                monsterClassId,
+                monsterId,
                 difficulty,
                 monsterType,
                 desecrated
@@ -125,7 +125,7 @@ class MonsterLibrary(val monsters: Set<Monster>, private val treasureClassLibrar
     private fun upgradeIfDesecrated(desecrated: Boolean, monster: Monster, desecratedLevel: Int): Monster =
         if (desecrated) upgradeMonsterToDesecrated(monster, desecratedLevel) else monster
 
-    fun upgradeMonsterToDesecrated(monster: Monster, characterLevel: Int): Monster {
+    private fun upgradeMonsterToDesecrated(monster: Monster, characterLevel: Int): Monster {
         val newMonsterLevel = monster.getDesecratedMonsterLevel(characterLevel)
         return monster.copy(
             level = newMonsterLevel,
@@ -138,8 +138,9 @@ class MonsterLibrary(val monsters: Set<Monster>, private val treasureClassLibrar
         )
     }
 
-    fun getMonsters(monsterType: MonsterType, desecrated: Boolean) =
+    fun getMonsters(monsterType: MonsterType, desecrated: Boolean, desecratedLevel: Int) =
         monstersByType.getOrDefault(MonsterLibraryTypeKey(monsterType, desecrated), emptySet())
+            .map { upgradeIfDesecrated(desecrated, it, desecratedLevel) }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

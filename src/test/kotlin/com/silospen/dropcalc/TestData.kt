@@ -205,6 +205,34 @@ val skeletonMonster = Monster(
     false,
     TreasureClassType.REGULAR
 )
+val fetishShamanMonster1 = Monster(
+    fetishShamanMonsterClass.id,
+    fetishShamanMonsterClass.id,
+    "FetishShaman-name",
+    fetishShamanMonsterClass,
+    area1Data,
+    NORMAL,
+    REGULAR,
+    fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
+    false,
+    22,
+    false,
+    TreasureClassType.REGULAR
+)
+val fetishShamanMonster2 = Monster(
+    fetishShamanMonsterClass.id,
+    fetishShamanMonsterClass.id,
+    "FetishShaman-name",
+    fetishShamanMonsterClass,
+    area2Data,
+    NORMAL,
+    REGULAR,
+    fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
+    false,
+    22,
+    false,
+    TreasureClassType.REGULAR
+)
 val monstersTestData = setOf(
     Monster(
         "skeleton1:Bonebreak",
@@ -291,34 +319,8 @@ val monstersTestData = setOf(
         true,
         TreasureClassType.UNIQUE
     ),
-    Monster(
-        fetishShamanMonsterClass.id,
-        fetishShamanMonsterClass.id,
-        "FetishShaman-name",
-        fetishShamanMonsterClass,
-        area1Data,
-        NORMAL,
-        REGULAR,
-        fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
-        false,
-        22,
-        false,
-        TreasureClassType.REGULAR
-    ),
-    Monster(
-        fetishShamanMonsterClass.id,
-        fetishShamanMonsterClass.id,
-        "FetishShaman-name",
-        fetishShamanMonsterClass,
-        area2Data,
-        NORMAL,
-        REGULAR,
-        fetishShamanMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
-        false,
-        22,
-        false,
-        TreasureClassType.REGULAR
-    ),
+    fetishShamanMonster1,
+    fetishShamanMonster2,
     Monster(
         fetishShamanMonsterClass.id,
         fetishShamanMonsterClass.id,

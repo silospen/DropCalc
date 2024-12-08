@@ -355,7 +355,7 @@ class VersionedApiResource(
                 desecratedLevel
             )
         } ?: monsterLibrary.getMonsters(
-            monsterType, desecrated
+            monsterType, desecrated, desecratedLevel
         )).asSequence()
             .flatMap { monster ->
                 val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
