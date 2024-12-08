@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
 import com.silospen.dropcalc.MonsterType.BOSS
+import com.silospen.dropcalc.MonsterType.REGULAR
 import com.silospen.dropcalc.areas.AreasLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassLibrary
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -40,6 +41,25 @@ class MonsterLibraryTest {
     @Test
     fun testConstruction() {
         assertEquals(MonsterLibrary(monstersTestData, treasureClassLibrary), createMonsterLibrary(treasureClassLibrary))
+    }
+
+    @Test
+    fun testMixOfDesecratedAndNon() {
+        val desecratedSkeleton = skeletonMonster.copy(id = "skeleton1d", isDesecrated = true)
+        val monsters = monstersTestData.toMutableSet().apply {
+            add(desecratedSkeleton)
+        }
+        val monsterLibrary = MonsterLibrary(monsters, treasureClassLibrary)
+        val baseExpectedMonsters =
+            monstersTestData.filter { it.id == fetishShamanMonsterClass.id && it.type == REGULAR }
+        assertEquals(
+            setOf(desecratedSkeleton) + baseExpectedMonsters,
+            monsterLibrary.getMonsters(REGULAR, true)
+        )
+        assertEquals(
+            setOf(skeletonMonster) + baseExpectedMonsters,
+            monsterLibrary.getMonsters(REGULAR, false)
+        )
     }
 
     @Test

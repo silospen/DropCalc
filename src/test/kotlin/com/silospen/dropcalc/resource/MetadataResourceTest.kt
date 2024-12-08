@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 
 class MetadataResourceTest {
-    val itemLibrary = ItemLibrary(
+    private val itemLibrary = ItemLibrary(
         emptyList(),
         emptyList(),
         listOf(
