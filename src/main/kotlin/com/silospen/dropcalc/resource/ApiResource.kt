@@ -260,7 +260,17 @@ class VersionedApiResource(
                     .asSequence()
                     .flatMap {
                         generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it, null)
-                        { item, monster, prob -> ApiResponseEntry(item.name, monster.area.name, prob) }
+                        { item, monster, prob ->
+                            if (item.onlyDropsFromMonsterClass != null && monster.monsterClass.id != item.onlyDropsFromMonsterClass) {
+                                null
+                            } else {
+                                ApiResponseEntry(
+                                    item.name,
+                                    monster.area.name,
+                                    prob
+                                )
+                            }
+                        }
                     }
             }
             .sortedBy { it.name }
@@ -274,7 +284,7 @@ class VersionedApiResource(
         monster: Monster,
         outcomeType: OutcomeType,
         itemToFilterTo: Item?,
-        responseGenerator: (Item, Monster, Double) -> ApiResponseEntry
+        responseGenerator: (Item, Monster, Double) -> ApiResponseEntry?
     ): Sequence<ApiResponseEntry> {
         val baseItem = outcomeType as BaseItem
         val eligibleItems = itemLibrary.getItemsForBaseId(itemQuality, baseItem.id)
@@ -292,7 +302,7 @@ class VersionedApiResource(
                 monster,
                 treasureClassPaths.getFinalProbability(outcomeType, additionalFactorGenerator).toDouble()
             )
-        }
+        }.filterNotNull()
     }
 
     private fun generateItemQualityResponse(
@@ -302,7 +312,7 @@ class VersionedApiResource(
         monster: Monster,
         outcomeType: OutcomeType,
         itemToFilterTo: Item?,
-        responseGenerator: (Item, Monster, Double) -> ApiResponseEntry
+        responseGenerator: (Item, Monster, Double) -> ApiResponseEntry?
     ): Sequence<ApiResponseEntry> {
         when (outcomeType) {
             is BaseItem -> {
@@ -325,7 +335,7 @@ class VersionedApiResource(
                         monster,
                         treasureClassPaths.getFinalProbability(outcomeType).toDouble()
                     )
-                )
+                ).filterNotNull()
             }
 
             else -> {
@@ -357,6 +367,7 @@ class VersionedApiResource(
         } ?: monsterLibrary.getMonsters(
             monsterType, desecrated, desecratedLevel
         )).asSequence()
+            .filter { item.onlyDropsFromMonsterClass == null || it.monsterClass.id == item.onlyDropsFromMonsterClass }
             .flatMap { monster ->
                 val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
                     monster.treasureClass

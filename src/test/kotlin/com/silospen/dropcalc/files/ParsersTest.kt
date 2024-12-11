@@ -66,9 +66,9 @@ class UniqueItemsLineParserTest {
     fun uniqueItemsParser() {
         val actual = parseItems(Version.V1_12)
         val expected = listOf(
-            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false),
-            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false),
-            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false),
+            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false, null),
+            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false, null),
+            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false, null),
         )
         assertEquals(expected, actual)
     }
@@ -77,10 +77,10 @@ class UniqueItemsLineParserTest {
     fun uniqueItemsParser_d2rEnabledFlag() {
         val actual = parseItems(Version.D2R_V1_0)
         val expected = listOf(
-            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false),
-            Item("The Gnasherv2", "The Gnasherv2-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, true),
-            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false),
-            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false),
+            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false, null),
+            Item("The Gnasherv2", "The Gnasherv2-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, true, null),
+            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false, null),
+            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false, null),
         )
         assertEquals(expected, actual)
     }
@@ -114,7 +114,17 @@ class SetItemsLineParserTest {
             )
         )
         val expected = listOf(
-            Item("Civerb's Ward", "Civerb's Ward-name", ItemQuality.SET, shieldBaseItem, 13, 7, false),
+            Item("Civerb's Ward", "Civerb's Ward-name", ItemQuality.SET, shieldBaseItem, 13, 7, false, null),
+            Item(
+                "Cow King's Hide",
+                "Cow King's Hide-name",
+                ItemQuality.SET,
+                shieldBaseItem,
+                13,
+                7,
+                false,
+                "hellbovine"
+            ),
         )
         assertEquals(expected, actual)
     }

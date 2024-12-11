@@ -87,6 +87,7 @@ data class Item(
     val level: Int,
     val rarity: Int,
     val onlyDropsDirectly: Boolean,
+    val onlyDropsFromMonsterClass: String?
 ) : OutcomeType
 
 data class BaseItem(

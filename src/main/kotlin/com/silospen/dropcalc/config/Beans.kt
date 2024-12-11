@@ -176,7 +176,8 @@ class ConfigLoader(private val version: Version) {
                     it,
                     it.level,
                     it.itemType.rarity,
-                    false
+                    false,
+                    null
                 )
             }
 

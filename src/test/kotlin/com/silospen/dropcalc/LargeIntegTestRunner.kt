@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong
 
 class LargeIntegTestRunner(private val jacksonObjectMapper: ObjectMapper) {
 
-    private val threadPool = Executors.newFixedThreadPool(6)
+    private val threadPool = Executors.newFixedThreadPool(8)
 
     fun <T : Any> generateTestData(file: File, dataGenerator: (Counter) -> List<Callable<T>>) {
         val counter = Counter()

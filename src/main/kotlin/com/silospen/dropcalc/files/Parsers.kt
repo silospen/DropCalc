@@ -122,7 +122,8 @@ class UniqueItemLineParser(
             baseItemsById.getValue(line["code"]),
             level,
             rarity,
-            !enabled
+            !enabled,
+            null
         )
     }
 }
@@ -146,7 +147,8 @@ class SetItemLineParser(
             baseItemsById.getValue(line["item"]),
             level,
             rarity,
-            false
+            false,
+            if ("Cow King's Leathers" == line["set"]) "hellbovine" else null
         )
     }
 }

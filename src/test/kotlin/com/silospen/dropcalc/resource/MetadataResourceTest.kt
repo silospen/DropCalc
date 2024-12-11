@@ -14,8 +14,8 @@ class MetadataResourceTest {
         emptyList(),
         emptyList(),
         listOf(
-            Item("item1", "item_1", ItemQuality.UNIQUE, armor1, 1, 1, false),
-            Item("item2", "item_2", ItemQuality.WHITE, weapon2, 1, 1, false)
+            Item("item1", "item_1", ItemQuality.UNIQUE, armor1, 1, 1, false, null),
+            Item("item2", "item_2", ItemQuality.WHITE, weapon2, 1, 1, false, null)
         )
     )
     private val metadataResource = VersionedMetadataResource(

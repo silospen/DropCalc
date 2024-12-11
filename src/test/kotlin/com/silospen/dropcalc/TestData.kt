@@ -376,7 +376,8 @@ val uniqueRing = Item(
     ring,
     10,
     3,
-    true
+    true,
+    null
 )
 
 val stubTranslations = object : Translations {
