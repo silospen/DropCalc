@@ -157,6 +157,15 @@ enum class ItemQuality {
     UNIQUE
 }
 
+enum class ApiItemQuality(val itemQuality: ItemQuality, val additionalFilter: (Item) -> Boolean = { true }) {
+    WHITE(ItemQuality.WHITE),
+    MAGIC(ItemQuality.MAGIC),
+    RARE(ItemQuality.RARE),
+    SET(ItemQuality.SET),
+    UNIQUE(ItemQuality.UNIQUE),
+    RUNE(ItemQuality.WHITE, { it.baseItem.itemType.id == "rune" })
+}
+
 enum class ItemVersion {
     NORMAL,
     EXCEPTIONAL,

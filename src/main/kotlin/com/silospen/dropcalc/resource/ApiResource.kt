@@ -69,7 +69,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int,
-        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("itemQuality", required = true) apiItemQuality: ApiItemQuality,
         @RequestParam("magicFind", required = true) magicFind: Int,
     ) = versionedApiResources[version]?.getMonster(
         monsterId,
@@ -77,7 +77,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         difficulty,
         nPlayers,
         partySize,
-        itemQuality,
+        apiItemQuality,
         magicFind,
         false,
         0
@@ -91,7 +91,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int,
-        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("itemQuality", required = true) apiItemQuality: ApiItemQuality,
         @RequestParam("magicFind", required = true) magicFind: Int,
         @RequestParam("decMode", required = true) decimalMode: Boolean,
         @RequestParam("desecrated", required = true) desecrated: Boolean,
@@ -103,7 +103,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
             difficulty,
             nPlayers,
             partySize,
-            itemQuality,
+            apiItemQuality,
             magicFind,
             desecrated,
             desecratedLevel
@@ -115,7 +115,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("version", required = true) version: Version,
         @RequestParam("itemId", required = true) itemId: String,
         @RequestParam("monsterType", required = true) monsterType: MonsterType,
-        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("itemQuality", required = true) apiItemQuality: ApiItemQuality,
         @RequestParam("difficulty", required = false) difficulty: Difficulty?,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int,
@@ -123,7 +123,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
     ) = versionedApiResources[version]?.getItemProbabilities(
         itemId,
         monsterType,
-        itemQuality,
+        apiItemQuality,
         difficulty,
         nPlayers,
         partySize,
@@ -137,7 +137,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("version", required = true) version: Version,
         @RequestParam("itemId", required = true) itemId: String,
         @RequestParam("monsterType", required = true) monsterType: MonsterType,
-        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("itemQuality", required = true) apiItemQuality: ApiItemQuality,
         @RequestParam("difficulty", required = false) difficulty: Difficulty?,
         @RequestParam("players", required = true) nPlayers: Int,
         @RequestParam("party", required = true) partySize: Int,
@@ -149,7 +149,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         versionedApiResources[version]?.getItemProbabilities(
             itemId,
             monsterType,
-            itemQuality,
+            apiItemQuality,
             difficulty,
             nPlayers,
             partySize,
@@ -239,7 +239,7 @@ class VersionedApiResource(
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
-        itemQuality: ItemQuality,
+        apiItemQuality: ApiItemQuality,
         magicFind: Int,
         desecrated: Boolean,
         desecratedLevel: Int
@@ -259,9 +259,18 @@ class VersionedApiResource(
                 treasureClassPaths
                     .asSequence()
                     .flatMap {
-                        generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it, null)
+                        generateItemQualityResponse(
+                            apiItemQuality.itemQuality,
+                            magicFind,
+                            treasureClassPaths,
+                            monster,
+                            it,
+                            null
+                        )
                         { item, monster, prob ->
-                            if (item.onlyDropsFromMonsterClass != null && monster.monsterClass.id != item.onlyDropsFromMonsterClass) {
+                            if ((item.onlyDropsFromMonsterClass != null && monster.monsterClass.id != item.onlyDropsFromMonsterClass) ||
+                                !apiItemQuality.additionalFilter(item)
+                            ) {
                                 null
                             } else {
                                 ApiResponseEntry(
@@ -347,7 +356,7 @@ class VersionedApiResource(
     fun getItemProbabilities(
         itemId: String,
         monsterType: MonsterType,
-        itemQuality: ItemQuality,
+        apiItemQuality: ApiItemQuality,
         difficulty: Difficulty?,
         nPlayers: Int,
         partySize: Int,
@@ -355,7 +364,9 @@ class VersionedApiResource(
         desecrated: Boolean,
         desecratedLevel: Int
     ): ApiResponse {
-        val item: Item = itemLibrary.getItem(itemQuality, itemId) ?: return emptyApiResponse
+        val item: Item =
+            itemLibrary.getItem(apiItemQuality.itemQuality, itemId)?.takeIf { apiItemQuality.additionalFilter(it) }
+                ?: return emptyApiResponse
         val treasureClassPathsCache = mutableMapOf<String, TreasureClassPaths>()
         return ApiResponse((difficulty?.let {
             monsterLibrary.getMonsters(
@@ -383,7 +394,14 @@ class VersionedApiResource(
                 treasureClassPaths
                     .asSequence()
                     .flatMap {
-                        generateItemQualityResponse(itemQuality, magicFind, treasureClassPaths, monster, it, item)
+                        generateItemQualityResponse(
+                            apiItemQuality.itemQuality,
+                            magicFind,
+                            treasureClassPaths,
+                            monster,
+                            it,
+                            item
+                        )
                         { _, monster, prob ->
                             ApiResponseEntry(
                                 "${monster.name} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",

@@ -59,7 +59,7 @@ class DropCalcIntegTest {
                 Difficulty.valueOf(parts[2]),
                 parts[3].toInt(),
                 parts[4].toInt(),
-                ItemQuality.valueOf(parts[5]),
+                ApiItemQuality.valueOf(parts[5]),
                 parts[6].toInt(),
                 file,
                 mode
@@ -77,7 +77,7 @@ class DropCalcIntegTest {
                 if (parts[2] == "null") null else Difficulty.valueOf(parts[2]),
                 parts[3].toInt(),
                 parts[4].toInt(),
-                ItemQuality.valueOf(parts[5]),
+                ApiItemQuality.valueOf(parts[5]),
                 parts[6].toInt(),
                 file,
                 mode
@@ -105,7 +105,7 @@ class DropCalcIntegTest {
         difficulty: Difficulty?,
         nPlayers: Int,
         partySize: Int,
-        itemQuality: ItemQuality,
+        itemQuality: ApiItemQuality,
         magicFind: Int,
         file: File,
         mode: Mode,
@@ -135,7 +135,7 @@ class DropCalcIntegTest {
         difficulty: Difficulty,
         nPlayers: Int,
         partySize: Int,
-        itemQuality: ItemQuality,
+        apiItemQuality: ApiItemQuality,
         magicFind: Int,
         file: File,
         mode: Mode,
@@ -150,12 +150,12 @@ class DropCalcIntegTest {
                 difficulty,
                 nPlayers,
                 partySize,
-                itemQuality,
+                apiItemQuality,
                 magicFind
             )
         },
         this::runAtomicTcAsserts,
-        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind",
+        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $apiItemQuality, $magicFind",
         mode,
     )
 

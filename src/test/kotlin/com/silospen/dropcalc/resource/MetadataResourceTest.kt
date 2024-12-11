@@ -116,19 +116,19 @@ class MetadataResourceTest {
     fun items() {
         assertEquals(
             emptyList<MetadataResponse>(),
-            metadataResource.getItems(ItemQuality.UNIQUE, ItemVersion.ELITE)
+            metadataResource.getItems(ApiItemQuality.UNIQUE, ItemVersion.ELITE)
         )
         assertEquals(
             listOf(MetadataResponse("item_2", "item2")),
-            metadataResource.getItems(ItemQuality.WHITE, ItemVersion.ELITE)
+            metadataResource.getItems(ApiItemQuality.WHITE, ItemVersion.ELITE)
         )
         assertEquals(
             listOf(MetadataResponse("item_2", "item2")),
-            metadataResource.getItems(ItemQuality.WHITE, null)
+            metadataResource.getItems(ApiItemQuality.WHITE, null)
         )
         assertEquals(
             emptyList<MetadataResponse>(),
-            metadataResource.getItems(ItemQuality.MAGIC, null)
+            metadataResource.getItems(ApiItemQuality.MAGIC, null)
         )
     }
 }

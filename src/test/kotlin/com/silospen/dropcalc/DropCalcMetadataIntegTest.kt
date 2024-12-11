@@ -57,7 +57,7 @@ class DropCalcMetadataIntegTest {
         largeIntegTestRunner.runTests(itemsMetadataTestFile, { expected ->
             getItemMetadataExpectation(
                 expected.version,
-                expected.itemQuality,
+                expected.apiItemQuality,
                 expected.itemVersion,
             )
         }, object : TypeReference<List<ItemsMetadataTestDataExpectation>>() {})
@@ -87,7 +87,7 @@ class DropCalcMetadataIntegTest {
     private fun generateItemsMetadataTestDataInputs(counter: Counter): List<Callable<ItemsMetadataTestDataExpectation>> {
         val result = mutableListOf<Callable<ItemsMetadataTestDataExpectation>>()
         for (version in Version.values()) {
-            for (itemQuality in ItemQuality.values()) {
+            for (itemQuality in ApiItemQuality.values()) {
                 for (itemVersion in ItemVersion.values()) {
                     result.add(
                         Callable {
@@ -107,15 +107,15 @@ class DropCalcMetadataIntegTest {
 
     private fun getItemMetadataExpectation(
         version: Version,
-        itemQuality: ItemQuality,
+        apiItemQuality: ApiItemQuality,
         itemVersion: ItemVersion
     ) = ItemsMetadataTestDataExpectation(
         version,
-        itemQuality,
+        apiItemQuality,
         itemVersion,
         metadataResource.getItems(
             version,
-            itemQuality,
+            apiItemQuality,
             itemVersion,
         )
     )
@@ -192,7 +192,7 @@ class DropCalcMetadataIntegTest {
 
     data class ItemsMetadataTestDataExpectation(
         val version: Version,
-        val itemQuality: ItemQuality,
+        val apiItemQuality: ApiItemQuality,
         val itemVersion: ItemVersion,
         val metadataResponse: List<MetadataResponse>
     )

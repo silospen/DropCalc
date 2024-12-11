@@ -28,9 +28,9 @@ class MetadataResource(private val versionedMetadataResources: Map<Version, Vers
     @GetMapping("items")
     fun getItems(
         @RequestParam("version", required = true) version: Version,
-        @RequestParam("itemQuality", required = true) itemQuality: ItemQuality,
+        @RequestParam("itemQuality", required = true) apiItemQuality: ApiItemQuality,
         @RequestParam("itemVersion", required = false) itemVersion: ItemVersion?,
-    ) = versionedMetadataResources[version]?.getItems(itemQuality, itemVersion) ?: emptyList()
+    ) = versionedMetadataResources[version]?.getItems(apiItemQuality, itemVersion) ?: emptyList()
 
     @GetMapping("versions")
     fun getVersions() = versionsResponses
@@ -47,21 +47,29 @@ class VersionedMetadataResource(
         }.mapKeys { Triple(it.key.difficulty, it.key.type, it.key.desecrated) }
 
     private val itemsResponsesByQualityVersion =
-        ImmutableTable.builder<ItemQuality, ItemVersion, Set<MetadataResponse>>().apply {
+        ImmutableTable.builder<ApiItemQuality, ItemVersion, Set<MetadataResponse>>().apply {
             val virtualTreasureClassNames = treasureClassLibrary.treasureClasses.asSequence().flatMap { it.outcomes }
                 .map { it.outcomeType }
                 .filter { it is VirtualTreasureClass }
                 .map { it.name }
                 .toSet()
 
-            itemLibrary.items
-                .filter { !it.onlyDropsDirectly || virtualTreasureClassNames.contains(it.id) }
-                .groupBy({ it.quality to it.baseItem.itemVersion }) { MetadataResponse(it.name, it.id) }
-                .mapValues { it.value.toSet() }
-                .forEach { (k, v) ->
-                    this.put(k.first, k.second, v)
+            val associateWith = ApiItemQuality.values().associateWith {
+                retrieveItems(virtualTreasureClassNames, it)
+            }
+            associateWith.forEach { (itemQuality, it) ->
+                it.forEach { (version, metadataResponses) ->
+                    this.put(itemQuality, version, metadataResponses)
                 }
+            }
         }.build()
+
+    private fun retrieveItems(virtualTreasureClassNames: Set<String>, apiItemQuality: ApiItemQuality) =
+        itemLibrary.items
+            .filter { !it.onlyDropsDirectly || virtualTreasureClassNames.contains(it.id) }
+            .filter { apiItemQuality.itemQuality == it.quality && apiItemQuality.additionalFilter(it) }
+            .groupBy({ it.baseItem.itemVersion }) { MetadataResponse(it.name, it.id) }
+            .mapValues { it.value.toSet() }
 
     fun getMonsters(
         difficulty: Difficulty,
@@ -72,11 +80,15 @@ class VersionedMetadataResource(
     }
 
     fun getItems(
-        itemQuality: ItemQuality,
+        apiItemQuality: ApiItemQuality,
         itemVersion: ItemVersion?,
     ): List<MetadataResponse> =
-        (if (itemVersion == null) itemsResponsesByQualityVersion.row(itemQuality).values.flatten() else (
-                itemsResponsesByQualityVersion.getOrDefault(itemQuality, itemVersion, emptySet()))).sortedBy { it.name }
+        (if (itemVersion == null) itemsResponsesByQualityVersion.row(apiItemQuality).values.flatten() else (
+                itemsResponsesByQualityVersion.getOrDefault(
+                    apiItemQuality,
+                    itemVersion,
+                    emptySet()
+                ))).sortedBy { it.name }
 }
 
 data class MetadataResponse(

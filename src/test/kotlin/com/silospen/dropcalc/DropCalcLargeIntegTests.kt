@@ -40,7 +40,7 @@ class DropCalcLargeIntegTests {
             getItemExpectation(
                 expected.version,
                 expected.itemId,
-                expected.itemQuality,
+                expected.apiItemQuality,
                 expected.monsterType,
                 expected.difficulty,
                 expected.numPlayers,
@@ -60,7 +60,7 @@ class DropCalcLargeIntegTests {
                 expected.difficulty,
                 expected.numPlayers,
                 expected.partySize,
-                expected.itemQuality,
+                expected.apiItemQuality,
                 expected.magicFind
             )
         }, object : TypeReference<List<MonstersTestDataExpectation>>() {})
@@ -140,7 +140,7 @@ class DropCalcLargeIntegTests {
                     for (difficulty in Difficulty.values()) {
                         for (nPlayers in listOf(7)) {
                             for (nGroup in listOf(5)) {
-                                for (itemQuality in ItemQuality.values()) {
+                                for (apiItemQuality in ApiItemQuality.values()) {
                                     for (magicFind in listOf(0, 975)) {
                                         result.add(
                                             Callable {
@@ -152,7 +152,7 @@ class DropCalcLargeIntegTests {
                                                     difficulty,
                                                     nPlayers,
                                                     nGroup,
-                                                    itemQuality,
+                                                    apiItemQuality,
                                                     magicFind
                                                 )
                                             }
@@ -173,8 +173,9 @@ class DropCalcLargeIntegTests {
         for (version in Version.values()) {
             val itemLibrary = versionedMetadataResources.getValue(version).itemLibrary
             for (monsterType in MonsterType.values()) {
-                for (itemQuality in ItemQuality.values()) {
-                    for (itemId in itemLibrary.items.asSequence().filter { it.quality == itemQuality }.map { it.id }
+                for (apiItemQuality in ApiItemQuality.values()) {
+                    for (itemId in itemLibrary.items.asSequence().filter { it.quality == apiItemQuality.itemQuality }
+                        .filter { apiItemQuality.additionalFilter(it) }.map { it.id }
                         .distinct()) {
                         for (difficulty in listOf<Difficulty?>(null) + Difficulty.values()) {
                             for (nPlayers in listOf(7)) {
@@ -186,7 +187,7 @@ class DropCalcLargeIntegTests {
                                                 getItemExpectation(
                                                     version,
                                                     itemId,
-                                                    itemQuality,
+                                                    apiItemQuality,
                                                     monsterType,
                                                     difficulty,
                                                     nPlayers,
@@ -209,7 +210,7 @@ class DropCalcLargeIntegTests {
     private fun getItemExpectation(
         version: Version,
         itemId: String,
-        itemQuality: ItemQuality,
+        apiItemQuality: ApiItemQuality,
         monsterType: MonsterType,
         difficulty: Difficulty?,
         numPlayers: Int,
@@ -218,7 +219,7 @@ class DropCalcLargeIntegTests {
     ) = ItemsTestDataExpectation(
         version,
         itemId,
-        itemQuality,
+        apiItemQuality,
         monsterType,
         difficulty,
         numPlayers,
@@ -229,7 +230,7 @@ class DropCalcLargeIntegTests {
                 version,
                 itemId,
                 monsterType,
-                itemQuality,
+                apiItemQuality,
                 difficulty,
                 numPlayers,
                 partySize,
@@ -245,7 +246,7 @@ class DropCalcLargeIntegTests {
         difficulty: Difficulty,
         numPlayers: Int,
         partySize: Int,
-        itemQuality: ItemQuality,
+        apiItemQuality: ApiItemQuality,
         magicFind: Int
     ) = MonstersTestDataExpectation(
         version,
@@ -254,7 +255,7 @@ class DropCalcLargeIntegTests {
         difficulty,
         numPlayers,
         partySize,
-        itemQuality,
+        apiItemQuality,
         magicFind,
         generateHash(
             apiResource.getMonster(
@@ -264,7 +265,7 @@ class DropCalcLargeIntegTests {
                 difficulty,
                 numPlayers,
                 partySize,
-                itemQuality,
+                apiItemQuality,
                 magicFind
             )
         )
@@ -323,7 +324,7 @@ class DropCalcLargeIntegTests {
         val difficulty: Difficulty,
         val numPlayers: Int,
         val partySize: Int,
-        val itemQuality: ItemQuality,
+        val apiItemQuality: ApiItemQuality,
         val magicFind: Int,
         val hash: String
     )
@@ -331,7 +332,7 @@ class DropCalcLargeIntegTests {
     data class ItemsTestDataExpectation(
         val version: Version,
         val itemId: String,
-        val itemQuality: ItemQuality,
+        val apiItemQuality: ApiItemQuality,
         val monsterType: MonsterType,
         val difficulty: Difficulty?,
         val numPlayers: Int,
