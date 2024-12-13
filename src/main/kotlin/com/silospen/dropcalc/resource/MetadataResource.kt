@@ -42,9 +42,20 @@ class VersionedMetadataResource(
     treasureClassLibrary: TreasureClassLibrary,
 ) {
     private val monstersResponsesByDifficultyType =
-        monsterLibrary.monstersByDifficultyType.mapValues { (_, monsters) ->
-            monsters.map { MetadataResponse(it.name, it.id) }.toSet().sortedBy { it.name }
-        }.mapKeys { Triple(it.key.difficulty, it.key.type, it.key.desecrated) }
+        Difficulty.values().flatMap { difficulty ->
+            MonsterType.values().flatMap { type ->
+                listOf(true, false).map { desecrated ->
+                    Triple(difficulty, type, desecrated) to monsterLibrary.getMonsters(
+                        desecrated,
+                        0,
+                        difficulty = difficulty,
+                        monsterType = type
+                    ).map { MetadataResponse(it.name, it.id) }
+                        .toSet()
+                        .sortedBy { it.name }
+                }
+            }
+        }.toMap()
 
     private val itemsResponsesByQualityVersion =
         ImmutableTable.builder<ApiItemQuality, ItemVersion, Set<MetadataResponse>>().apply {

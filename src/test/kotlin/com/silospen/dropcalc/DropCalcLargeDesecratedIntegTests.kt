@@ -103,7 +103,7 @@ class DropCalcLargeDesecratedIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monster in monsterLibrary.getMonsters(monsterType, true, 0)) {
+                for (monster in monsterLibrary.getMonsters(true, 0, monsterType = monsterType)) {
                     for ((nPlayers, nGroup) in listOf(3 to 5, 3 to 8, 7 to 8)) {
                         for (desecratedLevel in listOf(0, 45, 99)) {
                             result.add(
@@ -133,7 +133,7 @@ class DropCalcLargeDesecratedIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monster in monsterLibrary.getMonsters(monsterType, true, 0)) {
+                for (monster in monsterLibrary.getMonsters(true, 0, monsterType = monsterType)) {
                     for ((nPlayers, nGroup) in listOf(7 to 5)) {
                         for (apiItemQuality in ApiItemQuality.values()) {
                             for (magicFind in listOf(0, 975)) {

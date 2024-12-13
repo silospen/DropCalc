@@ -103,7 +103,8 @@ class DropCalcLargeIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monsterId in monsterLibrary.getMonsters(monsterType, false, 0).asSequence().map { it.id }
+                for (monsterId in monsterLibrary.getMonsters(false, 0, monsterType = monsterType).asSequence()
+                    .map { it.id }
                     .distinct()) {
                     for (difficulty in Difficulty.values()) {
                         for (nPlayers in listOf(3, 7)) {
@@ -135,7 +136,8 @@ class DropCalcLargeIntegTests {
         for (version in Version.values()) {
             val monsterLibrary = versionedMetadataResources.getValue(version).monsterLibrary
             for (monsterType in MonsterType.values()) {
-                for (monsterId in monsterLibrary.getMonsters(monsterType, false, 0).asSequence().map { it.id }
+                for (monsterId in monsterLibrary.getMonsters(false, 0, monsterType = monsterType).asSequence()
+                    .map { it.id }
                     .distinct()) {
                     for (difficulty in Difficulty.values()) {
                         for (nPlayers in listOf(7)) {

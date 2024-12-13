@@ -59,11 +59,11 @@ class MonsterLibraryTest {
             monstersTestData.filter { it.id == fetishShamanMonsterClass.id && it.type == REGULAR }
         assertEquals(
             listOf(desecratedSkeleton) + baseExpectedMonsters,
-            monsterLibrary.getMonsters(REGULAR, true, 0)
+            monsterLibrary.getMonsters(true, 0, monsterType = REGULAR)
         )
         assertEquals(
             listOf(skeletonMonster) + baseExpectedMonsters,
-            monsterLibrary.getMonsters(REGULAR, false, 0)
+            monsterLibrary.getMonsters(false, 0, monsterType = REGULAR)
         )
     }
 
@@ -222,19 +222,19 @@ class MonsterLibraryTest {
         )
         assertEquals(
             expectedDesecrated,
-            monsterLibrary.getMonsters(NORMAL, REGULAR, true, 99)
+            monsterLibrary.getMonsters(true, 99, difficulty = NORMAL, monsterType = REGULAR)
         )
         assertEquals(
             expectedDesecrated,
-            monsterLibrary.getMonsters(REGULAR, true, 99)
+            monsterLibrary.getMonsters(true, 99, monsterType = REGULAR)
         )
         assertEquals(
             listOf(expectedDesecratedSkeletonMonster),
-            monsterLibrary.getMonsters("skeleton1d", NORMAL, REGULAR, true, 99)
+            monsterLibrary.getMonsters(true, 99, monsterId = "skeleton1d", difficulty = NORMAL, REGULAR)
         )
         assertEquals(
             emptyList<Monster>(),
-            monsterLibrary.getMonsters("skeleton1", NORMAL, REGULAR, true, 99)
+            monsterLibrary.getMonsters(true, 99, monsterId = "skeleton1", difficulty = NORMAL, monsterType = REGULAR)
         )
 
 
@@ -245,19 +245,19 @@ class MonsterLibraryTest {
         )
         assertEquals(
             expectedNormal,
-            monsterLibrary.getMonsters(NORMAL, REGULAR, false, 99)
+            monsterLibrary.getMonsters(false, 99, difficulty = NORMAL, monsterType = REGULAR)
         )
         assertEquals(
             expectedNormal,
-            monsterLibrary.getMonsters(REGULAR, false, 99)
+            monsterLibrary.getMonsters(false, 99, monsterType = REGULAR)
         )
         assertEquals(
             emptyList<Monster>(),
-            monsterLibrary.getMonsters("skeleton1d", NORMAL, REGULAR, false, 99)
+            monsterLibrary.getMonsters(false, 99, monsterId = "skeleton1d", difficulty = NORMAL, monsterType = REGULAR)
         )
         assertEquals(
             listOf(expectedRegularSkeletonMonster),
-            monsterLibrary.getMonsters("skeleton1", NORMAL, REGULAR, false, 99)
+            monsterLibrary.getMonsters(false, 99, monsterId = "skeleton1", difficulty = NORMAL, monsterType = REGULAR)
         )
     }
 }

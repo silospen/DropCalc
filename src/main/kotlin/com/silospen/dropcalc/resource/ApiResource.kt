@@ -114,7 +114,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
     fun getItemProbabilities(
         @RequestParam("version", required = true) version: Version,
         @RequestParam("itemId", required = true) itemId: String,
-        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+        @RequestParam("monsterType", required = false) monsterType: MonsterType?,
         @RequestParam("itemQuality", required = true) apiItemQuality: ApiItemQuality,
         @RequestParam("difficulty", required = false) difficulty: Difficulty?,
         @RequestParam("players", required = true) nPlayers: Int,
@@ -136,7 +136,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
     fun getTabularItemProbabilities(
         @RequestParam("version", required = true) version: Version,
         @RequestParam("itemId", required = true) itemId: String,
-        @RequestParam("monsterType", required = true) monsterType: MonsterType,
+        @RequestParam("monsterType", required = false) monsterType: MonsterType?,
         @RequestParam("itemQuality", required = true) apiItemQuality: ApiItemQuality,
         @RequestParam("difficulty", required = false) difficulty: Difficulty?,
         @RequestParam("players", required = true) nPlayers: Int,
@@ -193,7 +193,7 @@ class VersionedApiResource(
         desecrated: Boolean,
         desecratedLevel: Int
     ): ApiResponse {
-        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType, desecrated, desecratedLevel)
+        val monsters = monsterLibrary.getMonsters(desecrated, desecratedLevel, monsterId, difficulty, monsterType)
         return ApiResponse(
             monsters
                 .asSequence()
@@ -244,7 +244,7 @@ class VersionedApiResource(
         desecrated: Boolean,
         desecratedLevel: Int
     ): ApiResponse {
-        val monsters = monsterLibrary.getMonsters(monsterId, difficulty, monsterType, desecrated, desecratedLevel)
+        val monsters = monsterLibrary.getMonsters(desecrated, desecratedLevel, monsterId, difficulty, monsterType)
         return ApiResponse(monsters
             .asSequence()
             .flatMap { monster ->
@@ -355,7 +355,7 @@ class VersionedApiResource(
 
     fun getItemProbabilities(
         itemId: String,
-        monsterType: MonsterType,
+        monsterType: MonsterType?,
         apiItemQuality: ApiItemQuality,
         difficulty: Difficulty?,
         nPlayers: Int,
@@ -368,60 +368,54 @@ class VersionedApiResource(
             itemLibrary.getItem(apiItemQuality.itemQuality, itemId)?.takeIf { apiItemQuality.additionalFilter(it) }
                 ?: return emptyApiResponse
         val treasureClassPathsCache = mutableMapOf<String, TreasureClassPaths>()
-        return ApiResponse((difficulty?.let {
-            monsterLibrary.getMonsters(
-                difficulty,
-                monsterType,
-                desecrated,
-                desecratedLevel
-            )
-        } ?: monsterLibrary.getMonsters(
-            monsterType, desecrated, desecratedLevel
-        )).asSequence()
-            .filter { item.onlyDropsFromMonsterClass == null || it.monsterClass.id == item.onlyDropsFromMonsterClass }
-            .flatMap { monster ->
-                val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
-                    monster.treasureClass
-                ) {
-                    treasureClassCalculator.getLeafOutcomes(
-                        monster.treasureClass,
-                        VIRTUAL,
-                        if (item.onlyDropsDirectly) item else item.baseItem,
-                        nPlayers,
-                        partySize
-                    )
-                }
-                treasureClassPaths
-                    .asSequence()
-                    .flatMap {
-                        generateItemQualityResponse(
-                            apiItemQuality.itemQuality,
-                            magicFind,
-                            treasureClassPaths,
-                            monster,
-                            it,
-                            item
+        val monsters =
+            monsterLibrary.getMonsters(desecrated, desecratedLevel, difficulty = difficulty, monsterType = monsterType)
+        return ApiResponse(
+            monsters.asSequence()
+                .filter { item.onlyDropsFromMonsterClass == null || it.monsterClass.id == item.onlyDropsFromMonsterClass }
+                .flatMap { monster ->
+                    val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
+                        monster.treasureClass
+                    ) {
+                        treasureClassCalculator.getLeafOutcomes(
+                            monster.treasureClass,
+                            VIRTUAL,
+                            if (item.onlyDropsDirectly) item else item.baseItem,
+                            nPlayers,
+                            partySize
                         )
-                        { _, monster, prob ->
-                            ApiResponseEntry(
-                                "${monster.name} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
-                                monster.area.name,
-                                prob
-                            )
-                        }
                     }
-            }
-            .toSet()
-            .sortedBy { it.name }
-            .toList(), ItemApiResponseContext(
-            item.id,
-            item.level,
-            item.baseItem.id,
-            item.baseItem.name,
-            item.baseItem.itemType.id,
-            item.baseItem.itemType.name,
-            item.baseItem.level,
-        ))
+                    treasureClassPaths
+                        .asSequence()
+                        .flatMap {
+                            generateItemQualityResponse(
+                                apiItemQuality.itemQuality,
+                                magicFind,
+                                treasureClassPaths,
+                                monster,
+                                it,
+                                item
+                            )
+                            { _, monster, prob ->
+                                ApiResponseEntry(
+                                    "${monster.name} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
+                                    monster.area.name,
+                                    prob
+                                )
+                            }
+                        }
+                }
+                .toSet()
+                .sortedBy { it.name }
+                .toList(), ItemApiResponseContext(
+                item.id,
+                item.level,
+                item.baseItem.id,
+                item.baseItem.name,
+                item.baseItem.itemType.id,
+                item.baseItem.itemType.name,
+                item.baseItem.level,
+            ))
     }
 }
 

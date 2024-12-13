@@ -6,37 +6,51 @@ import com.silospen.dropcalc.MonsterType.SUPERUNIQUE
 import com.silospen.dropcalc.areas.AreasLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassLibrary
 
-data class MonsterLibraryTypeKey(val type: MonsterType, val desecrated: Boolean)
-data class MonsterLibraryDifficultyTypeKey(val difficulty: Difficulty, val type: MonsterType, val desecrated: Boolean)
-data class MonsterLibraryIdDifficultyTypeKey(
-    val id: String,
-    val difficulty: Difficulty,
-    val type: MonsterType,
+data class MonsterLibraryKey(
+    val id: String?,
+    val difficulty: Difficulty?,
+    val type: MonsterType?,
     val desecrated: Boolean
 )
 
 class MonsterLibrary(val monsters: Set<Monster>, private val treasureClassLibrary: TreasureClassLibrary) {
-    private val monstersByType: Map<MonsterLibraryTypeKey, Set<Monster>> =
-        constructMonsterMap { monster, isDesecrated -> MonsterLibraryTypeKey(monster.type, isDesecrated) }
-    val monstersByDifficultyType: Map<MonsterLibraryDifficultyTypeKey, Set<Monster>> =
-        constructMonsterMap { monster, isDesecrated ->
-            MonsterLibraryDifficultyTypeKey(
-                monster.difficulty,
-                monster.type,
-                isDesecrated
-            )
-        }
-    private val monstersByIdDifficultyType: Map<MonsterLibraryIdDifficultyTypeKey, Set<Monster>> =
-        constructMonsterMap { monster, isDesecrated ->
-            MonsterLibraryIdDifficultyTypeKey(
-                monster.id,
-                monster.difficulty,
-                monster.type,
-                isDesecrated
-            )
-        }
 
-    private fun <T> constructMonsterMap(keyCreator: (Monster, Boolean) -> T): Map<T, Set<Monster>> {
+    private val monstersMap =
+        constructMonsterMap { _, isDesecrated -> MonsterLibraryKey(null, null, null, isDesecrated) } +
+                constructMonsterMap { monster, isDesecrated ->
+                    MonsterLibraryKey(
+                        null,
+                        null,
+                        monster.type,
+                        isDesecrated
+                    )
+                } +
+                constructMonsterMap { monster, isDesecrated ->
+                    MonsterLibraryKey(
+                        null,
+                        monster.difficulty,
+                        null,
+                        isDesecrated
+                    )
+                } +
+                constructMonsterMap { monster, isDesecrated ->
+                    MonsterLibraryKey(
+                        null,
+                        monster.difficulty,
+                        monster.type,
+                        isDesecrated
+                    )
+                } +
+                constructMonsterMap { monster, isDesecrated ->
+                    MonsterLibraryKey(
+                        monster.id,
+                        monster.difficulty,
+                        monster.type,
+                        isDesecrated
+                    )
+                }
+
+    private fun constructMonsterMap(keyCreator: (Monster, Boolean) -> MonsterLibraryKey): Map<MonsterLibraryKey, Set<Monster>> {
         val nonDesecratedSpawns = monsters.filter { !it.isDesecrated }.toSet()
 
         val desecratedSpawnsWithoutIdAndName = monsters
@@ -101,26 +115,18 @@ class MonsterLibrary(val monsters: Set<Monster>, private val treasureClassLibrar
     }
 
     fun getMonsters(
-        monsterId: String,
-        difficulty: Difficulty,
-        monsterType: MonsterType,
         desecrated: Boolean,
-        desecratedLevel: Int
-    ) =
-        monstersByIdDifficultyType.getOrDefault(
-            MonsterLibraryIdDifficultyTypeKey(
-                monsterId,
-                difficulty,
-                monsterType,
-                desecrated
-            ), emptySet()
-        ).map { upgradeIfDesecrated(desecrated, it, desecratedLevel) }
-
-    fun getMonsters(difficulty: Difficulty, monsterType: MonsterType, desecrated: Boolean, desecratedLevel: Int) =
-        monstersByDifficultyType.getOrDefault(
-            MonsterLibraryDifficultyTypeKey(difficulty, monsterType, desecrated),
-            emptySet()
-        ).map { upgradeIfDesecrated(desecrated, it, desecratedLevel) }
+        desecratedLevel: Int,
+        monsterId: String? = null,
+        difficulty: Difficulty? = null,
+        monsterType: MonsterType? = null,
+    ): List<Monster> = monstersMap[MonsterLibraryKey(monsterId, difficulty, monsterType, desecrated)]?.map {
+        upgradeIfDesecrated(
+            desecrated,
+            it,
+            desecratedLevel
+        )
+    } ?: emptyList()
 
     private fun upgradeIfDesecrated(desecrated: Boolean, monster: Monster, desecratedLevel: Int): Monster =
         if (desecrated) upgradeMonsterToDesecrated(monster, desecratedLevel) else monster
@@ -137,10 +143,6 @@ class MonsterLibrary(val monsters: Set<Monster>, private val treasureClassLibrar
             )
         )
     }
-
-    fun getMonsters(monsterType: MonsterType, desecrated: Boolean, desecratedLevel: Int) =
-        monstersByType.getOrDefault(MonsterLibraryTypeKey(monsterType, desecrated), emptySet())
-            .map { upgradeIfDesecrated(desecrated, it, desecratedLevel) }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
