@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.ItemQuality.SET
 import com.silospen.dropcalc.ItemQuality.UNIQUE
+import com.silospen.dropcalc.TreasureClassType.QUEST
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
@@ -129,7 +130,8 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         partySize,
         magicFind,
         false,
-        0
+        0,
+        true
     )?.entries ?: emptyList()
 
     @GetMapping("/tabularItem")
@@ -145,6 +147,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("decMode", required = true) decimalMode: Boolean,
         @RequestParam("desecrated", required = true) desecrated: Boolean,
         @RequestParam("desecratedLevel", required = true) desecratedLevel: Int,
+        @RequestParam("includeQuest", required = false) includeQuest: Boolean?,
     ) = toTable(
         versionedApiResources[version]?.getItemProbabilities(
             itemId,
@@ -155,7 +158,8 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
             partySize,
             magicFind,
             desecrated,
-            desecratedLevel
+            desecratedLevel,
+            includeQuest ?: true
         ), decimalMode
     )
 
@@ -362,7 +366,8 @@ class VersionedApiResource(
         partySize: Int,
         magicFind: Int,
         desecrated: Boolean,
-        desecratedLevel: Int
+        desecratedLevel: Int,
+        includeQuest: Boolean
     ): ApiResponse {
         val item: Item =
             itemLibrary.getItem(apiItemQuality.itemQuality, itemId)?.takeIf { apiItemQuality.additionalFilter(it) }
@@ -373,6 +378,7 @@ class VersionedApiResource(
         return ApiResponse(
             monsters.asSequence()
                 .filter { item.onlyDropsFromMonsterClass == null || it.monsterClass.id == item.onlyDropsFromMonsterClass }
+                .filter { includeQuest || it.treasureClassType != QUEST }
                 .flatMap { monster ->
                     val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
                         monster.treasureClass

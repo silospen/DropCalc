@@ -228,7 +228,8 @@ class DropCalcLargeDesecratedIntegTests {
                 magicFind,
                 false,
                 true,
-                0
+                0,
+                true
             )
         )
     )
