@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.files.getOrDefault
 import com.silospen.dropcalc.items.ItemLibrary
+import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import com.silospen.dropcalc.treasureclasses.TreasureClassLibrary
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,7 +24,9 @@ class MetadataResource(private val versionedMetadataResources: Map<Version, Vers
         @RequestParam("difficulty", required = true) difficulty: Difficulty,
         @RequestParam("monsterType", required = true) monsterType: MonsterType,
         @RequestParam("desecrated", required = true) desecrated: Boolean,
-    ) = versionedMetadataResources[version]?.getMonsters(difficulty, monsterType, desecrated) ?: emptyList()
+        @RequestParam("includeQuest", required = false) includeQuest: Boolean?,
+    ) = versionedMetadataResources[version]?.getMonsters(difficulty, monsterType, desecrated, includeQuest ?: true)
+        ?: emptyList()
 
     @GetMapping("items")
     fun getItems(
@@ -36,26 +39,42 @@ class MetadataResource(private val versionedMetadataResources: Map<Version, Vers
     fun getVersions() = versionsResponses
 }
 
+data class MonstersResponsesKey(
+    val difficulty: Difficulty,
+    val monsterType: MonsterType,
+    val desecrated: Boolean,
+    val includesQuest: Boolean
+)
+
 class VersionedMetadataResource(
     val monsterLibrary: MonsterLibrary,
     val itemLibrary: ItemLibrary,
     treasureClassLibrary: TreasureClassLibrary,
 ) {
-    private val monstersResponsesByDifficultyType =
-        Difficulty.values().flatMap { difficulty ->
+    private val monstersResponses =
+        generateMonstersResponses(true) { true } +
+                generateMonstersResponses(false) { it.treasureClassType != TreasureClassType.QUEST }
+
+    private fun generateMonstersResponses(
+        includesQuest: Boolean,
+        filter: (Monster) -> Boolean
+    ): Map<MonstersResponsesKey, List<MetadataResponse>> {
+        return Difficulty.values().flatMap { difficulty ->
             MonsterType.values().flatMap { type ->
                 listOf(true, false).map { desecrated ->
-                    Triple(difficulty, type, desecrated) to monsterLibrary.getMonsters(
+                    MonstersResponsesKey(difficulty, type, desecrated, includesQuest) to monsterLibrary.getMonsters(
                         desecrated,
                         0,
                         difficulty = difficulty,
                         monsterType = type
-                    ).map { MetadataResponse(it.name, it.id) }
+                    ).filter(filter)
+                        .map { MetadataResponse(it.name, it.id) }
                         .toSet()
                         .sortedBy { it.name }
                 }
             }
         }.toMap()
+    }
 
     private val itemsResponsesByQualityVersion =
         ImmutableTable.builder<ApiItemQuality, ItemVersion, Set<MetadataResponse>>().apply {
@@ -86,8 +105,12 @@ class VersionedMetadataResource(
         difficulty: Difficulty,
         monsterType: MonsterType,
         desecrated: Boolean,
+        includeQuest: Boolean,
     ): List<MetadataResponse> {
-        return monstersResponsesByDifficultyType.getOrDefault(Triple(difficulty, monsterType, desecrated), emptyList())
+        return monstersResponses.getOrDefault(
+            MonstersResponsesKey(difficulty, monsterType, desecrated, includeQuest),
+            emptyList()
+        )
     }
 
     fun getItems(

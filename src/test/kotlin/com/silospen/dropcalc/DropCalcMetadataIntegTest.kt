@@ -180,6 +180,7 @@ class DropCalcMetadataIntegTest {
             difficulty,
             monsterType,
             desecrated,
+            true
         )
     )
 
