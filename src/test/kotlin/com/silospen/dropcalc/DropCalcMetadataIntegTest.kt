@@ -35,6 +35,7 @@ class DropCalcMetadataIntegTest {
                 expected.monsterType,
                 expected.difficulty,
                 false,
+                expected.includeQuest,
             )
         }, object : TypeReference<List<MonstersMetadataTestDataExpectation>>() {})
     }
@@ -48,6 +49,7 @@ class DropCalcMetadataIntegTest {
                 expected.monsterType,
                 expected.difficulty,
                 true,
+                expected.includeQuest,
             )
         }, object : TypeReference<List<MonstersMetadataTestDataExpectation>>() {})
     }
@@ -125,18 +127,20 @@ class DropCalcMetadataIntegTest {
         for (version in Version.values()) {
             for (monsterType in MonsterType.values()) {
                 for (difficulty in Difficulty.values()) {
-//                    for(desecrated in listOf(true, false)) {}
-                    result.add(
-                        Callable {
-                            counter.incrementAndPossiblyPrint()
-                            getMonstersMetadataExpectation(
-                                version,
-                                monsterType,
-                                difficulty,
-                                false,
-                            )
-                        }
-                    )
+                    for (includeQuest in listOf(true, false)) {
+                        result.add(
+                            Callable {
+                                counter.incrementAndPossiblyPrint()
+                                getMonstersMetadataExpectation(
+                                    version,
+                                    monsterType,
+                                    difficulty,
+                                    false,
+                                    includeQuest
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -148,18 +152,20 @@ class DropCalcMetadataIntegTest {
         for (version in Version.values()) {
             for (monsterType in MonsterType.values()) {
                 for (difficulty in Difficulty.values()) {
-//                    for(desecrated in listOf(true, false)) {}
-                    result.add(
-                        Callable {
-                            counter.incrementAndPossiblyPrint()
-                            getMonstersMetadataExpectation(
-                                version,
-                                monsterType,
-                                difficulty,
-                                true,
-                            )
-                        }
-                    )
+                    for (includeQuest in listOf(true, false)) {
+                        result.add(
+                            Callable {
+                                counter.incrementAndPossiblyPrint()
+                                getMonstersMetadataExpectation(
+                                    version,
+                                    monsterType,
+                                    difficulty,
+                                    true,
+                                    includeQuest,
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -170,17 +176,19 @@ class DropCalcMetadataIntegTest {
         version: Version,
         monsterType: MonsterType,
         difficulty: Difficulty,
-        desecrated: Boolean
+        desecrated: Boolean,
+        includeQuest: Boolean,
     ) = MonstersMetadataTestDataExpectation(
         version,
         monsterType,
         difficulty,
+        includeQuest,
         metadataResource.getMonsters(
             version,
             difficulty,
             monsterType,
             desecrated,
-            true
+            includeQuest,
         )
     )
 
@@ -188,7 +196,8 @@ class DropCalcMetadataIntegTest {
         val version: Version,
         val monsterType: MonsterType,
         val difficulty: Difficulty,
-        val metadataResponse: List<MetadataResponse>
+        val includeQuest: Boolean,
+        val metadataResponse: List<MetadataResponse>,
     )
 
     data class ItemsMetadataTestDataExpectation(
