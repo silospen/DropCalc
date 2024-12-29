@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import com.silospen.dropcalc.resource.ApiResource
-import com.silospen.dropcalc.resource.ApiResponseEntry
+import com.silospen.dropcalc.resource.TabularApiResponse
 import com.silospen.dropcalc.resource.VersionedMetadataResource
 import org.apache.commons.math3.util.Precision
 import org.junit.jupiter.api.Disabled
@@ -228,7 +228,7 @@ class DropCalcLargeIntegTests {
         partySize,
         magicFind,
         generateHash(
-            apiResource.getItemProbabilities(
+            apiResource.getTabularItemProbabilities(
                 version,
                 itemId,
                 monsterType,
@@ -236,7 +236,11 @@ class DropCalcLargeIntegTests {
                 difficulty,
                 numPlayers,
                 partySize,
-                magicFind
+                magicFind,
+                true,
+                false,
+                0,
+                null,
             )
         )
     )
@@ -260,7 +264,7 @@ class DropCalcLargeIntegTests {
         apiItemQuality,
         magicFind,
         generateHash(
-            apiResource.getMonster(
+            apiResource.getTabularMonster(
                 version,
                 monsterId,
                 monsterType,
@@ -268,7 +272,10 @@ class DropCalcLargeIntegTests {
                 numPlayers,
                 partySize,
                 apiItemQuality,
-                magicFind
+                magicFind,
+                true,
+                false,
+                0,
             )
         )
     )
@@ -288,21 +295,25 @@ class DropCalcLargeIntegTests {
         numPlayers,
         partySize,
         generateHash(
-            apiResource.getAtomicTcs(
+            apiResource.getTabularAtomicTcs(
                 version,
                 monsterId,
                 monsterType,
                 difficulty,
                 numPlayers,
-                partySize
+                partySize,
+                true,
+                false,
+                0,
             )
         )
     )
 
-    private fun generateHash(apiResponseEntries: List<ApiResponseEntry>) = Hashing.sha256().hashString(
-        apiResponseEntries
+    private fun generateHash(apiResponse: TabularApiResponse) = Hashing.sha256().hashString(
+        apiResponse
+            .rows
             .asSequence()
-            .map { it.copy(prob = Precision.round(it.prob, 11)) }
+            .map { it.copy(prob = Precision.round(it.prob.toDouble(), 11).toString()) }
             .sortedWith(compareBy({ it.name }, { it.area }))
             .toList()
             .toString(),

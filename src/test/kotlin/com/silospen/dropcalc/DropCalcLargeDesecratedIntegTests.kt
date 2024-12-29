@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
+import com.silospen.dropcalc.LegacyTabularApiResponse.Companion.fromTabularApiResponse
 import com.silospen.dropcalc.resource.ApiResource
+import com.silospen.dropcalc.resource.ApiResponseContext
 import com.silospen.dropcalc.resource.TabularApiResponse
 import com.silospen.dropcalc.resource.VersionedMetadataResource
 import org.junit.jupiter.api.Disabled
@@ -300,10 +302,28 @@ class DropCalcLargeDesecratedIntegTests {
         )
     )
 
-    private fun generateHash(apiResponse: TabularApiResponse) =
-        Hashing.sha256().hashString(apiResponse.toString(), Charsets.UTF_8).toString()
+    private fun generateHash(apiResponse: TabularApiResponse): String {
+        return Hashing.sha256()
+            .hashString(fromTabularApiResponse(apiResponse).toString().removePrefix("Legacy"), Charsets.UTF_8)
+            .toString()
+    }
 }
 
+data class LegacyTabularApiResponse(
+    val columns: List<String>,
+    val rows: List<List<String>>,
+    val context: ApiResponseContext
+) {
+    companion object {
+        fun fromTabularApiResponse(tabularApiResponse: TabularApiResponse): LegacyTabularApiResponse {
+            return LegacyTabularApiResponse(
+                tabularApiResponse.columns,
+                tabularApiResponse.rows.map { listOf(it.name, it.area, it.prob) },
+                tabularApiResponse.context
+            )
+        }
+    }
+}
 
 data class DesecratedAtomicTcsTestDataExpectation(
     val version: Version,

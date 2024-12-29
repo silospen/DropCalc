@@ -7,6 +7,7 @@ import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.resource.ApiResource
 import com.silospen.dropcalc.resource.ApiResponseEntry
+import com.silospen.dropcalc.resource.TabularApiResponse
 import org.apache.commons.math3.util.Precision
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assertions.fail
@@ -113,7 +114,7 @@ class DropCalcIntegTest {
         file,
         tcExpectationDataLineParser,
         {
-            apiResource.getItemProbabilities(
+            apiResource.getTabularItemProbabilities(
                 Version.V1_12,
                 itemId,
                 monsterType,
@@ -121,7 +122,11 @@ class DropCalcIntegTest {
                 difficulty,
                 nPlayers,
                 partySize,
-                magicFind
+                magicFind,
+                true,
+                false,
+                0,
+                null
             )
         },
         this::runAtomicTcAsserts,
@@ -143,7 +148,7 @@ class DropCalcIntegTest {
         file,
         tcExpectationDataLineParser,
         {
-            apiResource.getMonster(
+            apiResource.getTabularMonster(
                 Version.V1_12,
                 monsterId,
                 monsterType,
@@ -151,7 +156,10 @@ class DropCalcIntegTest {
                 nPlayers,
                 partySize,
                 apiItemQuality,
-                magicFind
+                magicFind,
+                true,
+                false,
+                0,
             )
         },
         this::runAtomicTcAsserts,
@@ -171,7 +179,19 @@ class DropCalcIntegTest {
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
-        { apiResource.getAtomicTcs(version, monsterId, monsterType, difficulty, nPlayers, partySize) },
+        {
+            apiResource.getTabularAtomicTcs(
+                version,
+                monsterId,
+                monsterType,
+                difficulty,
+                nPlayers,
+                partySize,
+                true,
+                false,
+                0
+            )
+        },
         this::runAtomicTcAsserts,
         "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize",
         mode
@@ -180,12 +200,12 @@ class DropCalcIntegTest {
     fun runTestWithLocalExpectations(
         expectationsFile: File,
         expectationsLineParser: LineParser<ApiResponseEntry?>,
-        actualSource: () -> List<ApiResponseEntry>,
+        actualSource: () -> TabularApiResponse,
         assertionsRunner: (List<ApiResponseEntry>, List<ApiResponseEntry>, String) -> Unit,
         inputsForLogging: String,
         mode: Mode,
     ) {
-        val actual = actualSource()
+        val actual = actualSource().rows
         val expected = readTsv(
             FileInputStream(expectationsFile),
             expectationsLineParser
@@ -217,7 +237,7 @@ class DropCalcIntegTest {
                 if (value.size != 1) throw RuntimeException("Multiple probs found for $it and $value")
                 val actualProb = value[0].prob
                 val expectedProb = it.prob
-                key to Precision.equals(actualProb.dec(), expectedProb.dec(), 0.00000000001)
+                key to Precision.equals(actualProb.toDouble(), expectedProb.toDouble(), 0.00000000001)
             }
         val failedAsserts = outcomes.filter { !it.second }
         if (failedAsserts.isNotEmpty()) {
@@ -230,7 +250,7 @@ class DropCalcIntegTest {
 
     private val tcExpectationDataLineParser = object : LineParser<ApiResponseEntry?> {
         override fun parseLine(line: Line): ApiResponseEntry =
-            ApiResponseEntry(line[0], line[1], line[2].toDouble())
+            ApiResponseEntry(line[0], line[1], line[2])
     }
 
     private fun writeExpectationsTsv(outputStream: FileOutputStream, expectations: List<ApiResponseEntry>) {
