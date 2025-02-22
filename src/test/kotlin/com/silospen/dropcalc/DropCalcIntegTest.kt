@@ -6,7 +6,6 @@ import com.silospen.dropcalc.files.Line
 import com.silospen.dropcalc.files.LineParser
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.resource.ApiResource
-import com.silospen.dropcalc.resource.ApiResponseEntry
 import com.silospen.dropcalc.resource.TabularApiResponse
 import org.apache.commons.math3.util.Precision
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -197,7 +196,7 @@ class DropCalcIntegTest {
         mode
     )
 
-    fun runTestWithLocalExpectations(
+    private fun runTestWithLocalExpectations(
         expectationsFile: File,
         expectationsLineParser: LineParser<ApiResponseEntry?>,
         actualSource: () -> TabularApiResponse,
@@ -205,7 +204,10 @@ class DropCalcIntegTest {
         inputsForLogging: String,
         mode: Mode,
     ) {
-        val actual = actualSource().rows
+        val actual = actualSource().rows.map {
+            assertTrue(it.size == 3)
+            ApiResponseEntry(it[0], it[1], it[2])
+        }
         val expected = readTsv(
             FileInputStream(expectationsFile),
             expectationsLineParser

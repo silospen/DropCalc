@@ -138,14 +138,14 @@ class VersionedApiResource(
                     treasureClassPaths
                         .asSequence()
                         .map {
-                            ApiResponseEntry(
+                            listOf(
                                 it.name,
                                 monster.area.name,
                                 formatProbability(decimalMode, treasureClassPaths.getFinalProbability(it).toDouble())
                             )
                         }
                 }
-                .sortedBy { it.name }
+                .sortedBy { it[0] }
                 .toList(),
             createApiResponseContext(monsters)
         )
@@ -204,7 +204,7 @@ class VersionedApiResource(
                             ) {
                                 null
                             } else {
-                                ApiResponseEntry(
+                                listOf(
                                     item.name,
                                     monster.area.name,
                                     formatProbability(decimalMode, prob)
@@ -213,7 +213,7 @@ class VersionedApiResource(
                         }
                     }
             }
-            .sortedBy { it.name }
+                .sortedBy { it[0] }
             .toList(), createApiResponseContext(monsters))
     }
 
@@ -224,8 +224,8 @@ class VersionedApiResource(
         monster: Monster,
         outcomeType: OutcomeType,
         itemToFilterTo: Item?,
-        responseGenerator: (Item, Monster, Double) -> ApiResponseEntry?
-    ): Sequence<ApiResponseEntry> {
+        responseGenerator: (Item, Monster, Double) -> List<String>?
+    ): Sequence<List<String>> {
         val baseItem = outcomeType as BaseItem
         val eligibleItems = itemLibrary.getItemsForBaseId(itemQuality, baseItem.id)
             .asSequence()
@@ -252,8 +252,8 @@ class VersionedApiResource(
         monster: Monster,
         outcomeType: OutcomeType,
         itemToFilterTo: Item?,
-        responseGenerator: (Item, Monster, Double) -> ApiResponseEntry?
-    ): Sequence<ApiResponseEntry> {
+        responseGenerator: (Item, Monster, Double) -> List<String>?
+    ): Sequence<List<String>> {
         when (outcomeType) {
             is BaseItem -> {
                 return generateItemQualityResponseForBaseItem(
@@ -331,7 +331,7 @@ class VersionedApiResource(
                                 item
                             )
                             { _, monster, prob ->
-                                ApiResponseEntry(
+                                listOf(
                                     "${monster.name} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
                                     monster.area.name,
                                     formatProbability(decimalMode, prob)
@@ -340,7 +340,7 @@ class VersionedApiResource(
                         }
                 }
                 .toSet()
-                .sortedBy { it.name }
+                .sortedBy { it[0] }
                 .toList(), ItemApiResponseContext(
                 item.id,
                 item.level,
@@ -385,7 +385,6 @@ sealed interface ApiResponseContext {
 
 private val emptyApiResponse = TabularApiResponse(emptyList(), EmptyApiResponseContext)
 
-data class ApiResponseEntry(val name: String, val area: String, val prob: String)
-data class TabularApiResponse(val rows: List<ApiResponseEntry>, val context: ApiResponseContext) {
+data class TabularApiResponse(val rows: List<List<String>>, val context: ApiResponseContext) {
     val columns: List<String> = listOf("Name", "Area", "Prob")
 }

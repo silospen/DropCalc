@@ -64,3 +64,5 @@ data class Counter(private val counter: AtomicLong = AtomicLong(0L)) {
         if (value % 1000 == 0L) println(value)
     }
 }
+
+internal data class ApiResponseEntry(val name: String, val area: String, val prob: String)

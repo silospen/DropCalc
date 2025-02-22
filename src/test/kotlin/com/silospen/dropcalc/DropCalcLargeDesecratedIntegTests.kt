@@ -318,7 +318,7 @@ data class LegacyTabularApiResponse(
         fun fromTabularApiResponse(tabularApiResponse: TabularApiResponse): LegacyTabularApiResponse {
             return LegacyTabularApiResponse(
                 tabularApiResponse.columns,
-                tabularApiResponse.rows.map { listOf(it.name, it.area, it.prob) },
+                tabularApiResponse.rows.map { listOf(it[0], it[1], it[2]) },
                 tabularApiResponse.context
             )
         }

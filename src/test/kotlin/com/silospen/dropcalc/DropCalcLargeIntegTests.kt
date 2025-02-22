@@ -313,7 +313,7 @@ class DropCalcLargeIntegTests {
         apiResponse
             .rows
             .asSequence()
-            .map { it.copy(prob = Precision.round(it.prob.toDouble(), 11).toString()) }
+            .map { ApiResponseEntry(it[0], it[1], Precision.round(it[2].toDouble(), 11).toString()) }
             .sortedWith(compareBy({ it.name }, { it.area }))
             .toList()
             .toString(),
