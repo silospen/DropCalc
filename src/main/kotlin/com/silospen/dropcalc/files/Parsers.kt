@@ -367,7 +367,6 @@ class TreasureClassesLineParser : LineParser<TreasureClassConfig?> {
 }
 
 class LevelsLineParser(
-    private val translations: Translations,
     private val hardcodedAreas: Table<String, MonsterType, Set<String>>
 ) :
     LineParser<Area?> {
@@ -381,7 +380,7 @@ class LevelsLineParser(
         val monsterClassIds = parseMonsterClassIds(line, id)
         return Area(
             id,
-            translations.getTranslation(name),
+            name,
             EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
                 level?.let { put(NORMAL, level) }
                 levelN?.let { put(NIGHTMARE, levelN) }

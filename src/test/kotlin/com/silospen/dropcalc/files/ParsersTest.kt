@@ -429,7 +429,6 @@ class LevelsLineParserTest {
         val actual = readTsv(
             getResource("parsersTestData/levels.txt"),
             LevelsLineParser(
-                stubTranslations,
                 ImmutableTable.of("Act 5 - Throne Room", UNIQUE, setOf("hardcoded-mon-1", "hardcoded-mon-2"))
             )
         ).toSet()
@@ -461,13 +460,13 @@ class LevelsLineParserTest {
         val expected = setOf(
             Area(
                 "Act 1 - Town",
-                "Rogue Encampment-name",
+                "Rogue Encampment",
                 emptyMap(),
                 ImmutableTable.of()
             ),
             Area(
                 "Act 5 - Throne Room",
-                "Throne of Destruction-name",
+                "Throne of Destruction",
                 EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
                     put(NORMAL, 43)
                     put(NIGHTMARE, 66)

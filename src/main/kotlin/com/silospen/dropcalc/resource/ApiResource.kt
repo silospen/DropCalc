@@ -9,6 +9,7 @@ import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import com.silospen.dropcalc.resource.ApiResponseContext.*
+import com.silospen.dropcalc.translations.Translations
 import com.silospen.dropcalc.treasureclasses.TreasureClassCalculator
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.DEFINED
 import com.silospen.dropcalc.treasureclasses.TreasureClassOutcomeType.VIRTUAL
@@ -100,7 +101,8 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
 class VersionedApiResource(
     private val treasureClassCalculator: TreasureClassCalculator,
     private val monsterLibrary: MonsterLibrary,
-    private val itemLibrary: ItemLibrary
+    private val itemLibrary: ItemLibrary,
+    private val translations: Translations,
 ) {
 
     private val decimalModeFormat = DecimalFormat("#.###########")
@@ -140,7 +142,7 @@ class VersionedApiResource(
                         .map {
                             listOf(
                                 it.name,
-                                monster.area.name,
+                                monster.area.getDisplayName(translations),
                                 formatProbability(decimalMode, treasureClassPaths.getFinalProbability(it).toDouble())
                             )
                         }
@@ -156,7 +158,7 @@ class VersionedApiResource(
             MonsterApiResponseDetails(
                 it.id,
                 it.area.id,
-                it.area.name,
+                it.area.getDisplayName(translations),
                 it.level,
                 it.treasureClass
             )
@@ -206,7 +208,7 @@ class VersionedApiResource(
                             } else {
                                 listOf(
                                     item.name,
-                                    monster.area.name,
+                                    monster.area.getDisplayName(translations),
                                     formatProbability(decimalMode, prob)
                                 )
                             }
@@ -333,7 +335,7 @@ class VersionedApiResource(
                             { _, monster, prob ->
                                 listOf(
                                     "${monster.getDisplayName()} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
-                                    monster.area.name,
+                                    monster.area.getDisplayName(translations),
                                     formatProbability(decimalMode, prob)
                                 )
                             }

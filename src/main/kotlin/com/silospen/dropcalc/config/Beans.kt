@@ -51,7 +51,7 @@ class ConfigLoader(private val version: Version) {
     private val monsterLibrary = loadMonsterLibrary(
         loadMonsterClassConfigs(translations),
         loadSuperUniqueMonsterConfigs(translations),
-        MonsterFactory(loadAreasLibrary(loadAreas(translations)), treasureClassLibrary),
+        MonsterFactory(loadAreasLibrary(loadAreas()), treasureClassLibrary),
         treasureClassLibrary
     )
 
@@ -77,9 +77,9 @@ class ConfigLoader(private val version: Version) {
             SuperUniqueLineParser(hardcodedSuperUniqueAreas, translations)
         )
 
-    private fun loadAreas(translations: Translations): List<Area> = readTsv(
+    private fun loadAreas(): List<Area> = readTsv(
         getResource("d2Files/${version.pathName}/levels.txt"),
-        LevelsLineParser(translations, hardcodedBossAreas)
+        LevelsLineParser(hardcodedBossAreas)
     )
 
     private fun loadAreasLibrary(areas: List<Area>): AreasLibrary {
@@ -183,8 +183,7 @@ class ConfigLoader(private val version: Version) {
 
     fun createVersionedApiResource(): VersionedApiResource {
         return VersionedApiResource(
-            treasureClassCalculator, monsterLibrary,
-            itemLibrary
+            treasureClassCalculator, monsterLibrary, itemLibrary, translations
         )
     }
 

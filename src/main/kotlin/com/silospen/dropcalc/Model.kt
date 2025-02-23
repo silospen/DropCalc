@@ -3,6 +3,7 @@ package com.silospen.dropcalc
 import com.google.common.collect.Table
 import com.silospen.dropcalc.ItemQuality.*
 import com.silospen.dropcalc.ItemQualityRatios.Companion.EMPTY
+import com.silospen.dropcalc.translations.Translations
 import kotlin.math.max
 
 data class TreasureClassConfig(
@@ -74,10 +75,12 @@ data class SuperUniqueMonsterConfig(
 
 data class Area(
     val id: String,
-    val name: String,
+    private val nameId: String,
     val monsterLevels: Map<Difficulty, Int>,
     val monsterClassIds: Table<Difficulty, MonsterType, Set<String>>
-)
+) {
+    fun getDisplayName(translations: Translations) = translations.getTranslation(nameId)
+}
 
 data class Item(
     val id: String,
