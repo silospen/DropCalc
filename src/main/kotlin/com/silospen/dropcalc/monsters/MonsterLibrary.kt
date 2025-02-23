@@ -182,7 +182,7 @@ class MonsterFactory(
         return Monster(
             "$minionId:${parentMonster.id}",
             "$minionId:${parentMonster.rawId}",
-            monsterClass.name,
+            monsterClass.nameId,
             monsterClass,
             parentMonster.area,
             difficulty,
@@ -212,7 +212,7 @@ class MonsterFactory(
         return Monster(
             "${superUniqueMonsterConfig.id}${treasureClassType.idSuffix}",
             superUniqueMonsterConfig.id,
-            superUniqueMonsterConfig.name,
+            superUniqueMonsterConfig.nameId,
             monsterClass,
             area,
             difficulty,
@@ -241,7 +241,7 @@ class MonsterFactory(
                 Monster(
                     "${monsterClass.id}${treasureClassType.idSuffix}",
                     monsterClass.id,
-                    monsterClass.name,
+                    monsterClass.nameId,
                     monsterClass,
                     it,
                     difficulty,

@@ -1,11 +1,12 @@
 package com.silospen.dropcalc.monsters
 
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.translations.Translations
 
 data class Monster(
     val id: String,
     val rawId: String,
-    private val name: String,
+    private val nameId: String,
     val monsterClass: MonsterClass,
     val area: Area,
     val difficulty: Difficulty,
@@ -25,14 +26,14 @@ data class Monster(
         return newLevel
     }
 
-    fun getDisplayName(): String {
-        val nameSuffix = getNameSuffix()
-        return name + nameSuffix
+    fun getDisplayName(translations: Translations): String {
+        val nameSuffix = getNameSuffix(translations)
+        return translations.getTranslation(nameId) + nameSuffix
     }
 
-    private fun getNameSuffix(): String {
+    private fun getNameSuffix(translations: Translations): String {
         return if (parentMonster != null) {
-            " (${parentMonster.getDisplayName()})"
+            " (${parentMonster.getDisplayName(translations)})"
         } else {
             if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else ""
         }

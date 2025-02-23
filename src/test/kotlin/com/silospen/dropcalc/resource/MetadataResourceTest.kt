@@ -24,7 +24,7 @@ class MetadataResourceTest {
                 Monster(
                     "1",
                     "1",
-                    "1-name",
+                    "1",
                     skeletonMonsterClass,
                     area1Data,
                     Difficulty.NORMAL,
@@ -38,7 +38,7 @@ class MetadataResourceTest {
                 Monster(
                     "1",
                     "1",
-                    "1-name",
+                    "1",
                     skeletonMonsterClass,
                     area2Data,
                     Difficulty.NORMAL,
@@ -52,7 +52,7 @@ class MetadataResourceTest {
                 Monster(
                     "2",
                     "2",
-                    "2-name",
+                    "2",
                     skeletonMonsterClass,
                     area2Data,
                     Difficulty.NORMAL,
@@ -66,7 +66,7 @@ class MetadataResourceTest {
                 Monster(
                     "2d",
                     "2",
-                    "2-name",
+                    "2",
                     skeletonMonsterClass,
                     area2Data,
                     Difficulty.NORMAL,
@@ -80,7 +80,7 @@ class MetadataResourceTest {
                 Monster(
                     "1",
                     "1",
-                    "1-name",
+                    "1",
                     skeletonMonsterClass,
                     area2Data,
                     Difficulty.NORMAL,
@@ -94,7 +94,7 @@ class MetadataResourceTest {
                 Monster(
                     "1q",
                     "1",
-                    "1-name",
+                    "1",
                     skeletonMonsterClass,
                     area2Data,
                     Difficulty.NORMAL,
@@ -107,7 +107,7 @@ class MetadataResourceTest {
                 )
             ), TreasureClassLibrary(emptyList(), itemLibrary)
         ),
-        itemLibrary, mock()
+        itemLibrary, stubTranslations, mock()
     )
 
     @Test

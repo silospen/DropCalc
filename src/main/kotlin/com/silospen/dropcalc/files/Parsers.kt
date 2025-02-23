@@ -153,9 +153,7 @@ class SetItemLineParser(
     }
 }
 
-class MonstatsLineParser(
-    private val translations: Translations
-) : LineParser<MonsterClass?> {
+class MonstatsLineParser : LineParser<MonsterClass?> {
     override fun parseLine(line: Line): MonsterClass? {
         val isEnabled: Boolean = parseNumericBoolean(line["enabled"])
         val isKillable: Boolean = parseNumericBoolean(line["killable"])
@@ -166,7 +164,6 @@ class MonstatsLineParser(
         if (!isValid) return null
 
         val id = line["Id"]
-        val name = translations.getTranslation(line["NameStr"].trim())
         val isBoss: Boolean = parseNumericBoolean(line["boss"])
         val level: Int = line["Level"].toInt()
         val levelN: Int = line["Level(N)"].toInt()
@@ -174,7 +171,7 @@ class MonstatsLineParser(
 
         return MonsterClass(
             id = id,
-            name = name,
+            nameId = line["NameStr"].trim(),
             monsterLevels = EnumMap<Difficulty, Int>(Difficulty::class.java).apply {
                 put(NORMAL, level)
                 put(NIGHTMARE, levelN)
@@ -272,8 +269,7 @@ private fun HashBasedTable<Difficulty, TreasureClassType, String>.addIfNotBlank(
 }
 
 class SuperUniqueLineParser(
-    private val areasBySuperUniqueId: Map<String, String>,
-    private val translations: Translations
+    private val areasBySuperUniqueId: Map<String, String>
 ) :
     LineParser<SuperUniqueMonsterConfig?> {
 
@@ -288,7 +284,7 @@ class SuperUniqueLineParser(
         val superUniqueTreasureClasses = parseSuperUniqueTreasureClasses(line)
         return SuperUniqueMonsterConfig(
             id,
-            translations.getTranslation(name),
+            name,
             areaName,
             monsterClass,
             hasMinions,

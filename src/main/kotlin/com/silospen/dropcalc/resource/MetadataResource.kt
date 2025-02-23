@@ -6,6 +6,7 @@ import com.silospen.dropcalc.files.getOrDefault
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
+import com.silospen.dropcalc.translations.Translations
 import com.silospen.dropcalc.treasureclasses.TreasureClassLibrary
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -49,6 +50,7 @@ data class MonstersResponsesKey(
 class VersionedMetadataResource(
     val monsterLibrary: MonsterLibrary,
     val itemLibrary: ItemLibrary,
+    private val translations: Translations,
     treasureClassLibrary: TreasureClassLibrary,
 ) {
     private val monstersResponses =
@@ -68,7 +70,7 @@ class VersionedMetadataResource(
                         difficulty = difficulty,
                         monsterType = type
                     ).filter(filter)
-                        .map { MetadataResponse(it.getDisplayName(), it.id) }
+                        .map { MetadataResponse(it.getDisplayName(translations), it.id) }
                         .toSet()
                         .sortedBy { it.name }
                 }

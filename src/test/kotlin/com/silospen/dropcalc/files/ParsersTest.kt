@@ -219,7 +219,7 @@ class MonstatsLineParserTest {
     fun monstatsParser() {
         val actual = readTsv(
             getResource("parsersTestData/monstats.txt"),
-            MonstatsLineParser(stubTranslations)
+            MonstatsLineParser()
         ).toSet()
         assertEquals(monsterClassTestData, actual)
     }
@@ -275,20 +275,20 @@ class MonstatsLineParserTest {
 
         val actual = readTsv(
             getResource("parsersTestData/monstats_desecrated.txt"),
-            MonstatsLineParser(stubTranslations)
+            MonstatsLineParser()
         ).toSet()
         assertEquals(
             setOf(
                 MonsterClass(
                     "skeleton1",
-                    "Skeleton-name",
+                    "Skeleton",
                     minionIds = setOf("skeleton1"),
                     monsterClassTreasureClasses = skeletonClassProperties(),
                     monsterLevels = levelsPerDifficulty(2, 37, 68)
                 ),
                 MonsterClass(
                     "duriel",
-                    "Duriel-name",
+                    "Duriel",
                     minionIds = setOf("duriel"),
                     isBoss = true,
                     monsterClassTreasureClasses = durielClassProperties(),
@@ -340,7 +340,7 @@ class SuperUniqueLineParserTest {
         val expected = setOf(
             SuperUniqueMonsterConfig(
                 "The Feature Creep",
-                "The Feature Creep-name",
+                "The Feature Creep",
                 "Act 4 - Lava 1",
                 "hephasto",
                 false,
@@ -348,7 +348,7 @@ class SuperUniqueLineParserTest {
             ),
             SuperUniqueMonsterConfig(
                 "Corpsefire",
-                "Corpsefire-name",
+                "Corpsefire",
                 "Act 1 - Cave 1",
                 "zombie1",
                 true,
@@ -365,7 +365,7 @@ class SuperUniqueLineParserTest {
                 mapOf(
                     "Corpsefire" to "Act 1 - Cave 1",
                     "The Feature Creep" to "Act 4 - Lava 1",
-                ), stubTranslations
+                )
             )
         ).toSet()
         return actual

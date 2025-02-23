@@ -99,7 +99,7 @@ private val radamentClassProperties = getRadamentClassProperties()
 
 val skeletonMonsterClass = MonsterClass(
     "skeleton1",
-    "Skeleton-name",
+    "Skeleton",
     minionIds = setOf("skeleton1"),
     monsterClassTreasureClasses = skeletonClassProperties,
     monsterLevels = levelsPerDifficulty(2, 37, 68)
@@ -107,7 +107,7 @@ val skeletonMonsterClass = MonsterClass(
 val durielMonsterClass =
     MonsterClass(
         "duriel",
-        "Duriel-name",
+        "Duriel",
         minionIds = setOf("duriel"),
         isBoss = true,
         monsterClassTreasureClasses = durielClassProperties,
@@ -115,7 +115,7 @@ val durielMonsterClass =
     )
 val putridDefilerMonsterClass = MonsterClass(
     "putriddefiler2",
-    "Putrid Defiler2-name",
+    "Putrid Defiler2",
     minionIds = setOf("putriddefiler2"),
     isBoss = true,
     monsterClassTreasureClasses = putridDefilerClassProperties,
@@ -123,14 +123,14 @@ val putridDefilerMonsterClass = MonsterClass(
 )
 val fetishShamanMonsterClass = MonsterClass(
     "fetishshaman2",
-    "FetishShaman-name",
+    "FetishShaman",
     minionIds = setOf("fetish2", "fetishblow2"),
     monsterClassTreasureClasses = fetishShamanClassProperties,
     monsterLevels = levelsPerDifficulty(22, 49, 80)
 )
 val radamentMonsterClass = MonsterClass(
     "radament",
-    "Radament-name",
+    "Radament",
     minionIds = setOf("skeleton4"),
     isBoss = true,
     monsterClassTreasureClasses = radamentClassProperties,
@@ -194,7 +194,7 @@ val areasTestData = listOf(
 val skeletonMonster = Monster(
     skeletonMonsterClass.id,
     skeletonMonsterClass.id,
-    "Skeleton-name",
+    "Skeleton",
     skeletonMonsterClass,
     area1Data,
     NORMAL,
@@ -208,7 +208,7 @@ val skeletonMonster = Monster(
 val fetishShamanMonster1 = Monster(
     fetishShamanMonsterClass.id,
     fetishShamanMonsterClass.id,
-    "FetishShaman-name",
+    "FetishShaman",
     fetishShamanMonsterClass,
     area1Data,
     NORMAL,
@@ -222,7 +222,7 @@ val fetishShamanMonster1 = Monster(
 val fetishShamanMonster2 = Monster(
     fetishShamanMonsterClass.id,
     fetishShamanMonsterClass.id,
-    "FetishShaman-name",
+    "FetishShaman",
     fetishShamanMonsterClass,
     area2Data,
     NORMAL,
@@ -236,7 +236,7 @@ val fetishShamanMonster2 = Monster(
 val bonebreakHell = Monster(
     "Bonebreak",
     "Bonebreak",
-    "Bonebreak-name",
+    "Bonebreak",
     skeletonMonsterClass,
     bonebreakAreaData,
     HELL,
@@ -250,7 +250,7 @@ val bonebreakHell = Monster(
 val bonebreakNormal = Monster(
     "Bonebreak",
     "Bonebreak",
-    "Bonebreak-name",
+    "Bonebreak",
     skeletonMonsterClass,
     bonebreakAreaData,
     NORMAL,
@@ -264,7 +264,7 @@ val bonebreakNormal = Monster(
 val skeletonMonsterUnique = Monster(
     skeletonMonsterClass.id,
     skeletonMonsterClass.id,
-    "Skeleton-name",
+    "Skeleton",
     skeletonMonsterClass,
     area1Data,
     NORMAL,
@@ -278,7 +278,7 @@ val skeletonMonsterUnique = Monster(
 val bonebreakSkeletonMinion = Monster(
     "skeleton1:Bonebreak",
     "skeleton1:Bonebreak",
-    "Skeleton-name",
+    "Skeleton",
     skeletonMonsterClass,
     bonebreakAreaData,
     NORMAL,
@@ -303,7 +303,7 @@ val durielArea = Area(
 val durielMonsterQuest = Monster(
     "durielq",
     "duriel",
-    "Duriel-name",
+    "Duriel",
     durielMonsterClass,
     durielArea,
     HELL,
@@ -319,7 +319,7 @@ val monstersTestData = setOf(
     Monster(
         "skeleton1:Bonebreak",
         "skeleton1:Bonebreak",
-        "Skeleton-name",
+        "Skeleton",
         skeletonMonsterClass,
         bonebreakAreaData,
         HELL,
@@ -334,7 +334,7 @@ val monstersTestData = setOf(
     Monster(
         "skeleton1:skeleton1",
         "skeleton1:skeleton1",
-        "Skeleton-name",
+        "Skeleton",
         skeletonMonsterClass,
         area1Data,
         NORMAL,
@@ -355,7 +355,7 @@ val monstersTestData = setOf(
     Monster(
         fetishShamanMonsterClass.id,
         fetishShamanMonsterClass.id,
-        "FetishShaman-name",
+        "FetishShaman",
         fetishShamanMonsterClass,
         area2Data,
         HELL,

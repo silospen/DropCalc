@@ -49,8 +49,8 @@ class ConfigLoader(private val version: Version) {
     private val treasureClassLibrary = TreasureClassLibrary(treasureClassConfigs, itemLibrary)
     private val treasureClassCalculator = TreasureClassCalculator(treasureClassLibrary)
     private val monsterLibrary = loadMonsterLibrary(
-        loadMonsterClassConfigs(translations),
-        loadSuperUniqueMonsterConfigs(translations),
+        loadMonsterClassConfigs(),
+        loadSuperUniqueMonsterConfigs(),
         MonsterFactory(loadAreasLibrary(loadAreas()), treasureClassLibrary),
         treasureClassLibrary
     )
@@ -66,15 +66,15 @@ class ConfigLoader(private val version: Version) {
         TreasureClassesLineParser()
     )
 
-    private fun loadMonsterClassConfigs(translations: Translations): List<MonsterClass> = readTsv(
+    private fun loadMonsterClassConfigs(): List<MonsterClass> = readTsv(
         getResource("d2Files/${version.pathName}/monstats.txt"),
-        MonstatsLineParser(translations)
+        MonstatsLineParser()
     )
 
-    private fun loadSuperUniqueMonsterConfigs(translations: Translations): List<SuperUniqueMonsterConfig> =
+    private fun loadSuperUniqueMonsterConfigs(): List<SuperUniqueMonsterConfig> =
         readTsv(
             getResource("d2Files/${version.pathName}/superuniques.txt"),
-            SuperUniqueLineParser(hardcodedSuperUniqueAreas, translations)
+            SuperUniqueLineParser(hardcodedSuperUniqueAreas)
         )
 
     private fun loadAreas(): List<Area> = readTsv(
@@ -188,6 +188,6 @@ class ConfigLoader(private val version: Version) {
     }
 
     fun createVersionedMetadataResource(): VersionedMetadataResource {
-        return VersionedMetadataResource(monsterLibrary, itemLibrary, treasureClassLibrary)
+        return VersionedMetadataResource(monsterLibrary, itemLibrary, translations, treasureClassLibrary)
     }
 }

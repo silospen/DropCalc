@@ -16,9 +16,9 @@ class MonsterTest {
 
     @Test
     fun getDisplayName() {
-        assertEquals("Skeleton-name", skeletonMonster.getDisplayName())
-        assertEquals("Skeleton-name (Bonebreak-name)", bonebreakSkeletonMinion.getDisplayName())
-        assertEquals("Duriel-name (q)", durielMonsterQuest.getDisplayName())
+        assertEquals("Skeleton-name", skeletonMonster.getDisplayName(stubTranslations))
+        assertEquals("Skeleton-name (Bonebreak-name)", bonebreakSkeletonMinion.getDisplayName(stubTranslations))
+        assertEquals("Duriel-name (q)", durielMonsterQuest.getDisplayName(stubTranslations))
     }
 
     @ParameterizedTest

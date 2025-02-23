@@ -26,7 +26,7 @@ class MonsterLibraryTest {
             listOf(
                 SuperUniqueMonsterConfig(
                     "Bonebreak",
-                    "Bonebreak-name",
+                    "Bonebreak",
                     "bonebreak's area",
                     "skeleton1",
                     true,
@@ -87,7 +87,7 @@ class MonsterLibraryTest {
                 Monster(
                     "duriel",
                     "duriel",
-                    "Duriel-name",
+                    "Duriel",
                     durielMonsterClass,
                     durielArea,
                     NORMAL,
@@ -101,7 +101,7 @@ class MonsterLibraryTest {
                 Monster(
                     "durielq",
                     "duriel",
-                    "Duriel-name",
+                    "Duriel",
                     durielMonsterClass,
                     durielArea,
                     NORMAL,
@@ -115,7 +115,7 @@ class MonsterLibraryTest {
                 Monster(
                     "duriel",
                     "duriel",
-                    "Duriel-name",
+                    "Duriel",
                     durielMonsterClass,
                     durielArea,
                     NIGHTMARE,
@@ -129,7 +129,7 @@ class MonsterLibraryTest {
                 Monster(
                     "durielq",
                     "duriel",
-                    "Duriel-name",
+                    "Duriel",
                     durielMonsterClass,
                     durielArea,
                     NIGHTMARE,
@@ -143,7 +143,7 @@ class MonsterLibraryTest {
                 Monster(
                     "duriel",
                     "duriel",
-                    "Duriel-name",
+                    "Duriel",
                     durielMonsterClass,
                     durielArea,
                     HELL,
@@ -185,7 +185,6 @@ class MonsterLibraryTest {
             skeletonMonster.copy(monsterClass = desecratedSkeletonMonsterClass, treasureClass = "uAct 1 H2H A")
         val expectedDesecratedSkeletonMonster = skeletonMonster.copy(
             id = "skeleton1d",
-            name = "Skeleton-name",
             level = 45,
             treasureClass = "uuDesecrated Act 1 H2H A",
             monsterClass = desecratedSkeletonMonsterClass,
