@@ -182,7 +182,7 @@ class MonsterFactory(
         return Monster(
             "$minionId:${parentMonster.id}",
             "$minionId:${parentMonster.rawId}",
-            "${monsterClass.name} (${parentMonster.name})",
+            monsterClass.name,
             monsterClass,
             parentMonster.area,
             difficulty,
@@ -196,7 +196,8 @@ class MonsterFactory(
             parentMonster.isDesecrated,
             level,
             false,
-            TreasureClassType.REGULAR
+            TreasureClassType.REGULAR,
+            parentMonster
         )
     }
 
@@ -211,7 +212,7 @@ class MonsterFactory(
         return Monster(
             "${superUniqueMonsterConfig.id}${treasureClassType.idSuffix}",
             superUniqueMonsterConfig.id,
-            superUniqueMonsterConfig.name + if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else "",
+            superUniqueMonsterConfig.name,
             monsterClass,
             area,
             difficulty,
@@ -240,7 +241,7 @@ class MonsterFactory(
                 Monster(
                     "${monsterClass.id}${treasureClassType.idSuffix}",
                     monsterClass.id,
-                    monsterClass.name + if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else "",
+                    monsterClass.name,
                     monsterClass,
                     it,
                     difficulty,

@@ -1,11 +1,10 @@
 package com.silospen.dropcalc.monsters
 
-import com.silospen.dropcalc.Difficulty
+import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
-import com.silospen.dropcalc.MonsterType
 import com.silospen.dropcalc.MonsterType.*
-import com.silospen.dropcalc.skeletonMonster
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.Arguments.arguments
@@ -14,6 +13,13 @@ import java.util.stream.Stream
 import kotlin.streams.asStream
 
 class MonsterTest {
+
+    @Test
+    fun getDisplayName() {
+        assertEquals("Skeleton-name", skeletonMonster.getDisplayName())
+        assertEquals("Skeleton-name (Bonebreak-name)", bonebreakSkeletonMinion.getDisplayName())
+        assertEquals("Duriel-name (q)", durielMonsterQuest.getDisplayName())
+    }
 
     @ParameterizedTest
     @MethodSource("desecratedMonsterLevelProvider")

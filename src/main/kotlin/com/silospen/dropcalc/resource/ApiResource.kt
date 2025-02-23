@@ -332,7 +332,7 @@ class VersionedApiResource(
                             )
                             { _, monster, prob ->
                                 listOf(
-                                    "${monster.name} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
+                                    "${monster.getDisplayName()} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
                                     monster.area.name,
                                     formatProbability(decimalMode, prob)
                                 )

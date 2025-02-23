@@ -233,25 +233,93 @@ val fetishShamanMonster2 = Monster(
     false,
     TreasureClassType.REGULAR
 )
+val bonebreakHell = Monster(
+    "Bonebreak",
+    "Bonebreak",
+    "Bonebreak-name",
+    skeletonMonsterClass,
+    bonebreakAreaData,
+    HELL,
+    SUPERUNIQUE,
+    "Bonebreak TC(H)",
+    false,
+    58,
+    true,
+    TreasureClassType.REGULAR
+)
+val bonebreakNormal = Monster(
+    "Bonebreak",
+    "Bonebreak",
+    "Bonebreak-name",
+    skeletonMonsterClass,
+    bonebreakAreaData,
+    NORMAL,
+    SUPERUNIQUE,
+    "Bonebreak TC",
+    false,
+    5,
+    true,
+    TreasureClassType.REGULAR
+)
+val skeletonMonsterUnique = Monster(
+    skeletonMonsterClass.id,
+    skeletonMonsterClass.id,
+    "Skeleton-name",
+    skeletonMonsterClass,
+    area1Data,
+    NORMAL,
+    UNIQUE,
+    skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.UNIQUE),
+    false,
+    5,
+    true,
+    TreasureClassType.UNIQUE
+)
+val bonebreakSkeletonMinion = Monster(
+    "skeleton1:Bonebreak",
+    "skeleton1:Bonebreak",
+    "Skeleton-name",
+    skeletonMonsterClass,
+    bonebreakAreaData,
+    NORMAL,
+    MINION,
+    skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
+    false,
+    5,
+    false,
+    TreasureClassType.REGULAR,
+    bonebreakNormal,
+)
+val durielArea = Area(
+    "duriels-house",
+    "DurielsHouse",
+    mapOf(NORMAL to 10, NIGHTMARE to 20, HELL to 30),
+    ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
+        .put(NORMAL, BOSS, setOf("duriel"))
+        .put(NIGHTMARE, BOSS, setOf("duriel"))
+        .put(HELL, BOSS, setOf("duriel"))
+        .build()
+)
+val durielMonsterQuest = Monster(
+    "durielq",
+    "duriel",
+    "Duriel-name",
+    durielMonsterClass,
+    durielArea,
+    HELL,
+    BOSS,
+    "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.QUEST),
+    false,
+    88,
+    false,
+    TreasureClassType.QUEST
+)
 val monstersTestData = setOf(
+    bonebreakSkeletonMinion,
     Monster(
         "skeleton1:Bonebreak",
         "skeleton1:Bonebreak",
-        "Skeleton-name (Bonebreak-name)",
-        skeletonMonsterClass,
-        bonebreakAreaData,
-        NORMAL,
-        MINION,
-        skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
-        false,
-        5,
-        false,
-        TreasureClassType.REGULAR
-    ),
-    Monster(
-        "skeleton1:Bonebreak",
-        "skeleton1:Bonebreak",
-        "Skeleton-name (Bonebreak-name)",
+        "Skeleton-name",
         skeletonMonsterClass,
         bonebreakAreaData,
         HELL,
@@ -260,12 +328,13 @@ val monstersTestData = setOf(
         false,
         58,
         false,
-        TreasureClassType.REGULAR
+        TreasureClassType.REGULAR,
+        bonebreakHell
     ),
     Monster(
         "skeleton1:skeleton1",
         "skeleton1:skeleton1",
-        "Skeleton-name (Skeleton-name)",
+        "Skeleton-name",
         skeletonMonsterClass,
         area1Data,
         NORMAL,
@@ -274,51 +343,13 @@ val monstersTestData = setOf(
         false,
         5,
         false,
-        TreasureClassType.REGULAR
+        TreasureClassType.REGULAR,
+        skeletonMonsterUnique
     ),
-    Monster(
-        "Bonebreak",
-        "Bonebreak",
-        "Bonebreak-name",
-        skeletonMonsterClass,
-        bonebreakAreaData,
-        NORMAL,
-        SUPERUNIQUE,
-        "Bonebreak TC",
-        false,
-        5,
-        true,
-        TreasureClassType.REGULAR
-    ),
-    Monster(
-        "Bonebreak",
-        "Bonebreak",
-        "Bonebreak-name",
-        skeletonMonsterClass,
-        bonebreakAreaData,
-        HELL,
-        SUPERUNIQUE,
-        "Bonebreak TC(H)",
-        false,
-        58,
-        true,
-        TreasureClassType.REGULAR
-    ),
+    bonebreakNormal,
+    bonebreakHell,
     skeletonMonster,
-    Monster(
-        skeletonMonsterClass.id,
-        skeletonMonsterClass.id,
-        "Skeleton-name",
-        skeletonMonsterClass,
-        area1Data,
-        NORMAL,
-        UNIQUE,
-        skeletonMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.UNIQUE),
-        false,
-        5,
-        true,
-        TreasureClassType.UNIQUE
-    ),
+    skeletonMonsterUnique,
     fetishShamanMonster1,
     fetishShamanMonster2,
     Monster(

@@ -66,7 +66,7 @@ class MetadataResourceTest {
                 Monster(
                     "2d",
                     "2",
-                    "2-name(d)",
+                    "2-name",
                     skeletonMonsterClass,
                     area2Data,
                     Difficulty.NORMAL,
@@ -94,7 +94,7 @@ class MetadataResourceTest {
                 Monster(
                     "1q",
                     "1",
-                    "1-name(q)",
+                    "1-name",
                     skeletonMonsterClass,
                     area2Data,
                     Difficulty.NORMAL,
@@ -117,7 +117,7 @@ class MetadataResourceTest {
             metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false, true)
         )
         assertEquals(
-            listOf(MetadataResponse("1-name", "1"), MetadataResponse("2-name(d)", "2d")),
+            listOf(MetadataResponse("1-name", "1"), MetadataResponse("2-name (d)", "2d")),
             metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, true, true)
         )
         assertEquals(
@@ -125,7 +125,7 @@ class MetadataResourceTest {
             metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, false)
         )
         assertEquals(
-            listOf(MetadataResponse("1-name", "1"), MetadataResponse("1-name(q)", "1q")),
+            listOf(MetadataResponse("1-name", "1"), MetadataResponse("1-name (q)", "1q")),
             metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, true)
         )
     }

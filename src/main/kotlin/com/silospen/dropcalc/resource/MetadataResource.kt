@@ -68,7 +68,7 @@ class VersionedMetadataResource(
                         difficulty = difficulty,
                         monsterType = type
                     ).filter(filter)
-                        .map { MetadataResponse(it.name, it.id) }
+                        .map { MetadataResponse(it.getDisplayName(), it.id) }
                         .toSet()
                         .sortedBy { it.name }
                 }

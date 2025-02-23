@@ -69,16 +69,6 @@ class MonsterLibraryTest {
 
     @Test
     fun questMonsterTest() {
-        val durielArea = Area(
-            "duriels-house",
-            "DurielsHouse",
-            mapOf(NORMAL to 10, NIGHTMARE to 20, HELL to 30),
-            ImmutableTable.builder<Difficulty, MonsterType, Set<String>>()
-                .put(NORMAL, BOSS, setOf("duriel"))
-                .put(NIGHTMARE, BOSS, setOf("duriel"))
-                .put(HELL, BOSS, setOf("duriel"))
-                .build()
-        )
         val actual = MonsterLibrary.fromConfig(
             listOf(durielMonsterClass),
             emptyList(),
@@ -111,7 +101,7 @@ class MonsterLibraryTest {
                 Monster(
                     "durielq",
                     "duriel",
-                    "Duriel-name (q)",
+                    "Duriel-name",
                     durielMonsterClass,
                     durielArea,
                     NORMAL,
@@ -139,7 +129,7 @@ class MonsterLibraryTest {
                 Monster(
                     "durielq",
                     "duriel",
-                    "Duriel-name (q)",
+                    "Duriel-name",
                     durielMonsterClass,
                     durielArea,
                     NIGHTMARE,
@@ -164,20 +154,7 @@ class MonsterLibraryTest {
                     false,
                     TreasureClassType.REGULAR
                 ),
-                Monster(
-                    "durielq",
-                    "duriel",
-                    "Duriel-name (q)",
-                    durielMonsterClass,
-                    durielArea,
-                    HELL,
-                    BOSS,
-                    "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.QUEST),
-                    false,
-                    88,
-                    false,
-                    TreasureClassType.QUEST
-                ),
+                durielMonsterQuest,
             ),
             treasureClassLibrary
         )
@@ -208,7 +185,7 @@ class MonsterLibraryTest {
             skeletonMonster.copy(monsterClass = desecratedSkeletonMonsterClass, treasureClass = "uAct 1 H2H A")
         val expectedDesecratedSkeletonMonster = skeletonMonster.copy(
             id = "skeleton1d",
-            name = "Skeleton-name (d)",
+            name = "Skeleton-name",
             level = 45,
             treasureClass = "uuDesecrated Act 1 H2H A",
             monsterClass = desecratedSkeletonMonsterClass,
