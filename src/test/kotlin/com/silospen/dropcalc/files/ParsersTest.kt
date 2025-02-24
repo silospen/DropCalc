@@ -66,9 +66,9 @@ class UniqueItemsLineParserTest {
     fun uniqueItemsParser() {
         val actual = parseItems(Version.V1_12)
         val expected = listOf(
-            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false, null),
-            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false, null),
-            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false, null),
+            Item("The Gnasher", "The Gnasher", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false, null),
+            Item("Deathspade", "Deathspade", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false, null),
+            Item("Rainbow Facet", "Rainbow Facet", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false, null),
         )
         assertEquals(expected, actual)
     }
@@ -77,10 +77,10 @@ class UniqueItemsLineParserTest {
     fun uniqueItemsParser_d2rEnabledFlag() {
         val actual = parseItems(Version.D2R_V1_0)
         val expected = listOf(
-            Item("The Gnasher", "The Gnasher-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false, null),
-            Item("The Gnasherv2", "The Gnasherv2-name", ItemQuality.UNIQUE, haxBaseItem, 7, 1, true, null),
-            Item("Deathspade", "Deathspade-name", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false, null),
-            Item("Rainbow Facet", "Rainbow Facet-name", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false, null),
+            Item("The Gnasher", "The Gnasher", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false, null),
+            Item("The Gnasherv2", "The Gnasherv2", ItemQuality.UNIQUE, haxBaseItem, 7, 1, true, null),
+            Item("Deathspade", "Deathspade", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false, null),
+            Item("Rainbow Facet", "Rainbow Facet", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false, null),
         )
         assertEquals(expected, actual)
     }
@@ -88,13 +88,7 @@ class UniqueItemsLineParserTest {
     private fun parseItems(version: Version): List<Item> {
         val actual = readTsv(
             getResource("parsersTestData/uniqueItems.txt"),
-            UniqueItemLineParser(
-                stubTranslations, listOf(
-                    haxBaseItem,
-                    axeBaseItem,
-                    jewelBaseItem
-                ), version
-            )
+            UniqueItemLineParser(listOf(haxBaseItem, axeBaseItem, jewelBaseItem), version)
         )
         return actual
     }
@@ -104,20 +98,16 @@ class SetItemsLineParserTest {
     @Test
     fun setItemsParser() {
         val shieldItemType = ItemType("lrg", "Large Shield", false, 3, setOf("armo"))
-        val shieldBaseItem = BaseItem("lrg", "shield-name", shieldItemType, ItemVersion.NORMAL, 1, setOf("armo3"))
+        val shieldBaseItem = BaseItem("lrg", "shield", shieldItemType, ItemVersion.NORMAL, 1, setOf("armo3"))
         val actual = readTsv(
             getResource("parsersTestData/setitems.txt"),
-            SetItemLineParser(
-                stubTranslations, listOf(
-                    shieldBaseItem
-                )
-            )
+            SetItemLineParser(listOf(shieldBaseItem))
         )
         val expected = listOf(
-            Item("Civerb's Ward", "Civerb's Ward-name", ItemQuality.SET, shieldBaseItem, 13, 7, false, null),
+            Item("Civerb's Ward", "Civerb's Ward", ItemQuality.SET, shieldBaseItem, 13, 7, false, null),
             Item(
                 "Cow King's Hide",
-                "Cow King's Hide-name",
+                "Cow King's Hide",
                 ItemQuality.SET,
                 shieldBaseItem,
                 13,
@@ -138,7 +128,6 @@ class BaseItemLineParserTest {
         val actual = readTsv(
             getResource("parsersTestData/weapons.txt"),
             BaseItemLineParser(
-                stubTranslations,
                 listOf(
                     axeItemType,
                     potionItemType,
@@ -148,8 +137,8 @@ class BaseItemLineParserTest {
         )
         assertEquals(
             listOf(
-                BaseItem("hax", "hax-name", axeItemType, ItemVersion.NORMAL, 3, setOf("weap3")),
-                BaseItem("opl", "bopl-name", potionItemType, ItemVersion.NORMAL, 4, setOf("misc6"))
+                BaseItem("hax", "hax", axeItemType, ItemVersion.NORMAL, 3, setOf("weap3")),
+                BaseItem("opl", "bopl", potionItemType, ItemVersion.NORMAL, 4, setOf("misc6"))
             ),
             actual
         )
@@ -160,10 +149,10 @@ class BaseItemLineParserTest {
         val helmItemType = ItemType("helm", "Helm", false, 3, setOf("armo"))
         val actual = readTsv(
             getResource("parsersTestData/armor.txt"),
-            BaseItemLineParser(stubTranslations, listOf(helmItemType))
+            BaseItemLineParser(listOf(helmItemType))
         )
         assertEquals(
-            listOf(BaseItem("cap", "cap-name", helmItemType, ItemVersion.NORMAL, 1, setOf("armo3"))),
+            listOf(BaseItem("cap", "cap", helmItemType, ItemVersion.NORMAL, 1, setOf("armo3"))),
             actual
         )
     }
@@ -174,12 +163,12 @@ class BaseItemLineParserTest {
         val ringItemType = ItemType("ring", "Ring", false, 3, setOf("misc"))
         val actual = readTsv(
             getResource("parsersTestData/misc.txt"),
-            BaseItemLineParser(stubTranslations, listOf(elixirItemType, ringItemType), ItemVersion.NORMAL)
+            BaseItemLineParser(listOf(elixirItemType, ringItemType), ItemVersion.NORMAL)
         )
         assertEquals(
             listOf(
-                BaseItem("elx", "elx-name", elixirItemType, ItemVersion.NORMAL, 21, setOf("misc21")),
-                BaseItem("rin", "rin-name", ringItemType, ItemVersion.NORMAL, 1, setOf("misc3"))
+                BaseItem("elx", "elx", elixirItemType, ItemVersion.NORMAL, 21, setOf("misc21")),
+                BaseItem("rin", "rin", ringItemType, ItemVersion.NORMAL, 1, setOf("misc3"))
             ),
             actual
         )

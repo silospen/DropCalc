@@ -9,7 +9,7 @@ class ItemLibrary(
     private val itemRatios: List<ItemRatio>,
     val items: List<Item>
 ) {
-    private val itemTreasureClassesByName = generateVirtualTreasureClasses().associateBy { it.name }
+    private val itemTreasureClassesByNameId = generateVirtualTreasureClasses().associateBy { it.nameId }
     private val baseItemsById = baseItems.associateBy { it.id }
     private val itemsByQualityAndBaseId = items.groupBy { it.quality to it.baseItem.id }
     private val itemsByQualityAndId = items.associateBy { it.quality to it.id }
@@ -34,7 +34,7 @@ class ItemLibrary(
             }
 
     fun getOrConstructVirtualTreasureClass(name: String): VirtualTreasureClass {
-        val virtualTreasureClass = itemTreasureClassesByName[name]
+        val virtualTreasureClass = itemTreasureClassesByNameId[name]
         if (virtualTreasureClass != null) return virtualTreasureClass
         val outcomes = (baseItemsById[name] ?: ItemQuality.values().firstNotNullOfOrNull { getItem(it, name) })
             ?.let { setOf(Outcome(it, 1)) } ?: emptySet()

@@ -19,22 +19,26 @@ interface TreasureClass : OutcomeType {
 }
 
 data class DefinedTreasureClass(
-    override val name: String,
+    override val nameId: String,
     override val probabilityDenominator: Int,
     override val properties: TreasureClassProperties,
     override val outcomes: Set<Outcome>
 ) : TreasureClass {
     override fun toString(): String {
-        return "DefinedTreasureClass(name='$name', probabilityDenominator=$probabilityDenominator, properties=$properties)"
+        return "DefinedTreasureClass(name='$nameId', probabilityDenominator=$probabilityDenominator, properties=$properties)"
     }
+
+    override fun getDisplayName(translations: Translations) = nameId
 }
 
 data class VirtualTreasureClass(
-    override val name: String,
+    override val nameId: String,
     override val probabilityDenominator: Int = 1,
     override val outcomes: Set<Outcome> = emptySet()
 ) : TreasureClass {
     override val properties: TreasureClassProperties = TreasureClassProperties(1, EMPTY)
+
+    override fun getDisplayName(translations: Translations) = nameId
 }
 
 data class TreasureClassProperties(
@@ -51,8 +55,8 @@ data class Outcome(
 )
 
 sealed interface OutcomeType {
-    val name: String
-//    val probabilitySum: Int
+    val nameId: String
+    fun getDisplayName(translations: Translations): String
 }
 
 data class MonsterClass(
@@ -84,23 +88,27 @@ data class Area(
 
 data class Item(
     val id: String,
-    override val name: String,
+    override val nameId: String,
     val quality: ItemQuality,
     val baseItem: BaseItem,
     val level: Int,
     val rarity: Int,
     val onlyDropsDirectly: Boolean,
     val onlyDropsFromMonsterClass: String?
-) : OutcomeType
+) : OutcomeType {
+    override fun getDisplayName(translations: Translations) = translations.getTranslation(nameId)
+}
 
 data class BaseItem(
     val id: String,
-    override val name: String,
+    override val nameId: String,
     val itemType: ItemType,
     val itemVersion: ItemVersion,
     val level: Int,
     val treasureClasses: Set<String>
-) : OutcomeType
+) : OutcomeType {
+    override fun getDisplayName(translations: Translations) = translations.getTranslation(nameId)
+}
 
 data class ItemType(
     val id: String,

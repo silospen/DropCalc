@@ -137,11 +137,11 @@ class MetadataResourceTest {
             metadataResource.getItems(ApiItemQuality.UNIQUE, ItemVersion.ELITE)
         )
         assertEquals(
-            listOf(MetadataResponse("item_2", "item2")),
+            listOf(MetadataResponse("item_2-name", "item2")),
             metadataResource.getItems(ApiItemQuality.WHITE, ItemVersion.ELITE)
         )
         assertEquals(
-            listOf(MetadataResponse("item_2", "item2")),
+            listOf(MetadataResponse("item_2-name", "item2")),
             metadataResource.getItems(ApiItemQuality.WHITE, null)
         )
         assertEquals(

@@ -141,7 +141,7 @@ class VersionedApiResource(
                         .asSequence()
                         .map {
                             listOf(
-                                it.name,
+                                it.getDisplayName(translations),
                                 monster.area.getDisplayName(translations),
                                 formatProbability(decimalMode, treasureClassPaths.getFinalProbability(it).toDouble())
                             )
@@ -207,7 +207,7 @@ class VersionedApiResource(
                                 null
                             } else {
                                 listOf(
-                                    item.name,
+                                    item.getDisplayName(translations),
                                     monster.area.getDisplayName(translations),
                                     formatProbability(decimalMode, prob)
                                 )
@@ -347,7 +347,7 @@ class VersionedApiResource(
                 item.id,
                 item.level,
                 item.baseItem.id,
-                item.baseItem.name,
+                item.baseItem.getDisplayName(translations),
                 item.baseItem.itemType.id,
                 item.baseItem.itemType.name,
                 item.baseItem.level,

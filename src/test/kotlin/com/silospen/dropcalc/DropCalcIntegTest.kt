@@ -128,7 +128,7 @@ class DropCalcIntegTest {
                 null
             )
         },
-        this::runAtomicTcAsserts,
+        this::runAsserts,
         "$itemId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind",
         mode,
     )
@@ -161,7 +161,7 @@ class DropCalcIntegTest {
                 0,
             )
         },
-        this::runAtomicTcAsserts,
+        this::runAsserts,
         "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $apiItemQuality, $magicFind",
         mode,
     )
@@ -191,7 +191,7 @@ class DropCalcIntegTest {
                 0
             )
         },
-        this::runAtomicTcAsserts,
+        this::runAsserts,
         "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize",
         mode
     )
@@ -223,30 +223,35 @@ class DropCalcIntegTest {
 
     }
 
-    private fun runAtomicTcAsserts(
+    private fun runAsserts(
         actual: List<ApiResponseEntry>,
         expected: List<ApiResponseEntry>,
         testInput: String
     ) {
-        val actualsByTcAndArea: Map<Pair<String, String>, List<ApiResponseEntry>> =
-            actual.groupBy { it.name.lowercase() to it.area }
-        val outcomes = expected
-            .filterNot { brokenNames.contains(it.name) }
-            .filterNot { brokenNamesAndAreas.contains(it.name to it.area) }
-            .map {
-                val key = it.name.lowercase() to it.area
-                val value = actualsByTcAndArea.getValue(key)
-                if (value.size != 1) throw RuntimeException("Multiple probs found for $it and $value")
-                val actualProb = value[0].prob
-                val expectedProb = it.prob
-                key to Precision.equals(actualProb.toDouble(), expectedProb.toDouble(), 0.00000000001)
+        try {
+            val actualsByTcAndArea: Map<Pair<String, String>, List<ApiResponseEntry>> =
+                actual.groupBy { it.name.lowercase() to it.area }
+            val outcomes = expected
+                .filterNot { brokenNames.contains(it.name) }
+                .filterNot { brokenNamesAndAreas.contains(it.name to it.area) }
+                .map {
+                    val key = it.name.lowercase() to it.area
+                    val value = actualsByTcAndArea.getValue(key)
+                    if (value.size != 1) throw RuntimeException("Multiple probs found for $it and $value")
+                    val actualProb = value[0].prob
+                    val expectedProb = it.prob
+                    key to Precision.equals(actualProb.toDouble(), expectedProb.toDouble(), 0.00000000001)
+                }
+            val failedAsserts = outcomes.filter { !it.second }
+            if (failedAsserts.isNotEmpty()) {
+                println("Failed: $testInput on ${failedAsserts.joinToString("\n")}")
+                fail()
+            } else {
+                println("Succeeded: $testInput")
             }
-        val failedAsserts = outcomes.filter { !it.second }
-        if (failedAsserts.isNotEmpty()) {
-            println("Failed: $testInput on ${failedAsserts.joinToString("\n")}")
+        } catch (e: Exception) {
+            println("Failed: $testInput on $e}")
             fail()
-        } else {
-            println("Succeeded: $testInput")
         }
     }
 

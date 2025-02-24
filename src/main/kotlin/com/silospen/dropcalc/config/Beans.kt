@@ -43,8 +43,8 @@ class Beans {
 class ConfigLoader(private val version: Version) {
     private val translations = loadTranslations()
     private val itemTypes = loadItemTypes(loadItemTypeCodeLibrary(loadItemTypeCodes()))
-    private val baseItems = loadBaseItems(translations, itemTypes)
-    private val itemLibrary = ItemLibrary(baseItems, loadItemRatio(), loadItems(translations, baseItems))
+    private val baseItems = loadBaseItems(itemTypes)
+    private val itemLibrary = ItemLibrary(baseItems, loadItemRatio(), loadItems(baseItems))
     private val treasureClassConfigs = loadTreasureClassConfigs()
     private val treasureClassLibrary = TreasureClassLibrary(treasureClassConfigs, itemLibrary)
     private val treasureClassCalculator = TreasureClassCalculator(treasureClassLibrary)
@@ -118,15 +118,15 @@ class ConfigLoader(private val version: Version) {
         }
     }
 
-    private fun loadBaseItems(translations: Translations, itemTypes: List<ItemType>): List<BaseItem> = readTsv(
+    private fun loadBaseItems(itemTypes: List<ItemType>): List<BaseItem> = readTsv(
         getResource("d2Files/${version.pathName}/weapons.txt"),
-        BaseItemLineParser(translations, itemTypes)
+        BaseItemLineParser(itemTypes)
     ) + readTsv(
         getResource("d2Files/${version.pathName}/armor.txt"),
-        BaseItemLineParser(translations, itemTypes)
+        BaseItemLineParser(itemTypes)
     ) + readTsv(
         getResource("d2Files/${version.pathName}/misc.txt"),
-        BaseItemLineParser(translations, itemTypes, ItemVersion.NORMAL)
+        BaseItemLineParser(itemTypes, ItemVersion.NORMAL)
     )
 
     private fun loadItemTypes(itemTypeCodeLibrary: ItemTypeCodeLibrary): List<ItemType> = readTsv(
@@ -147,14 +147,14 @@ class ConfigLoader(private val version: Version) {
     private fun loadItemTypeCodeLibrary(itemTypeCodes: List<SingleItemTypeCodeEntry>) =
         ItemTypeCodeLibrary.fromIncompleteLineages(itemTypeCodes)
 
-    private fun loadItems(translations: Translations, baseItems: List<BaseItem>): List<Item> {
+    private fun loadItems(baseItems: List<BaseItem>): List<Item> {
         val uniqueItems = readTsv(
             getResource("d2Files/${version.pathName}/uniqueitems.txt"),
-            UniqueItemLineParser(translations, baseItems, version)
+            UniqueItemLineParser(baseItems, version)
         )
         val setItems = readTsv(
             getResource("d2Files/${version.pathName}/setitems.txt"),
-            SetItemLineParser(translations, baseItems)
+            SetItemLineParser(baseItems)
         )
         val rareItems = generateItems(ItemQuality.RARE, baseItems) { it.itemType.canBeRare }
         val magicItems = generateItems(ItemQuality.MAGIC, baseItems) { it.itemType.canBeRare }
@@ -171,7 +171,7 @@ class ConfigLoader(private val version: Version) {
             .map {
                 Item(
                     it.id,
-                    it.name,
+                    it.nameId,
                     itemQuality,
                     it,
                     it.level,

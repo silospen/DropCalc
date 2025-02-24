@@ -83,7 +83,7 @@ class VersionedMetadataResource(
             val virtualTreasureClassNames = treasureClassLibrary.treasureClasses.asSequence().flatMap { it.outcomes }
                 .map { it.outcomeType }
                 .filter { it is VirtualTreasureClass }
-                .map { it.name }
+                .map { it.nameId }
                 .toSet()
 
             val associateWith = ApiItemQuality.values().associateWith {
@@ -100,7 +100,7 @@ class VersionedMetadataResource(
         itemLibrary.items
             .filter { !it.onlyDropsDirectly || virtualTreasureClassNames.contains(it.id) }
             .filter { apiItemQuality.itemQuality == it.quality && apiItemQuality.additionalFilter(it) }
-            .groupBy({ it.baseItem.itemVersion }) { MetadataResponse(it.name, it.id) }
+            .groupBy({ it.baseItem.itemVersion }) { MetadataResponse(it.getDisplayName(translations), it.id) }
             .mapValues { it.value.toSet() }
 
     fun getMonsters(

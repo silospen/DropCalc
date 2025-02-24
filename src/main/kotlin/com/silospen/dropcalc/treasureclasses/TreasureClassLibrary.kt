@@ -5,7 +5,7 @@ import com.silospen.dropcalc.items.ItemLibrary
 
 class TreasureClassLibrary(treasureClassConfigs: List<TreasureClassConfig>, private val itemLibrary: ItemLibrary) {
     val treasureClasses: List<TreasureClass> = generateTreasureClasses(treasureClassConfigs)
-    private val treasureClassesByName: Map<String, TreasureClass> = treasureClasses.associateBy { it.name }
+    private val treasureClassesByNameId: Map<String, TreasureClass> = treasureClasses.associateBy { it.nameId }
     private val treasureClassesByGroup = treasureClasses
         .filter { it.properties.group != null && it.properties.level != null }
         .groupBy { it.properties.group }
@@ -26,7 +26,7 @@ class TreasureClassLibrary(treasureClassConfigs: List<TreasureClassConfig>, priv
     }
 
     private fun toOutcome(itemAndProbability: Pair<String, Int>, treasureClasses: List<TreasureClass>): Outcome {
-        val treasureClass = treasureClasses.find { it.name == itemAndProbability.first }
+        val treasureClass = treasureClasses.find { it.nameId == itemAndProbability.first }
         return if (treasureClass != null) {
             Outcome(treasureClass, itemAndProbability.second)
         } else {
@@ -45,7 +45,7 @@ class TreasureClassLibrary(treasureClassConfigs: List<TreasureClassConfig>, priv
             monsterLevel,
             difficulty,
             alwaysUpgrade
-        ).name
+        ).nameId
 
     fun changeTcBasedOnLevel(
         baseTreasureClass: TreasureClass,
@@ -67,7 +67,7 @@ class TreasureClassLibrary(treasureClassConfigs: List<TreasureClassConfig>, priv
     }
 
     fun getTreasureClass(treasureClassName: String) =
-        treasureClassesByName.getOrDefault(treasureClassName, VirtualTreasureClass(treasureClassName))
+        treasureClassesByNameId.getOrDefault(treasureClassName, VirtualTreasureClass(treasureClassName))
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

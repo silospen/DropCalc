@@ -366,7 +366,7 @@ class TreasureClassCalculatorTest {
         val actual = accumulator.map {
             TcExpectation(it, accumulator.getSubPaths(it), accumulator.getFinalProbability(it))
         }
-        assertEquals(expectations.sortedBy { it.outcomeType.name }, actual.sortedBy { it.outcomeType.name })
+        assertEquals(expectations.sortedBy { it.outcomeType.nameId }, actual.sortedBy { it.outcomeType.nameId })
     }
 
     private fun expectation(

@@ -9,7 +9,6 @@ import com.silospen.dropcalc.MonsterType.*
 import com.silospen.dropcalc.MonsterType.UNIQUE
 import com.silospen.dropcalc.items.ItemTypeCodeLibrary
 import com.silospen.dropcalc.items.SingleItemTypeCodeEntry
-import com.silospen.dropcalc.translations.Translations
 import org.springframework.util.StringUtils
 import java.util.*
 
@@ -34,7 +33,6 @@ class ItemRatioLineParser : LineParser<ItemRatio?> {
 }
 
 class BaseItemLineParser(
-    private val translations: Translations,
     itemTypes: List<ItemType>,
     private val hardcodedItemVersion: ItemVersion? = null
 ) : LineParser<BaseItem?> {
@@ -50,7 +48,7 @@ class BaseItemLineParser(
         val id = line["code"]
         return BaseItem(
             id,
-            translations.getTranslation(line["namestr"].trim()),
+            line["namestr"].trim(),
             itemType,
             hardcodedItemVersion ?: getItemVersion(
                 line,
@@ -101,7 +99,6 @@ class ItemTypeCodesParser : LineParser<SingleItemTypeCodeEntry?> {
 }
 
 class UniqueItemLineParser(
-    private val translations: Translations,
     baseItems: List<BaseItem>,
     private val version: Version
 ) : LineParser<Item?> {
@@ -117,7 +114,7 @@ class UniqueItemLineParser(
         val rarity = line["rarity"].toInt()
         return Item(
             id,
-            translations.getTranslation(id),
+            id,
             ItemQuality.UNIQUE,
             baseItemsById.getValue(line["code"]),
             level,
@@ -129,7 +126,6 @@ class UniqueItemLineParser(
 }
 
 class SetItemLineParser(
-    private val translations: Translations,
     baseItems: List<BaseItem>
 ) : LineParser<Item?> {
 
@@ -142,7 +138,7 @@ class SetItemLineParser(
         val rarity = line["rarity"].toInt()
         return Item(
             id,
-            translations.getTranslation(id),
+            id,
             SET,
             baseItemsById.getValue(line["item"]),
             level,
