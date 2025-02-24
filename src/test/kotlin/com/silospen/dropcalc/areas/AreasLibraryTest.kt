@@ -1,12 +1,9 @@
 package com.silospen.dropcalc.areas
 
+import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.HELL
 import com.silospen.dropcalc.Difficulty.NORMAL
 import com.silospen.dropcalc.MonsterType.*
-import com.silospen.dropcalc.area1Data
-import com.silospen.dropcalc.area2Data
-import com.silospen.dropcalc.areasTestData
-import com.silospen.dropcalc.bonebreakAreaData
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -31,5 +28,10 @@ class AreasLibraryTest {
             setOf(area1Data) + setOf(area2Data),
             actual.getAreasForMonsterClassId("fetishshaman2", NORMAL, REGULAR)
         )
+    }
+
+    @Test
+    fun getDisplayName() {
+        assertEquals("DurielsHouse-name", durielArea.getDisplayName(stubTranslations))
     }
 }

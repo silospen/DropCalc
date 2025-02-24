@@ -1,14 +1,11 @@
 package com.silospen.dropcalc.treasureclasses
 
+import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Difficulty.*
-import com.silospen.dropcalc.armor1
 import com.silospen.dropcalc.files.TreasureClassesLineParser
 import com.silospen.dropcalc.files.getResource
 import com.silospen.dropcalc.files.readTsv
 import com.silospen.dropcalc.items.ItemLibrary
-import com.silospen.dropcalc.ring
-import com.silospen.dropcalc.weapon1
-import com.silospen.dropcalc.weapon2
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -36,6 +33,12 @@ class TreasureClassLibraryTest {
         assertEquals(levelTwoTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 15, NORMAL, false))
         assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelTwoTc, 15, NORMAL, true))
         assertEquals(levelNineTc, treasureClassLibrary.changeTcBasedOnLevel(levelNineTc, 1, HELL, false))
+    }
+
+    @Test
+    fun displayName() {
+        val treasureClass = treasureClassLibrary.getTreasureClass("Act 1 Equip B")
+        assertEquals(treasureClass.nameId, treasureClass.getDisplayName(stubTranslations))
     }
 
     @Test

@@ -26,6 +26,12 @@ class ItemLibraryTest {
     private val itemQualityRatios = ItemQualityRatios(400, 300, 200, 100)
 
     @Test
+    fun getDisplayName() {
+        assertEquals("Fancy Armor-name", armor1.getDisplayName(stubTranslations))
+        assertEquals("MyUniqueRing-name", uniqueRing.getDisplayName(stubTranslations))
+    }
+
+    @Test
     fun getOrConstructVirtualTreasureClass() {
         assertEquals(
             VirtualTreasureClass("armo3", 2, setOf(Outcome(armor1, 2))),
