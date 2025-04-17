@@ -32,6 +32,6 @@ class AreasLibraryTest {
 
     @Test
     fun getDisplayName() {
-        assertEquals("DurielsHouse-name", durielArea.getDisplayName(stubTranslations))
+        assertEquals("DurielsHouse-ENGLISH-name", durielArea.getDisplayName(stubTranslations, Language.ENGLISH))
     }
 }

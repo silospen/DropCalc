@@ -4,6 +4,7 @@ import com.google.common.collect.Table
 import com.silospen.dropcalc.ItemQuality.*
 import com.silospen.dropcalc.ItemQualityRatios.Companion.EMPTY
 import com.silospen.dropcalc.translations.Translations
+import java.util.*
 import kotlin.math.max
 
 data class TreasureClassConfig(
@@ -28,7 +29,7 @@ data class DefinedTreasureClass(
         return "DefinedTreasureClass(name='$nameId', probabilityDenominator=$probabilityDenominator, properties=$properties)"
     }
 
-    override fun getDisplayName(translations: Translations) = nameId
+    override fun getDisplayName(translations: Translations, language: Language) = nameId
 }
 
 data class VirtualTreasureClass(
@@ -38,7 +39,7 @@ data class VirtualTreasureClass(
 ) : TreasureClass {
     override val properties: TreasureClassProperties = TreasureClassProperties(1, EMPTY)
 
-    override fun getDisplayName(translations: Translations) = nameId
+    override fun getDisplayName(translations: Translations, language: Language) = nameId
 }
 
 data class TreasureClassProperties(
@@ -56,7 +57,7 @@ data class Outcome(
 
 sealed interface OutcomeType {
     val nameId: String
-    fun getDisplayName(translations: Translations): String
+    fun getDisplayName(translations: Translations, language: Language): String
 }
 
 data class MonsterClass(
@@ -83,7 +84,7 @@ data class Area(
     val monsterLevels: Map<Difficulty, Int>,
     val monsterClassIds: Table<Difficulty, MonsterType, Set<String>>
 ) {
-    fun getDisplayName(translations: Translations) = translations.getTranslation(nameId)
+    fun getDisplayName(translations: Translations, language: Language) = translations.getTranslation(nameId, language)
 }
 
 data class Item(
@@ -96,7 +97,8 @@ data class Item(
     val onlyDropsDirectly: Boolean,
     val onlyDropsFromMonsterClass: String?
 ) : OutcomeType {
-    override fun getDisplayName(translations: Translations) = translations.getTranslation(nameId)
+    override fun getDisplayName(translations: Translations, language: Language) =
+        translations.getTranslation(nameId, language)
 }
 
 data class BaseItem(
@@ -107,7 +109,8 @@ data class BaseItem(
     val level: Int,
     val treasureClasses: Set<String>
 ) : OutcomeType {
-    override fun getDisplayName(translations: Translations) = translations.getTranslation(nameId)
+    override fun getDisplayName(translations: Translations, language: Language) =
+        translations.getTranslation(nameId, language)
 }
 
 data class ItemType(
@@ -223,6 +226,66 @@ enum class TreasureClassType(
     DESECRATED_CHAMPION(listOf(MonsterType.CHAMPION), "d", true),
     DESECRATED_UNIQUE(listOf(MonsterType.UNIQUE), "d", true),
 
+}
+
+enum class Language(val d2String: String) {
+    ENGLISH("enUS"),
+    TAIWANESE("zhTW"),
+    GERMAN("deDE"),
+    SPANISH("esES"),
+    FRENCH("frFR"),
+    ITALIAN("itIT"),
+    KOREAN("koKR"),
+    POLISH("plPL"),
+    MEXICAN("esMX"),
+    JAPANESE("jaJP"),
+    BRAZILIAN("ptBR"),
+    RUSSIAN("ruRU"),
+    CHINESE("zhCN"),
+    ;
+
+
+    companion object {
+
+        private val localeLookup = mapOf(
+            Locale.US to ENGLISH,
+            Locale.TAIWAN to TAIWANESE,
+            Locale.GERMAN to GERMAN,
+            Locale("es", "ES") to SPANISH,
+            Locale.FRENCH to FRENCH,
+            Locale.ITALIAN to ITALIAN,
+            Locale.KOREAN to KOREAN,
+            Locale("pl", "PL") to POLISH,
+            Locale("es", "MX") to MEXICAN,
+            Locale.JAPANESE to JAPANESE,
+            Locale("pt", "BR") to BRAZILIAN,
+            Locale("ru", "RU") to RUSSIAN,
+            Locale.SIMPLIFIED_CHINESE to CHINESE,
+        )
+
+        private val languageLookup = mapOf(
+            "en" to ENGLISH,
+            "de" to GERMAN,
+            "es" to SPANISH,
+            "fr" to FRENCH,
+            "it" to ITALIAN,
+            "ko" to KOREAN,
+            "pl" to POLISH,
+            "ja" to JAPANESE,
+            "ru" to RUSSIAN,
+            "ZH" to CHINESE,
+        )
+
+        fun forD2String(fieldName: String): Language? {
+            return values().firstOrNull { it.d2String == fieldName }
+        }
+
+        fun forLangAttribute(langAttribute: String?, default: Language = ENGLISH): Language {
+            val parsedLocale = langAttribute?.let { Locale.forLanguageTag(langAttribute) }
+            return parsedLocale?.let { locale -> localeLookup.getOrDefault(locale, languageLookup[locale.language]) }
+                ?: default
+        }
+    }
 }
 
 fun <R, C, V> Table<R, C, V>.getValue(rowKey: R, columnKey: C) =

@@ -231,7 +231,8 @@ class DropCalcLargeDesecratedIntegTests {
                 false,
                 true,
                 0,
-                true
+                true,
+                "en",
             )
         )
     )
@@ -266,7 +267,8 @@ class DropCalcLargeDesecratedIntegTests {
                 magicFind,
                 false,
                 true,
-                0
+                0,
+                "en",
             )
         )
     )
@@ -297,7 +299,8 @@ class DropCalcLargeDesecratedIntegTests {
                 partySize,
                 false,
                 true,
-                desecratedLevel
+                desecratedLevel,
+                "en",
             )
         )
     )

@@ -57,8 +57,9 @@ class ConfigLoader(private val version: Version) {
 
     companion object {
         private val expansionTranslations =
-            MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/expansionstring.tbl"))
-        private val coreTranslations = MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/string.tbl"))
+            MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/expansionstring.tbl"), Language.ENGLISH)
+        private val coreTranslations =
+            MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/string.tbl"), Language.ENGLISH)
     }
 
     private fun loadTreasureClassConfigs(): List<TreasureClassConfig> = readTsv(
@@ -105,13 +106,22 @@ class ConfigLoader(private val version: Version) {
             CompositeTranslations(
                 MapBasedTranslations.loadTranslationsFromJsonFile(getResource("d2Files/tbl/${version.pathName}/item-names.json")),
                 MapBasedTranslations.loadTranslationsFromJsonFile(getResource("d2Files/tbl/${version.pathName}/item-runes.json")),
-                MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/${version.pathName}/patchstring.tbl")),
+                MapBasedTranslations.loadTranslationsFromJsonFile(getResource("d2Files/tbl/${version.pathName}/levels.json")),
+                MapBasedTranslations.loadTranslationsFromJsonFile(getResource("d2Files/tbl/${version.pathName}/monsters.json")),
+                MapBasedTranslations.loadTranslationsFromJsonFile(getResource("d2Files/tbl/${version.pathName}/npcs.json")),
+                MapBasedTranslations.loadTranslations(
+                    getResource("d2Files/tbl/${version.pathName}/patchstring.tbl"),
+                    Language.ENGLISH
+                ),
                 expansionTranslations,
                 coreTranslations
             )
         } else {
             CompositeTranslations(
-                MapBasedTranslations.loadTranslations(getResource("d2Files/tbl/${version.pathName}/patchstring.tbl")),
+                MapBasedTranslations.loadTranslations(
+                    getResource("d2Files/tbl/${version.pathName}/patchstring.tbl"),
+                    Language.ENGLISH
+                ),
                 expansionTranslations,
                 coreTranslations
             )

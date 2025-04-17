@@ -32,6 +32,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("decMode", required = true) decimalMode: Boolean,
         @RequestParam("desecrated", required = true) desecrated: Boolean,
         @RequestParam("desecratedLevel", required = true) desecratedLevel: Int,
+        @RequestParam("language", required = false) language: String?,
     ): TabularApiResponse = versionedApiResources[version]?.getAtomicTcs(
         monsterId,
         monsterType,
@@ -41,6 +42,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         desecrated,
         desecratedLevel,
         decimalMode,
+        Language.forLangAttribute(language),
     ) ?: emptyApiResponse
 
     @GetMapping("/tabularMonster")
@@ -56,6 +58,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("decMode", required = true) decimalMode: Boolean,
         @RequestParam("desecrated", required = true) desecrated: Boolean,
         @RequestParam("desecratedLevel", required = true) desecratedLevel: Int,
+        @RequestParam("language", required = false) language: String?,
     ): TabularApiResponse = versionedApiResources[version]?.getMonster(
         monsterId,
         monsterType,
@@ -67,6 +70,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         desecrated,
         desecratedLevel,
         decimalMode,
+        Language.forLangAttribute(language),
     ) ?: emptyApiResponse
 
     @GetMapping("/tabularItem")
@@ -83,6 +87,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("desecrated", required = true) desecrated: Boolean,
         @RequestParam("desecratedLevel", required = true) desecratedLevel: Int,
         @RequestParam("includeQuest", required = false) includeQuest: Boolean?,
+        @RequestParam("language", required = false) language: String?,
     ): TabularApiResponse = versionedApiResources[version]?.getItemProbabilities(
         itemId,
         monsterType,
@@ -95,6 +100,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         desecratedLevel,
         includeQuest ?: true,
         decimalMode,
+        Language.forLangAttribute(language),
     ) ?: emptyApiResponse
 }
 
@@ -122,7 +128,8 @@ class VersionedApiResource(
         partySize: Int,
         desecrated: Boolean,
         desecratedLevel: Int,
-        decimalMode: Boolean
+        decimalMode: Boolean,
+        language: Language
     ): TabularApiResponse {
         val monsters = monsterLibrary.getMonsters(desecrated, desecratedLevel, monsterId, difficulty, monsterType)
         return TabularApiResponse(
@@ -141,24 +148,24 @@ class VersionedApiResource(
                         .asSequence()
                         .map {
                             listOf(
-                                it.getDisplayName(translations),
-                                monster.area.getDisplayName(translations),
+                                it.getDisplayName(translations, language),
+                                monster.area.getDisplayName(translations, language),
                                 formatProbability(decimalMode, treasureClassPaths.getFinalProbability(it).toDouble())
                             )
                         }
                 }
                 .sortedBy { it[0] }
                 .toList(),
-            createApiResponseContext(monsters)
+            createApiResponseContext(monsters, language)
         )
     }
 
-    private fun createApiResponseContext(monsters: List<Monster>) =
+    private fun createApiResponseContext(monsters: List<Monster>, language: Language) =
         MonsterApiResponseContext(monsters.map {
             MonsterApiResponseDetails(
                 it.id,
                 it.area.id,
-                it.area.getDisplayName(translations),
+                it.area.getDisplayName(translations, language),
                 it.level,
                 it.treasureClass
             )
@@ -174,7 +181,8 @@ class VersionedApiResource(
         magicFind: Int,
         desecrated: Boolean,
         desecratedLevel: Int,
-        decimalMode: Boolean
+        decimalMode: Boolean,
+        language: Language
     ): TabularApiResponse {
         val monsters = monsterLibrary.getMonsters(desecrated, desecratedLevel, monsterId, difficulty, monsterType)
         return TabularApiResponse(
@@ -207,8 +215,8 @@ class VersionedApiResource(
                                 null
                             } else {
                                 listOf(
-                                    item.getDisplayName(translations),
-                                    monster.area.getDisplayName(translations),
+                                    item.getDisplayName(translations, language),
+                                    monster.area.getDisplayName(translations, language),
                                     formatProbability(decimalMode, prob)
                                 )
                             }
@@ -216,7 +224,7 @@ class VersionedApiResource(
                     }
             }
                 .sortedBy { it[0] }
-            .toList(), createApiResponseContext(monsters))
+                .toList(), createApiResponseContext(monsters, language))
     }
 
     private fun generateItemQualityResponseForBaseItem(
@@ -297,7 +305,8 @@ class VersionedApiResource(
         desecrated: Boolean,
         desecratedLevel: Int,
         includeQuest: Boolean,
-        decimalMode: Boolean
+        decimalMode: Boolean,
+        language: Language
     ): TabularApiResponse {
         val item: Item =
             itemLibrary.getItem(apiItemQuality.itemQuality, itemId)?.takeIf { apiItemQuality.additionalFilter(it) }
@@ -334,8 +343,13 @@ class VersionedApiResource(
                             )
                             { _, monster, prob ->
                                 listOf(
-                                    "${monster.getDisplayName(translations)} - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
-                                    monster.area.getDisplayName(translations),
+                                    "${
+                                        monster.getDisplayName(
+                                            translations,
+                                            language
+                                        )
+                                    } - ${monster.monsterClass.id} (${monster.difficulty.displayString})",
+                                    monster.area.getDisplayName(translations, language),
                                     formatProbability(decimalMode, prob)
                                 )
                             }
@@ -347,7 +361,7 @@ class VersionedApiResource(
                 item.id,
                 item.level,
                 item.baseItem.id,
-                item.baseItem.getDisplayName(translations),
+                item.baseItem.getDisplayName(translations, language),
                 item.baseItem.itemType.id,
                 item.baseItem.itemType.name,
                 item.baseItem.level,

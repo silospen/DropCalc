@@ -412,7 +412,7 @@ val uniqueRing = Item(
 )
 
 val stubTranslations = object : Translations {
-    override fun getTranslationOrNull(key: String): String {
-        return "$key-name"
+    override fun getTranslationOrNull(key: String, language: Language): String {
+        return "$key-$language-name"
     }
 }

@@ -113,19 +113,19 @@ class MetadataResourceTest {
     @Test
     fun monsters() {
         assertEquals(
-            listOf(MetadataResponse("1-name", "1"), MetadataResponse("2-name", "2")),
+            listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("2-ENGLISH-name", "2")),
             metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false, true)
         )
         assertEquals(
-            listOf(MetadataResponse("1-name", "1"), MetadataResponse("2-name (d)", "2d")),
+            listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("2-ENGLISH-name (d)", "2d")),
             metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, true, true)
         )
         assertEquals(
-            listOf(MetadataResponse("1-name", "1")),
+            listOf(MetadataResponse("1-ENGLISH-name", "1")),
             metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, false)
         )
         assertEquals(
-            listOf(MetadataResponse("1-name", "1"), MetadataResponse("1-name (q)", "1q")),
+            listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("1-ENGLISH-name (q)", "1q")),
             metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, true)
         )
     }
@@ -137,11 +137,11 @@ class MetadataResourceTest {
             metadataResource.getItems(ApiItemQuality.UNIQUE, ItemVersion.ELITE)
         )
         assertEquals(
-            listOf(MetadataResponse("item_2-name", "item2")),
+            listOf(MetadataResponse("item_2-ENGLISH-name", "item2")),
             metadataResource.getItems(ApiItemQuality.WHITE, ItemVersion.ELITE)
         )
         assertEquals(
-            listOf(MetadataResponse("item_2-name", "item2")),
+            listOf(MetadataResponse("item_2-ENGLISH-name", "item2")),
             metadataResource.getItems(ApiItemQuality.WHITE, null)
         )
         assertEquals(

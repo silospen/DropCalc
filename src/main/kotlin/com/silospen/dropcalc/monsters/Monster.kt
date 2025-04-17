@@ -26,14 +26,14 @@ data class Monster(
         return newLevel
     }
 
-    fun getDisplayName(translations: Translations): String {
-        val nameSuffix = getNameSuffix(translations)
-        return translations.getTranslation(nameId) + nameSuffix
+    fun getDisplayName(translations: Translations, language: Language): String {
+        val nameSuffix = getNameSuffix(translations, language)
+        return translations.getTranslation(nameId, language) + nameSuffix
     }
 
-    private fun getNameSuffix(translations: Translations): String {
+    private fun getNameSuffix(translations: Translations, language: Language): String {
         return if (parentMonster != null) {
-            " (${parentMonster.getDisplayName(translations)})"
+            " (${parentMonster.getDisplayName(translations, language)})"
         } else {
             if (treasureClassType.idSuffix.isNotBlank()) " (${treasureClassType.idSuffix})" else ""
         }

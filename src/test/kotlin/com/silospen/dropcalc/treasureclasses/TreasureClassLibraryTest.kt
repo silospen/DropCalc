@@ -38,7 +38,7 @@ class TreasureClassLibraryTest {
     @Test
     fun displayName() {
         val treasureClass = treasureClassLibrary.getTreasureClass("Act 1 Equip B")
-        assertEquals(treasureClass.nameId, treasureClass.getDisplayName(stubTranslations))
+        assertEquals(treasureClass.nameId, treasureClass.getDisplayName(stubTranslations, Language.ENGLISH))
     }
 
     @Test

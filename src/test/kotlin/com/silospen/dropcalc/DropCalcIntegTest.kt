@@ -44,7 +44,8 @@ class DropCalcIntegTest {
             parts[4].toInt(),
             file,
             mode,
-            if (parts.size == 5) Version.V1_12 else Version.valueOf(parts[5].replace(" ", "_"))
+            if (parts.size == 5) Version.V1_12 else Version.valueOf(parts[5].replace(" ", "_")),
+            if (parts.size <= 6) "en" else parts[6]
         )
     }
 
@@ -62,7 +63,9 @@ class DropCalcIntegTest {
                 ApiItemQuality.valueOf(parts[5]),
                 parts[6].toInt(),
                 file,
-                mode
+                mode,
+                if (parts.size == 7) Version.V1_12 else Version.valueOf(parts[7].replace(" ", "_")),
+                if (parts.size <= 8) "en" else parts[8]
             )
         }
 
@@ -80,7 +83,9 @@ class DropCalcIntegTest {
                 ApiItemQuality.valueOf(parts[5]),
                 parts[6].toInt(),
                 file,
-                mode
+                mode,
+                if (parts.size == 7) Version.V1_12 else Version.valueOf(parts[7].replace(" ", "_")),
+                if (parts.size <= 8) "en" else parts[8]
             )
         }
 
@@ -109,12 +114,14 @@ class DropCalcIntegTest {
         magicFind: Int,
         file: File,
         mode: Mode,
+        version: Version,
+        languageCode: String,
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
         {
             apiResource.getTabularItemProbabilities(
-                Version.V1_12,
+                version,
                 itemId,
                 monsterType,
                 itemQuality,
@@ -125,11 +132,12 @@ class DropCalcIntegTest {
                 true,
                 false,
                 0,
-                null
+                null,
+                languageCode,
             )
         },
         this::runAsserts,
-        "$itemId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind",
+        "$itemId, $monsterType, $difficulty, $nPlayers, $partySize, $itemQuality, $magicFind, $version, $languageCode",
         mode,
     )
 
@@ -143,12 +151,14 @@ class DropCalcIntegTest {
         magicFind: Int,
         file: File,
         mode: Mode,
+        version: Version,
+        languageCode: String,
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
         {
             apiResource.getTabularMonster(
-                Version.V1_12,
+                version,
                 monsterId,
                 monsterType,
                 difficulty,
@@ -159,10 +169,11 @@ class DropCalcIntegTest {
                 true,
                 false,
                 0,
+                languageCode,
             )
         },
         this::runAsserts,
-        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $apiItemQuality, $magicFind",
+        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $apiItemQuality, $magicFind, $version, $languageCode",
         mode,
     )
 
@@ -174,7 +185,8 @@ class DropCalcIntegTest {
         partySize: Int,
         file: File,
         mode: Mode,
-        version: Version = Version.V1_12
+        version: Version,
+        languageCode: String,
     ) = runTestWithLocalExpectations(
         file,
         tcExpectationDataLineParser,
@@ -188,11 +200,12 @@ class DropCalcIntegTest {
                 partySize,
                 true,
                 false,
-                0
+                0,
+                languageCode,
             )
         },
         this::runAsserts,
-        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize",
+        "$monsterId, $monsterType, $difficulty, $nPlayers, $partySize, $version, $languageCode",
         mode
     )
 

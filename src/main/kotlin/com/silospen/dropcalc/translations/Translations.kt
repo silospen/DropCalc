@@ -2,6 +2,7 @@ package com.silospen.dropcalc.translations
 
 import com.fasterxml.jackson.module.kotlin.jsonMapper
 import com.fasterxml.jackson.module.kotlin.kotlinModule
+import com.silospen.dropcalc.Language
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder.LITTLE_ENDIAN
@@ -11,33 +12,39 @@ private val mapper = jsonMapper {
 }
 
 interface Translations {
-    fun getTranslationOrNull(key: String): String?
-    fun getTranslation(key: String): String =
-        getTranslationOrNull(key) ?: throw IllegalArgumentException("No translation for $key")
+    fun getTranslationOrNull(key: String, language: Language): String?
+    fun getTranslation(key: String, language: Language): String =
+        getTranslationOrNull(key, language) ?: throw IllegalArgumentException("No translation for $key")
 }
 
 class CompositeTranslations(private vararg val translations: Translations) : Translations {
-    override fun getTranslationOrNull(key: String): String? =
-        translations.firstNotNullOfOrNull { it.getTranslationOrNull(key) }
+    override fun getTranslationOrNull(key: String, language: Language): String? =
+        translations.firstNotNullOfOrNull { it.getTranslationOrNull(key, language) }
 }
 
-class MapBasedTranslations(private val translationData: Map<String, String>) : Translations {
+class MapBasedTranslations(private val translationData: Map<Language, Map<String, String>>) : Translations {
     companion object {
-        fun loadTranslations(inputStream: InputStream): Translations {
+        fun loadTranslations(inputStream: InputStream, language: Language): Translations {
             val buffer = ByteBuffer.wrap(inputStream.readAllBytes()).order(LITTLE_ENDIAN)
             val headerBuffer = buffer.sliceKeepEndian(0, 21)
             val header = TableFileHeader.fromByteBuffer(headerBuffer)
             val hashTableBuffer =
                 buffer.sliceKeepEndian(21 + (header.numElements * 2), header.hashTableSize.toInt() * 17)
-            return MapBasedTranslations(readDataTable(readHashTable(hashTableBuffer), buffer))
+            val translationData = readDataTable(readHashTable(hashTableBuffer), buffer)
+            return MapBasedTranslations(mapOf(language to translationData))
         }
 
         fun loadTranslationsFromJsonFile(inputStream: InputStream): Translations {
-            return MapBasedTranslations(
-                mapper.readTree(inputStream).associateBy(
-                    { it.get("Key").textValue() },
-                    { it.get("enUS").textValue() })
-            )
+            val result = Language.values().associateByTo(mutableMapOf(), { it }) { mutableMapOf<String, String>() }
+
+            mapper.readTree(inputStream).forEach { json ->
+                val key = json.get("Key").textValue()
+                for (fieldName in json.fieldNames()) {
+                    val language = Language.forD2String(fieldName)
+                    language?.let { result.getValue(language).put(key, json.get(fieldName).textValue()) }
+                }
+            }
+            return MapBasedTranslations(result)
         }
 
         private fun readDataTable(hashTable: List<TableFileHashEntries>, buffer: ByteBuffer): Map<String, String> =
@@ -65,7 +72,9 @@ class MapBasedTranslations(private val translationData: Map<String, String>) : T
         }
     }
 
-    override fun getTranslationOrNull(key: String) = translationData[key]
+    override fun getTranslationOrNull(key: String, language: Language): String? {
+        return translationData.getOrDefault(language, translationData.getValue(Language.ENGLISH))[key]
+    }
 
 
     override fun toString(): String {

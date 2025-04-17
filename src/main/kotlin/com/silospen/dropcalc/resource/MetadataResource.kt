@@ -70,7 +70,7 @@ class VersionedMetadataResource(
                         difficulty = difficulty,
                         monsterType = type
                     ).filter(filter)
-                        .map { MetadataResponse(it.getDisplayName(translations), it.id) }
+                        .map { MetadataResponse(it.getDisplayName(translations, Language.ENGLISH), it.id) }
                         .toSet()
                         .sortedBy { it.name }
                 }
@@ -100,7 +100,12 @@ class VersionedMetadataResource(
         itemLibrary.items
             .filter { !it.onlyDropsDirectly || virtualTreasureClassNames.contains(it.id) }
             .filter { apiItemQuality.itemQuality == it.quality && apiItemQuality.additionalFilter(it) }
-            .groupBy({ it.baseItem.itemVersion }) { MetadataResponse(it.getDisplayName(translations), it.id) }
+            .groupBy({ it.baseItem.itemVersion }) {
+                MetadataResponse(
+                    it.getDisplayName(translations, Language.ENGLISH),
+                    it.id
+                )
+            }
             .mapValues { it.value.toSet() }
 
     fun getMonsters(

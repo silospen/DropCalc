@@ -27,8 +27,8 @@ class ItemLibraryTest {
 
     @Test
     fun getDisplayName() {
-        assertEquals("Fancy Armor-name", armor1.getDisplayName(stubTranslations))
-        assertEquals("MyUniqueRing-name", uniqueRing.getDisplayName(stubTranslations))
+        assertEquals("Fancy Armor-ENGLISH-name", armor1.getDisplayName(stubTranslations, Language.ENGLISH))
+        assertEquals("MyUniqueRing-ENGLISH-name", uniqueRing.getDisplayName(stubTranslations, Language.ENGLISH))
     }
 
     @Test
