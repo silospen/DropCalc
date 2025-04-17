@@ -36,6 +36,7 @@ class DropCalcMetadataIntegTest {
                 expected.difficulty,
                 false,
                 expected.includeQuest,
+                expected.language
             )
         }, object : TypeReference<List<MonstersMetadataTestDataExpectation>>() {})
     }
@@ -50,6 +51,7 @@ class DropCalcMetadataIntegTest {
                 expected.difficulty,
                 true,
                 expected.includeQuest,
+                expected.language
             )
         }, object : TypeReference<List<MonstersMetadataTestDataExpectation>>() {})
     }
@@ -119,6 +121,7 @@ class DropCalcMetadataIntegTest {
             version,
             apiItemQuality,
             itemVersion,
+            "en",
         )
     )
 
@@ -128,18 +131,21 @@ class DropCalcMetadataIntegTest {
             for (monsterType in MonsterType.values()) {
                 for (difficulty in Difficulty.values()) {
                     for (includeQuest in listOf(true, false)) {
-                        result.add(
-                            Callable {
-                                counter.incrementAndPossiblyPrint()
-                                getMonstersMetadataExpectation(
-                                    version,
-                                    monsterType,
-                                    difficulty,
-                                    false,
-                                    includeQuest
-                                )
-                            }
-                        )
+                        for (language in listOf("en", "fr")) {
+                            result.add(
+                                Callable {
+                                    counter.incrementAndPossiblyPrint()
+                                    getMonstersMetadataExpectation(
+                                        version,
+                                        monsterType,
+                                        difficulty,
+                                        false,
+                                        includeQuest,
+                                        language
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -153,18 +159,21 @@ class DropCalcMetadataIntegTest {
             for (monsterType in MonsterType.values()) {
                 for (difficulty in Difficulty.values()) {
                     for (includeQuest in listOf(true, false)) {
-                        result.add(
-                            Callable {
-                                counter.incrementAndPossiblyPrint()
-                                getMonstersMetadataExpectation(
-                                    version,
-                                    monsterType,
-                                    difficulty,
-                                    true,
-                                    includeQuest,
-                                )
-                            }
-                        )
+                        for (language in listOf("en", "fr")) {
+                            result.add(
+                                Callable {
+                                    counter.incrementAndPossiblyPrint()
+                                    getMonstersMetadataExpectation(
+                                        version,
+                                        monsterType,
+                                        difficulty,
+                                        true,
+                                        includeQuest,
+                                        language
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -178,6 +187,7 @@ class DropCalcMetadataIntegTest {
         difficulty: Difficulty,
         desecrated: Boolean,
         includeQuest: Boolean,
+        language: String
     ) = MonstersMetadataTestDataExpectation(
         version,
         monsterType,
@@ -189,7 +199,9 @@ class DropCalcMetadataIntegTest {
             monsterType,
             desecrated,
             includeQuest,
-        )
+            language
+        ),
+        language
     )
 
     data class MonstersMetadataTestDataExpectation(
@@ -198,6 +210,7 @@ class DropCalcMetadataIntegTest {
         val difficulty: Difficulty,
         val includeQuest: Boolean,
         val metadataResponse: List<MetadataResponse>,
+        val language: String
     )
 
     data class ItemsMetadataTestDataExpectation(

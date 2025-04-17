@@ -1,6 +1,8 @@
 package com.silospen.dropcalc.resource
 
 import com.silospen.dropcalc.*
+import com.silospen.dropcalc.Language.ENGLISH
+import com.silospen.dropcalc.Language.FRENCH
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
@@ -107,26 +109,30 @@ class MetadataResourceTest {
                 )
             ), TreasureClassLibrary(emptyList(), itemLibrary)
         ),
-        itemLibrary, stubTranslations, mock()
+        itemLibrary, stubTranslations, true, mock()
     )
 
     @Test
     fun monsters() {
         assertEquals(
             listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("2-ENGLISH-name", "2")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false, true)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false, true, ENGLISH)
+        )
+        assertEquals(
+            listOf(MetadataResponse("1-FRENCH-name", "1"), MetadataResponse("2-FRENCH-name", "2")),
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false, true, FRENCH)
         )
         assertEquals(
             listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("2-ENGLISH-name (d)", "2d")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, true, true)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, true, true, ENGLISH)
         )
         assertEquals(
             listOf(MetadataResponse("1-ENGLISH-name", "1")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, false)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, false, ENGLISH)
         )
         assertEquals(
             listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("1-ENGLISH-name (q)", "1q")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, true)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, true, ENGLISH)
         )
     }
 
@@ -134,19 +140,23 @@ class MetadataResourceTest {
     fun items() {
         assertEquals(
             emptyList<MetadataResponse>(),
-            metadataResource.getItems(ApiItemQuality.UNIQUE, ItemVersion.ELITE)
+            metadataResource.getItems(ApiItemQuality.UNIQUE, ItemVersion.ELITE, ENGLISH)
         )
         assertEquals(
             listOf(MetadataResponse("item_2-ENGLISH-name", "item2")),
-            metadataResource.getItems(ApiItemQuality.WHITE, ItemVersion.ELITE)
+            metadataResource.getItems(ApiItemQuality.WHITE, ItemVersion.ELITE, ENGLISH)
+        )
+        assertEquals(
+            listOf(MetadataResponse("item_2-FRENCH-name", "item2")),
+            metadataResource.getItems(ApiItemQuality.WHITE, ItemVersion.ELITE, FRENCH)
         )
         assertEquals(
             listOf(MetadataResponse("item_2-ENGLISH-name", "item2")),
-            metadataResource.getItems(ApiItemQuality.WHITE, null)
+            metadataResource.getItems(ApiItemQuality.WHITE, null, ENGLISH)
         )
         assertEquals(
             emptyList<MetadataResponse>(),
-            metadataResource.getItems(ApiItemQuality.MAGIC, null)
+            metadataResource.getItems(ApiItemQuality.MAGIC, null, ENGLISH)
         )
     }
 }

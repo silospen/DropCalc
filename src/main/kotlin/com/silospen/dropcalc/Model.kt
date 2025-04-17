@@ -228,22 +228,21 @@ enum class TreasureClassType(
 
 }
 
-enum class Language(val d2String: String) {
-    ENGLISH("enUS"),
-    TAIWANESE("zhTW"),
-    GERMAN("deDE"),
-    SPANISH("esES"),
-    FRENCH("frFR"),
-    ITALIAN("itIT"),
-    KOREAN("koKR"),
-    POLISH("plPL"),
-    MEXICAN("esMX"),
-    JAPANESE("jaJP"),
-    BRAZILIAN("ptBR"),
-    RUSSIAN("ruRU"),
-    CHINESE("zhCN"),
+enum class Language(val d2String: String, val locale: Locale) {
+    ENGLISH("enUS", Locale.US),
+    TAIWANESE("zhTW", Locale.TAIWAN),
+    GERMAN("deDE", Locale.GERMAN),
+    SPANISH("esES", Locale("es", "ES")),
+    FRENCH("frFR", Locale.FRENCH),
+    ITALIAN("itIT", Locale.ITALIAN),
+    KOREAN("koKR", Locale.KOREAN),
+    POLISH("plPL", Locale("pl", "PL")),
+    MEXICAN("esMX", Locale("es", "MX")),
+    JAPANESE("jaJP", Locale.JAPANESE),
+    BRAZILIAN("ptBR", Locale("pt", "BR")),
+    RUSSIAN("ruRU", Locale("ru", "RU")),
+    CHINESE("zhCN", Locale.SIMPLIFIED_CHINESE),
     ;
-
 
     companion object {
 

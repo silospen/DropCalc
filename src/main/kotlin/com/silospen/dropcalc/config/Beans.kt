@@ -198,6 +198,12 @@ class ConfigLoader(private val version: Version) {
     }
 
     fun createVersionedMetadataResource(): VersionedMetadataResource {
-        return VersionedMetadataResource(monsterLibrary, itemLibrary, translations, treasureClassLibrary)
+        return VersionedMetadataResource(
+            monsterLibrary,
+            itemLibrary,
+            translations,
+            version == Version.D2R_V1_0,
+            treasureClassLibrary
+        )
     }
 }

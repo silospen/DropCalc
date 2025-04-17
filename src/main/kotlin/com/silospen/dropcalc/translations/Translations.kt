@@ -41,7 +41,10 @@ class MapBasedTranslations(private val translationData: Map<Language, Map<String
                 val key = json.get("Key").textValue()
                 for (fieldName in json.fieldNames()) {
                     val language = Language.forD2String(fieldName)
-                    language?.let { result.getValue(language).put(key, json.get(fieldName).textValue()) }
+                    language?.let {
+                        result.getValue(language)
+                            .put(key, json.get(fieldName).textValue().replace(Regex("^\\[[^]]+]"), ""))
+                    }
                 }
             }
             return MapBasedTranslations(result)

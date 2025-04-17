@@ -1,8 +1,7 @@
 package com.silospen.dropcalc.resource
 
-import com.google.common.collect.ImmutableTable
 import com.silospen.dropcalc.*
-import com.silospen.dropcalc.files.getOrDefault
+import com.silospen.dropcalc.Language.ENGLISH
 import com.silospen.dropcalc.items.ItemLibrary
 import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.text.Collator
 
 @RequestMapping(value = ["/metadata"])
 @RestController
@@ -26,7 +26,14 @@ class MetadataResource(private val versionedMetadataResources: Map<Version, Vers
         @RequestParam("monsterType", required = true) monsterType: MonsterType,
         @RequestParam("desecrated", required = true) desecrated: Boolean,
         @RequestParam("includeQuest", required = false) includeQuest: Boolean?,
-    ) = versionedMetadataResources[version]?.getMonsters(difficulty, monsterType, desecrated, includeQuest ?: true)
+        @RequestParam("language", required = false) language: String?,
+    ) = versionedMetadataResources[version]?.getMonsters(
+        difficulty,
+        monsterType,
+        desecrated,
+        includeQuest ?: true,
+        Language.forLangAttribute(language)
+    )
         ?: emptyList()
 
     @GetMapping("items")
@@ -34,7 +41,9 @@ class MetadataResource(private val versionedMetadataResources: Map<Version, Vers
         @RequestParam("version", required = true) version: Version,
         @RequestParam("itemQuality", required = true) apiItemQuality: ApiItemQuality,
         @RequestParam("itemVersion", required = false) itemVersion: ItemVersion?,
-    ) = versionedMetadataResources[version]?.getItems(apiItemQuality, itemVersion) ?: emptyList()
+        @RequestParam("language", required = false) language: String?,
+    ) = versionedMetadataResources[version]?.getItems(apiItemQuality, itemVersion, Language.forLangAttribute(language))
+        ?: emptyList()
 
     @GetMapping("versions")
     fun getVersions() = versionsResponses
@@ -44,13 +53,21 @@ data class MonstersResponsesKey(
     val difficulty: Difficulty,
     val monsterType: MonsterType,
     val desecrated: Boolean,
-    val includesQuest: Boolean
+    val includesQuest: Boolean,
+    val language: Language
+)
+
+data class ItemsResponsesKey(
+    val apiItemQuality: ApiItemQuality,
+    val language: Language,
+    val itemVersion: ItemVersion?,
 )
 
 class VersionedMetadataResource(
     val monsterLibrary: MonsterLibrary,
     val itemLibrary: ItemLibrary,
     private val translations: Translations,
+    private val multilingual: Boolean,
     treasureClassLibrary: TreasureClassLibrary,
 ) {
     private val monstersResponses =
@@ -63,59 +80,76 @@ class VersionedMetadataResource(
     ): Map<MonstersResponsesKey, List<MetadataResponse>> {
         return Difficulty.values().flatMap { difficulty ->
             MonsterType.values().flatMap { type ->
-                listOf(true, false).map { desecrated ->
-                    MonstersResponsesKey(difficulty, type, desecrated, includesQuest) to monsterLibrary.getMonsters(
-                        desecrated,
-                        0,
-                        difficulty = difficulty,
-                        monsterType = type
-                    ).filter(filter)
-                        .map { MetadataResponse(it.getDisplayName(translations, Language.ENGLISH), it.id) }
-                        .toSet()
-                        .sortedBy { it.name }
+                listOf(true, false).flatMap { desecrated ->
+                    getSupportedLanguages().map { language ->
+                        MonstersResponsesKey(
+                            difficulty,
+                            type,
+                            desecrated,
+                            includesQuest,
+                            language
+                        ) to monsterLibrary.getMonsters(
+                            desecrated,
+                            0,
+                            difficulty = difficulty,
+                            monsterType = type
+                        ).filter(filter)
+                            .map { MetadataResponse(it.getDisplayName(translations, language), it.id) }
+                            .toSet()
+                            .sortedWith(MetadataResponse.comparator(language))
+                    }
                 }
             }
         }.toMap()
     }
 
-    private val itemsResponsesByQualityVersion =
-        ImmutableTable.builder<ApiItemQuality, ItemVersion, Set<MetadataResponse>>().apply {
-            val virtualTreasureClassNames = treasureClassLibrary.treasureClasses.asSequence().flatMap { it.outcomes }
+    private val itemsResponses =
+        generateItemsResponses(treasureClassLibrary)
+
+    private fun generateItemsResponses(treasureClassLibrary: TreasureClassLibrary): Map<ItemsResponsesKey, List<MetadataResponse>> {
+        val virtualTreasureClassNames: Set<String> =
+            treasureClassLibrary.treasureClasses.asSequence().flatMap { it.outcomes }
                 .map { it.outcomeType }
                 .filter { it is VirtualTreasureClass }
                 .map { it.nameId }
                 .toSet()
 
-            val associateWith = ApiItemQuality.values().associateWith {
-                retrieveItems(virtualTreasureClassNames, it)
-            }
-            associateWith.forEach { (itemQuality, it) ->
-                it.forEach { (version, metadataResponses) ->
-                    this.put(itemQuality, version, metadataResponses)
+        val items: Map<ApiItemQuality, List<Item>> = ApiItemQuality.values().associateWith { apiItemQuality ->
+            retrieveItems(virtualTreasureClassNames, apiItemQuality)
+        }
+        return ApiItemQuality.values().flatMap { apiItemQuality ->
+            (arrayOf<ItemVersion?>(null) + ItemVersion.values()).flatMap { itemVersion ->
+                val itemList: List<Item> =
+                    items.getValue(apiItemQuality)
+                        .filter { if (itemVersion == null) true else it.baseItem.itemVersion == itemVersion }
+                getSupportedLanguages().map { language ->
+                    ItemsResponsesKey(apiItemQuality, language, itemVersion) to itemList.map {
+                        MetadataResponse(
+                            it.getDisplayName(translations, language),
+                            it.id
+                        )
+                    }.toSet().sortedWith(MetadataResponse.comparator(language))
                 }
             }
-        }.build()
+        }.toMap()
+    }
+
+    private fun getSupportedLanguages() = (if (multilingual) Language.values() else arrayOf(ENGLISH))
 
     private fun retrieveItems(virtualTreasureClassNames: Set<String>, apiItemQuality: ApiItemQuality) =
         itemLibrary.items
             .filter { !it.onlyDropsDirectly || virtualTreasureClassNames.contains(it.id) }
             .filter { apiItemQuality.itemQuality == it.quality && apiItemQuality.additionalFilter(it) }
-            .groupBy({ it.baseItem.itemVersion }) {
-                MetadataResponse(
-                    it.getDisplayName(translations, Language.ENGLISH),
-                    it.id
-                )
-            }
-            .mapValues { it.value.toSet() }
 
     fun getMonsters(
         difficulty: Difficulty,
         monsterType: MonsterType,
         desecrated: Boolean,
         includeQuest: Boolean,
+        language: Language,
     ): List<MetadataResponse> {
         return monstersResponses.getOrDefault(
-            MonstersResponsesKey(difficulty, monsterType, desecrated, includeQuest),
+            MonstersResponsesKey(difficulty, monsterType, desecrated, includeQuest, language),
             emptyList()
         )
     }
@@ -123,16 +157,17 @@ class VersionedMetadataResource(
     fun getItems(
         apiItemQuality: ApiItemQuality,
         itemVersion: ItemVersion?,
+        language: Language,
     ): List<MetadataResponse> =
-        (if (itemVersion == null) itemsResponsesByQualityVersion.row(apiItemQuality).values.flatten() else (
-                itemsResponsesByQualityVersion.getOrDefault(
-                    apiItemQuality,
-                    itemVersion,
-                    emptySet()
-                ))).sortedBy { it.name }
+        itemsResponses.getOrDefault(ItemsResponsesKey(apiItemQuality, language, itemVersion), emptyList())
 }
 
 data class MetadataResponse(
     val name: String,
     val id: String
-)
+) {
+    companion object {
+        fun comparator(language: Language): Comparator<MetadataResponse> =
+            compareBy(Collator.getInstance(language.locale)) { it.name }
+    }
+}
