@@ -107,16 +107,21 @@ class UniqueItemLineParser(
 
     override fun parseLine(line: Line): Item? {
         val level = line["lvl"].toIntOrNull() ?: 0
-        val enabled = parseNumericBoolean(line["enabled"])
+        val enabled =
+            if (version == Version.D2R_ROW_3_0) parseNumericBoolean(line["spawnable"]) else parseNumericBoolean(line["enabled"])
         if (level == 0) return null
-        if (version != Version.D2R_V1_0 && !enabled) return null
+        if (version != Version.D2R_V1_0 && version != Version.D2R_ROW_3_0 && !enabled) return null
         val id = line["index"].trim()
         val rarity = line["rarity"].toInt()
+        val baseItem = baseItemsById.getOrElse(line["code"]) {
+            println("Failed to lookup base item for $line")
+            return null
+        }
         return Item(
             id,
             id,
             ItemQuality.UNIQUE,
-            baseItemsById.getValue(line["code"]),
+            baseItem,
             level,
             rarity,
             !enabled,

@@ -102,7 +102,7 @@ class ConfigLoader(private val version: Version) {
     }
 
     private fun loadTranslations(): Translations {
-        return if (version == Version.D2R_V1_0) {
+        return if (version == Version.D2R_V1_0 || version == Version.D2R_ROW_3_0) {
             CompositeTranslations(
                 MapBasedTranslations.loadTranslationsFromJsonFile(getResource("d2Files/tbl/${version.pathName}/item-names.json")),
                 MapBasedTranslations.loadTranslationsFromJsonFile(getResource("d2Files/tbl/${version.pathName}/item-runes.json")),
@@ -202,7 +202,7 @@ class ConfigLoader(private val version: Version) {
             monsterLibrary,
             itemLibrary,
             translations,
-            version == Version.D2R_V1_0,
+            version == Version.D2R_V1_0 || version == Version.D2R_ROW_3_0,
             treasureClassLibrary
         )
     }

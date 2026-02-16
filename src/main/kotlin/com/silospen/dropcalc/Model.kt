@@ -190,7 +190,8 @@ enum class Version(val pathName: String, val displayName: String) {
     V1_12("1.12a", "1.12"),
     V1_13("1.13d", "1.13"),
     V1_14("1.14d", "1.14"),
-    D2R_V1_0("D2R_1.0", "Resurrected")
+    D2R_V1_0("D2R_1.0", "Resurrected"),
+    D2R_ROW_3_0("D2R_ROW_3.0", "D2R Reign of the Warlock")
 }
 
 enum class Difficulty(val displayString: String) {

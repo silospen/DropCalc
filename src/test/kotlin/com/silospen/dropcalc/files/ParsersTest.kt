@@ -64,7 +64,7 @@ class UniqueItemsLineParserTest {
 
     @Test
     fun uniqueItemsParser() {
-        val actual = parseItems(Version.V1_12)
+        val actual = parseItems(Version.V1_12, "uniqueItems")
         val expected = listOf(
             Item("The Gnasher", "The Gnasher", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false, null),
             Item("Deathspade", "Deathspade", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false, null),
@@ -75,7 +75,7 @@ class UniqueItemsLineParserTest {
 
     @Test
     fun uniqueItemsParser_d2rEnabledFlag() {
-        val actual = parseItems(Version.D2R_V1_0)
+        val actual = parseItems(Version.D2R_V1_0, "uniqueItems")
         val expected = listOf(
             Item("The Gnasher", "The Gnasher", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false, null),
             Item("The Gnasherv2", "The Gnasherv2", ItemQuality.UNIQUE, haxBaseItem, 7, 1, true, null),
@@ -85,9 +85,21 @@ class UniqueItemsLineParserTest {
         assertEquals(expected, actual)
     }
 
-    private fun parseItems(version: Version): List<Item> {
+    @Test
+    fun uniqueItemsParser_d2r_row() {
+        val actual = parseItems(Version.D2R_ROW_3_0, "uniqueItems_d2r_row")
+        val expected = listOf(
+            Item("The Gnasher", "The Gnasher", ItemQuality.UNIQUE, haxBaseItem, 7, 1, false, null),
+            Item("The Gnasherv2", "The Gnasherv2", ItemQuality.UNIQUE, haxBaseItem, 7, 1, true, null),
+            Item("Deathspade", "Deathspade", ItemQuality.UNIQUE, axeBaseItem, 12, 1, false, null),
+            Item("Rainbow Facet", "Rainbow Facet", ItemQuality.UNIQUE, jewelBaseItem, 85, 1, false, null),
+        )
+        assertEquals(expected, actual)
+    }
+
+    private fun parseItems(version: Version, filename: String): List<Item> {
         val actual = readTsv(
-            getResource("parsersTestData/uniqueItems.txt"),
+            getResource("parsersTestData/$filename.txt"),
             UniqueItemLineParser(listOf(haxBaseItem, axeBaseItem, jewelBaseItem), version)
         )
         return actual
