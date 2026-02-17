@@ -124,7 +124,7 @@ class UniqueItemLineParser(
             baseItem,
             level,
             rarity,
-            !enabled,
+            !enabled || !line.getIfColExistsOrNull("DropConditionCalc").isNullOrBlank(),
             null
         )
     }
