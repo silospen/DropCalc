@@ -226,7 +226,7 @@ enum class TreasureClassType(
     DESECRATED_REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS, MonsterType.SUPERUNIQUE), "d", true),
     DESECRATED_CHAMPION(listOf(MonsterType.CHAMPION), "d", true),
     DESECRATED_UNIQUE(listOf(MonsterType.UNIQUE), "d", true),
-
+    HERALD_REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS), "h", true),
 }
 
 enum class Language(val d2String: String, val locale: Locale) {

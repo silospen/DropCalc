@@ -185,6 +185,8 @@ class MonstatsLineParser : LineParser<MonsterClass?> {
     }
 
     private fun parseMonsterClassTreasureClasses(line: Line): HashBasedTable<Difficulty, TreasureClassType, String> {
+        val cannotHerald = line.getIfColExistsOrNull("CannotHerald") == "1"
+        if (cannotHerald) println(line)
         val treasureClass: String = line["TreasureClass1", "TreasureClass"]
         val treasureClassChamp: String = line["TreasureClass2", "TreasureClassChamp"]
         val treasureClassUnique: String = line["TreasureClass3", "TreasureClassUnique"]
@@ -192,6 +194,7 @@ class MonstatsLineParser : LineParser<MonsterClass?> {
         val treasureClassDesecrated: String? = line.getIfColExistsOrNull("TreasureClassDesecrated")
         val treasureClassDesecratedChamp: String? = line.getIfColExistsOrNull("TreasureClassDesecratedChamp")
         val treasureClassDesecratedUnique: String? = line.getIfColExistsOrNull("TreasureClassDesecratedUnique")
+        val treasureClassHerald: String? = line.getIfColExistsOrNull("TreasureClassHerald(")
         val treasureClassN: String = line["TreasureClass1(N)", "TreasureClass(N)"]
         val treasureClassChampN: String = line["TreasureClass2(N)", "TreasureClassChamp(N)"]
         val treasureClassUniqueN: String = line["TreasureClass3(N)", "TreasureClassUnique(N)"]
@@ -199,6 +202,7 @@ class MonstatsLineParser : LineParser<MonsterClass?> {
         val treasureClassDesecratedN: String? = line.getIfColExistsOrNull("TreasureClassDesecrated(N)")
         val treasureClassDesecratedChampN: String? = line.getIfColExistsOrNull("TreasureClassDesecratedChamp(N)")
         val treasureClassDesecratedUniqueN: String? = line.getIfColExistsOrNull("TreasureClassDesecratedUnique(N)")
+        val treasureClassHeraldN: String? = line.getIfColExistsOrNull("TreasureClassHerald(N)")
         val treasureClassH: String = line["TreasureClass1(H)", "TreasureClass(H)"]
         val treasureClassChampH: String = line["TreasureClass2(H)", "TreasureClassChamp(H)"]
         val treasureClassUniqueH: String = line["TreasureClass3(H)", "TreasureClassUnique(H)"]
@@ -206,6 +210,7 @@ class MonstatsLineParser : LineParser<MonsterClass?> {
         val treasureClassDesecratedH: String? = line.getIfColExistsOrNull("TreasureClassDesecrated(H)")
         val treasureClassDesecratedChampH: String? = line.getIfColExistsOrNull("TreasureClassDesecratedChamp(H)")
         val treasureClassDesecratedUniqueH: String? = line.getIfColExistsOrNull("TreasureClassDesecratedUnique(H)")
+        val treasureClassHeraldH: String? = line.getIfColExistsOrNull("TreasureClassHerald(H)")
         val monsterClassProperties = HashBasedTable.create<Difficulty, TreasureClassType, String>()
         monsterClassProperties.addIfNotBlank(NORMAL, TreasureClassType.REGULAR, treasureClass)
         monsterClassProperties.addIfNotBlank(NORMAL, TreasureClassType.CHAMPION, treasureClassChamp)
@@ -222,6 +227,11 @@ class MonstatsLineParser : LineParser<MonsterClass?> {
             TreasureClassType.DESECRATED_UNIQUE,
             treasureClassDesecratedUnique
         )
+        if (!cannotHerald) monsterClassProperties.addIfNotBlank(
+            NORMAL,
+            TreasureClassType.HERALD_REGULAR,
+            treasureClassHerald
+        )
         monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.REGULAR, treasureClassN)
         monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.CHAMPION, treasureClassChampN)
         monsterClassProperties.addIfNotBlank(NIGHTMARE, TreasureClassType.UNIQUE, treasureClassUniqueN)
@@ -237,6 +247,11 @@ class MonstatsLineParser : LineParser<MonsterClass?> {
             TreasureClassType.DESECRATED_UNIQUE,
             treasureClassDesecratedUniqueN
         )
+        if (!cannotHerald) monsterClassProperties.addIfNotBlank(
+            NIGHTMARE,
+            TreasureClassType.HERALD_REGULAR,
+            treasureClassHeraldN
+        )
         monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.REGULAR, treasureClassH)
         monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.CHAMPION, treasureClassChampH)
         monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.UNIQUE, treasureClassUniqueH)
@@ -244,6 +259,11 @@ class MonstatsLineParser : LineParser<MonsterClass?> {
         monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.DESECRATED_REGULAR, treasureClassDesecratedH)
         monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.DESECRATED_CHAMPION, treasureClassDesecratedChampH)
         monsterClassProperties.addIfNotBlank(HELL, TreasureClassType.DESECRATED_UNIQUE, treasureClassDesecratedUniqueH)
+        if (!cannotHerald) monsterClassProperties.addIfNotBlank(
+            HELL,
+            TreasureClassType.HERALD_REGULAR,
+            treasureClassHeraldH
+        )
         return monsterClassProperties
     }
 
