@@ -50,22 +50,32 @@ class MonsterLibrary(val monsters: Set<Monster>, private val treasureClassLibrar
                     )
                 }
 
+    private data class DescGenerationKey(
+        val rawId: String,
+        val difficulty: Difficulty,
+        val type: MonsterType,
+        val isHerald: Boolean,
+        val area: Area
+    )
+
     private fun constructMonsterMap(keyCreator: (Monster, Boolean) -> MonsterLibraryKey): Map<MonsterLibraryKey, Set<Monster>> {
-        val nonDesecratedSpawns = monsters.filter { !it.isDesecrated }.toSet()
+        val nonDesecratedSpawns = monsters.filter { !it.isDesecrated && !it.isHerald }.toSet()
 
         val desecratedSpawnsWithoutIdAndName = monsters
-            .filter { it.isDesecrated }
+            .filter { it.isDesecrated || it.isHerald }
             .associateBy {
-                Triple(it.rawId, it.difficulty, it.type)
+                DescGenerationKey(it.rawId, it.difficulty, it.type, it.isHerald, it.area)
             }
 
         val possibleDesecratedSpawns = if (desecratedSpawnsWithoutIdAndName.isEmpty()) emptySet() else {
             (desecratedSpawnsWithoutIdAndName.values + nonDesecratedSpawns.filter {
                 it.treasureClassType == TreasureClassType.QUEST || !desecratedSpawnsWithoutIdAndName.contains(
-                    Triple(
+                    DescGenerationKey(
                         it.rawId,
                         it.difficulty,
-                        it.type
+                        it.type,
+                        it.isHerald,
+                        it.area
                     )
                 )
             }).toSet()
@@ -194,6 +204,7 @@ class MonsterFactory(
                 ), level, difficulty, false
             ),
             parentMonster.isDesecrated,
+            false,
             level,
             false,
             TreasureClassType.REGULAR,
@@ -224,6 +235,7 @@ class MonsterFactory(
                 ), level, difficulty, false
             ),
             treasureClassType.isDesecrated,
+            treasureClassType.isHerald,
             level,
             superUniqueMonsterConfig.hasMinions,
             treasureClassType
@@ -253,6 +265,7 @@ class MonsterFactory(
                         false
                     ),
                     treasureClassType.isDesecrated,
+                    treasureClassType.isHerald,
                     level,
                     monsterType == MonsterType.UNIQUE,
                     treasureClassType

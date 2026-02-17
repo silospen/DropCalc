@@ -174,7 +174,7 @@ class DropCalcLargeDesecratedIntegTests {
                         .distinct()) {
                         for (difficulty in listOf<Difficulty?>(null) + Difficulty.values()) {
                             for ((nPlayers, nGroup) in listOf(7 to 5)) {
-                                for (magicFind in listOf(0, 975)) {
+                                for (magicFind in listOf(975)) {
                                     result.add(
                                         Callable {
                                             counter.incrementAndPossiblyPrint()

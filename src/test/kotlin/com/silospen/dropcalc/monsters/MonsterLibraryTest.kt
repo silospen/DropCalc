@@ -68,6 +68,27 @@ class MonsterLibraryTest {
     }
 
     @Test
+    fun testMixOfDesecratedAndNonAndHerald() {
+        val desecratedSkeleton = skeletonMonster.copy(id = "skeleton1d", isDesecrated = true)
+        val heraldSkeleton = skeletonMonster.copy(id = "skeleton1h", isHerald = true)
+        val monsters = monstersTestData.toMutableSet().apply {
+            add(desecratedSkeleton)
+            add(heraldSkeleton)
+        }
+        val monsterLibrary = MonsterLibrary(monsters, treasureClassLibrary)
+        val baseExpectedMonsters =
+            monstersTestData.filter { it.id == fetishShamanMonsterClass.id && it.type == REGULAR }
+        assertEquals(
+            listOf(desecratedSkeleton, heraldSkeleton) + baseExpectedMonsters,
+            monsterLibrary.getMonsters(true, 0, monsterType = REGULAR)
+        )
+        assertEquals(
+            listOf(skeletonMonster) + baseExpectedMonsters,
+            monsterLibrary.getMonsters(false, 0, monsterType = REGULAR)
+        )
+    }
+
+    @Test
     fun questMonsterTest() {
         val actual = MonsterLibrary.fromConfig(
             listOf(durielMonsterClass),
@@ -94,6 +115,7 @@ class MonsterLibraryTest {
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.REGULAR),
                     false,
+                    false,
                     22,
                     false,
                     TreasureClassType.REGULAR
@@ -107,6 +129,7 @@ class MonsterLibraryTest {
                     NORMAL,
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(NORMAL, TreasureClassType.QUEST),
+                    false,
                     false,
                     22,
                     false,
@@ -122,6 +145,7 @@ class MonsterLibraryTest {
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.REGULAR),
                     false,
+                    false,
                     55,
                     false,
                     TreasureClassType.REGULAR
@@ -136,6 +160,7 @@ class MonsterLibraryTest {
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(NIGHTMARE, TreasureClassType.QUEST),
                     false,
+                    false,
                     55,
                     false,
                     TreasureClassType.QUEST
@@ -149,6 +174,7 @@ class MonsterLibraryTest {
                     HELL,
                     BOSS,
                     "u" + durielMonsterClass.monsterClassTreasureClasses.getValue(HELL, TreasureClassType.REGULAR),
+                    false,
                     false,
                     88,
                     false,

@@ -217,16 +217,17 @@ enum class MonsterType(
 enum class TreasureClassType(
     val validMonsterTypes: List<MonsterType>,
     val idSuffix: String,
-    val isDesecrated: Boolean
+    val isDesecrated: Boolean,
+    val isHerald: Boolean,
 ) {
-    REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS, MonsterType.SUPERUNIQUE), "", false),
-    CHAMPION(listOf(MonsterType.CHAMPION), "", false),
-    UNIQUE(listOf(MonsterType.UNIQUE), "", false),
-    QUEST(listOf(MonsterType.REGULAR, MonsterType.BOSS), "q", false),
-    DESECRATED_REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS, MonsterType.SUPERUNIQUE), "d", true),
-    DESECRATED_CHAMPION(listOf(MonsterType.CHAMPION), "d", true),
-    DESECRATED_UNIQUE(listOf(MonsterType.UNIQUE), "d", true),
-    HERALD_REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS), "h", true),
+    REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS, MonsterType.SUPERUNIQUE), "", false, false),
+    CHAMPION(listOf(MonsterType.CHAMPION), "", false, false),
+    UNIQUE(listOf(MonsterType.UNIQUE), "", false, false),
+    QUEST(listOf(MonsterType.REGULAR, MonsterType.BOSS), "q", false, false),
+    DESECRATED_REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS, MonsterType.SUPERUNIQUE), "d", true, false),
+    DESECRATED_CHAMPION(listOf(MonsterType.CHAMPION), "d", true, false),
+    DESECRATED_UNIQUE(listOf(MonsterType.UNIQUE), "d", true, false),
+    HERALD_REGULAR(listOf(MonsterType.REGULAR, MonsterType.BOSS), "h", false, true),
 }
 
 enum class Language(val d2String: String, val locale: Locale) {

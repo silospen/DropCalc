@@ -13,6 +13,7 @@ data class Monster(
     val type: MonsterType,
     val treasureClass: String,
     val isDesecrated: Boolean,
+    val isHerald: Boolean,
     val level: Int,
     val hasMinions: Boolean,
     val treasureClassType: TreasureClassType,

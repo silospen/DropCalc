@@ -33,6 +33,7 @@ class MetadataResourceTest {
                     MonsterType.SUPERUNIQUE,
                     "foo",
                     false,
+                    false,
                     1,
                     false,
                     TreasureClassType.REGULAR
@@ -46,6 +47,7 @@ class MetadataResourceTest {
                     Difficulty.NORMAL,
                     MonsterType.SUPERUNIQUE,
                     "foo",
+                    false,
                     false,
                     2,
                     false,
@@ -61,6 +63,7 @@ class MetadataResourceTest {
                     MonsterType.SUPERUNIQUE,
                     "foo",
                     false,
+                    false,
                     3,
                     false,
                     TreasureClassType.REGULAR
@@ -75,6 +78,7 @@ class MetadataResourceTest {
                     MonsterType.SUPERUNIQUE,
                     "foo",
                     true,
+                    false,
                     3,
                     false,
                     TreasureClassType.DESECRATED_REGULAR
@@ -89,6 +93,7 @@ class MetadataResourceTest {
                     MonsterType.BOSS,
                     "foo",
                     false,
+                    false,
                     4,
                     false,
                     TreasureClassType.REGULAR
@@ -102,6 +107,7 @@ class MetadataResourceTest {
                     Difficulty.NORMAL,
                     MonsterType.BOSS,
                     "foo",
+                    false,
                     false,
                     4,
                     false,

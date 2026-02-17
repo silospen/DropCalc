@@ -186,7 +186,6 @@ class MonstatsLineParser : LineParser<MonsterClass?> {
 
     private fun parseMonsterClassTreasureClasses(line: Line): HashBasedTable<Difficulty, TreasureClassType, String> {
         val cannotHerald = line.getIfColExistsOrNull("CannotHerald") == "1"
-        if (cannotHerald) println(line)
         val treasureClass: String = line["TreasureClass1", "TreasureClass"]
         val treasureClassChamp: String = line["TreasureClass2", "TreasureClassChamp"]
         val treasureClassUnique: String = line["TreasureClass3", "TreasureClassUnique"]
