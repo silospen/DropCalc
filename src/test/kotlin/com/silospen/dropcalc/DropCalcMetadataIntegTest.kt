@@ -199,6 +199,7 @@ class DropCalcMetadataIntegTest {
             monsterType,
             desecrated,
             includeQuest,
+            true,
             language
         ),
         language

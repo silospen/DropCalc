@@ -112,6 +112,21 @@ class MetadataResourceTest {
                     4,
                     false,
                     TreasureClassType.QUEST
+                ),
+                Monster(
+                    "1h",
+                    "1",
+                    "1",
+                    skeletonMonsterClass,
+                    area2Data,
+                    Difficulty.NORMAL,
+                    MonsterType.BOSS,
+                    "foo",
+                    false,
+                    true,
+                    4,
+                    false,
+                    TreasureClassType.HERALD_REGULAR
                 )
             ), TreasureClassLibrary(emptyList(), itemLibrary)
         ),
@@ -122,23 +137,35 @@ class MetadataResourceTest {
     fun monsters() {
         assertEquals(
             listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("2-ENGLISH-name", "2")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false, true, ENGLISH)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false, true, true, ENGLISH)
         )
         assertEquals(
             listOf(MetadataResponse("1-FRENCH-name", "1"), MetadataResponse("2-FRENCH-name", "2")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false, true, FRENCH)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, false, true, true, FRENCH)
         )
         assertEquals(
             listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("2-ENGLISH-name (d)", "2d")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, true, true, ENGLISH)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.SUPERUNIQUE, true, true, true, ENGLISH)
         )
         assertEquals(
             listOf(MetadataResponse("1-ENGLISH-name", "1")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, false, ENGLISH)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, false, true, ENGLISH)
         )
         assertEquals(
             listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("1-ENGLISH-name (q)", "1q")),
-            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, true, ENGLISH)
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, false, true, true, ENGLISH)
+        )
+        assertEquals(
+            listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("1-ENGLISH-name (h)", "1h"), MetadataResponse("1-ENGLISH-name (q)", "1q")),
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, true, true, true, ENGLISH)
+        )
+        assertEquals(
+            listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("1-ENGLISH-name (q)", "1q")),
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, true, true, false, ENGLISH)
+        )
+        assertEquals(
+            listOf(MetadataResponse("1-ENGLISH-name", "1"), MetadataResponse("1-ENGLISH-name (h)", "1h")),
+            metadataResource.getMonsters(Difficulty.NORMAL, MonsterType.BOSS, true, false, true, ENGLISH)
         )
     }
 

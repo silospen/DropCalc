@@ -87,6 +87,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         @RequestParam("desecrated", required = true) desecrated: Boolean,
         @RequestParam("desecratedLevel", required = true) desecratedLevel: Int,
         @RequestParam("includeQuest", required = false) includeQuest: Boolean?,
+        @RequestParam("includeHerald", required = false) includeHerald: Boolean?,
         @RequestParam("language", required = false) language: String?,
     ): TabularApiResponse = versionedApiResources[version]?.getItemProbabilities(
         itemId,
@@ -99,6 +100,7 @@ class ApiResource(private val versionedApiResources: Map<Version, VersionedApiRe
         desecrated,
         desecratedLevel,
         includeQuest ?: true,
+        includeHerald ?: true,
         decimalMode,
         Language.forLangAttribute(language),
     ) ?: emptyApiResponse
@@ -305,6 +307,7 @@ class VersionedApiResource(
         desecrated: Boolean,
         desecratedLevel: Int,
         includeQuest: Boolean,
+        includeHerald: Boolean,
         decimalMode: Boolean,
         language: Language
     ): TabularApiResponse {
@@ -318,6 +321,7 @@ class VersionedApiResource(
             monsters.asSequence()
                 .filter { item.onlyDropsFromMonsterClass == null || it.monsterClass.id == item.onlyDropsFromMonsterClass }
                 .filter { includeQuest || it.treasureClassType != QUEST }
+                .filter { includeHerald || !it.isHerald }
                 .flatMap { monster ->
                     val treasureClassPaths: TreasureClassPaths = treasureClassPathsCache.getOrPut(
                         monster.treasureClass

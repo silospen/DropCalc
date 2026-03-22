@@ -3,7 +3,6 @@ package com.silospen.dropcalc.resource
 import com.silospen.dropcalc.*
 import com.silospen.dropcalc.Language.ENGLISH
 import com.silospen.dropcalc.items.ItemLibrary
-import com.silospen.dropcalc.monsters.Monster
 import com.silospen.dropcalc.monsters.MonsterLibrary
 import com.silospen.dropcalc.translations.Translations
 import com.silospen.dropcalc.treasureclasses.TreasureClassLibrary
@@ -26,12 +25,14 @@ class MetadataResource(private val versionedMetadataResources: Map<Version, Vers
         @RequestParam("monsterType", required = true) monsterType: MonsterType,
         @RequestParam("desecrated", required = true) desecrated: Boolean,
         @RequestParam("includeQuest", required = false) includeQuest: Boolean?,
+        @RequestParam("includeHerald", required = false) includeHerald: Boolean?,
         @RequestParam("language", required = false) language: String?,
     ) = versionedMetadataResources[version]?.getMonsters(
         difficulty,
         monsterType,
         desecrated,
         includeQuest ?: true,
+        includeHerald ?: true,
         Language.forLangAttribute(language)
     )
         ?: emptyList()
@@ -54,6 +55,7 @@ data class MonstersResponsesKey(
     val monsterType: MonsterType,
     val desecrated: Boolean,
     val includesQuest: Boolean,
+    val includesHerald: Boolean,
     val language: Language
 )
 
@@ -71,12 +73,14 @@ class VersionedMetadataResource(
     treasureClassLibrary: TreasureClassLibrary,
 ) {
     private val monstersResponses =
-        generateMonstersResponses(true) { true } +
-                generateMonstersResponses(false) { it.treasureClassType != TreasureClassType.QUEST }
+        generateMonstersResponses(true, true) +
+                generateMonstersResponses(true, false) +
+                generateMonstersResponses(false, true) +
+                generateMonstersResponses(false, false)
 
     private fun generateMonstersResponses(
         includesQuest: Boolean,
-        filter: (Monster) -> Boolean
+        includesHerald: Boolean
     ): Map<MonstersResponsesKey, List<MetadataResponse>> {
         return Difficulty.values().flatMap { difficulty ->
             MonsterType.values().flatMap { type ->
@@ -87,16 +91,19 @@ class VersionedMetadataResource(
                             type,
                             desecrated,
                             includesQuest,
+                            includesHerald,
                             language
                         ) to monsterLibrary.getMonsters(
                             desecrated,
                             0,
                             difficulty = difficulty,
                             monsterType = type
-                        ).filter(filter)
+                        ).asSequence()
+                            .filter { includesQuest || it.treasureClassType != TreasureClassType.QUEST }
+                            .filter { includesHerald || !it.isHerald }
                             .map { MetadataResponse(it.getDisplayName(translations, language), it.id) }
                             .toSet()
-                            .sortedWith(MetadataResponse.comparator(language))
+                            .sortedWith(MetadataResponse.comparator(language)).toList()
                     }
                 }
             }
@@ -146,10 +153,11 @@ class VersionedMetadataResource(
         monsterType: MonsterType,
         desecrated: Boolean,
         includeQuest: Boolean,
+        includeHerald: Boolean,
         language: Language,
     ): List<MetadataResponse> {
         return monstersResponses.getOrDefault(
-            MonstersResponsesKey(difficulty, monsterType, desecrated, includeQuest, language),
+            MonstersResponsesKey(difficulty, monsterType, desecrated, includeQuest, includeHerald, language),
             emptyList()
         )
     }
