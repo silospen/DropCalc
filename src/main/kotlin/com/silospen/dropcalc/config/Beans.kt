@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration
 class Beans {
 
     @Bean
-    fun configLoaders(): Map<Version, ConfigLoader> = Version.values().associateWith { ConfigLoader(it) }
+    fun configLoaders(): Map<Version, ConfigLoader> = Version.entries.associateWith { ConfigLoader(it) }
 
     @Bean
     fun getVersionedApiResources(configLoaders: Map<Version, ConfigLoader>): Map<Version, VersionedApiResource> =

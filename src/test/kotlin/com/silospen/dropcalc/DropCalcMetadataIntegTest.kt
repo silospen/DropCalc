@@ -1,13 +1,13 @@
 package com.silospen.dropcalc
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.silospen.dropcalc.resource.MetadataResource
 import com.silospen.dropcalc.resource.MetadataResponse
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.json.JsonMapper
 import java.io.File
 import java.util.concurrent.Callable
 
@@ -17,7 +17,7 @@ class DropCalcMetadataIntegTest {
     private lateinit var metadataResource: MetadataResource
 
     @Autowired
-    private lateinit var jacksonObjectMapper: ObjectMapper
+    private lateinit var jacksonObjectMapper: JsonMapper
 
     private val largeIntegTestRunner by lazy {
         LargeIntegTestRunner(jacksonObjectMapper)

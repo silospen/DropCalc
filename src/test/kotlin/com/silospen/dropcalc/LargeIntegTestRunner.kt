@@ -1,15 +1,16 @@
 package com.silospen.dropcalc
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.junit.jupiter.api.Assertions.assertEquals
+import tools.jackson.core.JsonGenerator
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.ObjectMapper
+import tools.jackson.databind.json.JsonMapper
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicLong
 
-class LargeIntegTestRunner(private val jacksonObjectMapper: ObjectMapper) {
+class LargeIntegTestRunner(private val jacksonObjectMapper: JsonMapper) {
 
     private val threadPool = Executors.newFixedThreadPool(8)
 
@@ -48,7 +49,7 @@ class TestDataExpectationWriter(private val jsonGenerator: JsonGenerator) : Auto
     }
 
     fun write(o: Any) {
-        jsonGenerator.writeObject(o)
+        jsonGenerator.writePOJO(o)
         jsonGenerator.writeRaw("\n")
     }
 

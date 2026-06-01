@@ -36,7 +36,7 @@ class ItemLibrary(
     fun getOrConstructVirtualTreasureClass(name: String): VirtualTreasureClass {
         val virtualTreasureClass = itemTreasureClassesByNameId[name]
         if (virtualTreasureClass != null) return virtualTreasureClass
-        val outcomes = (baseItemsById[name] ?: ItemQuality.values().firstNotNullOfOrNull { getItem(it, name) })
+        val outcomes = (baseItemsById[name] ?: ItemQuality.entries.firstNotNullOfOrNull { getItem(it, name) })
             ?.let { setOf(Outcome(it, 1)) } ?: emptySet()
         return VirtualTreasureClass(name, outcomes = outcomes)
     }

@@ -1,8 +1,5 @@
 package com.silospen.dropcalc
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import com.silospen.dropcalc.resource.ApiResource
 import com.silospen.dropcalc.resource.TabularApiResponse
@@ -12,13 +9,16 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.json.JsonMapper
 import java.io.File
+import java.nio.charset.StandardCharsets
 import java.util.concurrent.Callable
 
 @SpringBootTest
 class DropCalcLargeIntegTests {
     @Autowired
-    private lateinit var jacksonObjectMapper: ObjectMapper
+    private lateinit var jacksonObjectMapper: JsonMapper
 
     private val largeIntegTestRunner by lazy {
         LargeIntegTestRunner(jacksonObjectMapper)
@@ -172,14 +172,14 @@ class DropCalcLargeIntegTests {
 
     fun generateItemsTestDataInputs(counter: Counter): List<Callable<ItemsTestDataExpectation>> {
         val result = mutableListOf<Callable<ItemsTestDataExpectation>>()
-        for (version in Version.values()) {
+        for (version in Version.entries) {
             val itemLibrary = versionedMetadataResources.getValue(version).itemLibrary
-            for (monsterType in MonsterType.values()) {
-                for (apiItemQuality in ApiItemQuality.values()) {
+            for (monsterType in MonsterType.entries) {
+                for (apiItemQuality in ApiItemQuality.entries) {
                     for (itemId in itemLibrary.items.asSequence().filter { it.quality == apiItemQuality.itemQuality }
                         .filter { apiItemQuality.additionalFilter(it) }.map { it.id }
                         .distinct()) {
-                        for (difficulty in listOf<Difficulty?>(null) + Difficulty.values()) {
+                        for (difficulty in listOf<Difficulty?>(null) + Difficulty.entries) {
                             for (nPlayers in listOf(7)) {
                                 for (nGroup in listOf(5)) {
                                     for (magicFind in listOf(0, 975)) {
@@ -321,7 +321,7 @@ class DropCalcLargeIntegTests {
             .sortedWith(compareBy({ it.name }, { it.area }))
             .toList()
             .toString(),
-        Charsets.UTF_8
+        StandardCharsets.UTF_8
     ).toString()
 
     data class AtomicTcsTestDataExpectation(

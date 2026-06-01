@@ -234,15 +234,15 @@ enum class Language(val d2String: String, val locale: Locale) {
     ENGLISH("enUS", Locale.US),
     TAIWANESE("zhTW", Locale.TAIWAN),
     GERMAN("deDE", Locale.GERMAN),
-    SPANISH("esES", Locale("es", "ES")),
+    SPANISH("esES", Locale.of("es", "ES")),
     FRENCH("frFR", Locale.FRENCH),
     ITALIAN("itIT", Locale.ITALIAN),
     KOREAN("koKR", Locale.KOREAN),
-    POLISH("plPL", Locale("pl", "PL")),
-    MEXICAN("esMX", Locale("es", "MX")),
+    POLISH("plPL", Locale.of("pl", "PL")),
+    MEXICAN("esMX", Locale.of("es", "MX")),
     JAPANESE("jaJP", Locale.JAPANESE),
-    BRAZILIAN("ptBR", Locale("pt", "BR")),
-    RUSSIAN("ruRU", Locale("ru", "RU")),
+    BRAZILIAN("ptBR", Locale.of("pt", "BR")),
+    RUSSIAN("ruRU", Locale.of("ru", "RU")),
     CHINESE("zhCN", Locale.SIMPLIFIED_CHINESE),
     ;
 
@@ -252,15 +252,15 @@ enum class Language(val d2String: String, val locale: Locale) {
             Locale.US to ENGLISH,
             Locale.TAIWAN to TAIWANESE,
             Locale.GERMAN to GERMAN,
-            Locale("es", "ES") to SPANISH,
+            Locale.of("es", "ES") to SPANISH,
             Locale.FRENCH to FRENCH,
             Locale.ITALIAN to ITALIAN,
             Locale.KOREAN to KOREAN,
-            Locale("pl", "PL") to POLISH,
-            Locale("es", "MX") to MEXICAN,
+            Locale.of("pl", "PL") to POLISH,
+            Locale.of("es", "MX") to MEXICAN,
             Locale.JAPANESE to JAPANESE,
-            Locale("pt", "BR") to BRAZILIAN,
-            Locale("ru", "RU") to RUSSIAN,
+            Locale.of("pt", "BR") to BRAZILIAN,
+            Locale.of("ru", "RU") to RUSSIAN,
             Locale.SIMPLIFIED_CHINESE to CHINESE,
         )
 
@@ -278,7 +278,7 @@ enum class Language(val d2String: String, val locale: Locale) {
         )
 
         fun forD2String(fieldName: String): Language? {
-            return values().firstOrNull { it.d2String == fieldName }
+            return entries.firstOrNull { it.d2String == fieldName }
         }
 
         fun forLangAttribute(langAttribute: String?, default: Language = ENGLISH): Language {

@@ -16,7 +16,7 @@ import java.text.Collator
 @RestController
 class MetadataResource(private val versionedMetadataResources: Map<Version, VersionedMetadataResource>) {
 
-    val versionsResponses = Version.values().map { MetadataResponse(it.displayName, it.name) }
+    val versionsResponses = Version.entries.map { MetadataResponse(it.displayName, it.name) }
 
     @GetMapping("monsters")
     fun getMonsters(
@@ -82,8 +82,8 @@ class VersionedMetadataResource(
         includesQuest: Boolean,
         includesHerald: Boolean
     ): Map<MonstersResponsesKey, List<MetadataResponse>> {
-        return Difficulty.values().flatMap { difficulty ->
-            MonsterType.values().flatMap { type ->
+        return Difficulty.entries.flatMap { difficulty ->
+            MonsterType.entries.flatMap { type ->
                 listOf(true, false).flatMap { desecrated ->
                     getSupportedLanguages().map { language ->
                         MonstersResponsesKey(
@@ -121,11 +121,11 @@ class VersionedMetadataResource(
                 .map { it.nameId }
                 .toSet()
 
-        val items: Map<ApiItemQuality, List<Item>> = ApiItemQuality.values().associateWith { apiItemQuality ->
+        val items: Map<ApiItemQuality, List<Item>> = ApiItemQuality.entries.associateWith { apiItemQuality ->
             retrieveItems(virtualTreasureClassNames, apiItemQuality)
         }
-        return ApiItemQuality.values().flatMap { apiItemQuality ->
-            (arrayOf<ItemVersion?>(null) + ItemVersion.values()).flatMap { itemVersion ->
+        return ApiItemQuality.entries.flatMap { apiItemQuality ->
+            (arrayOf<ItemVersion?>(null) + ItemVersion.entries).flatMap { itemVersion ->
                 val itemList: List<Item> =
                     items.getValue(apiItemQuality)
                         .filter { if (itemVersion == null) true else it.baseItem.itemVersion == itemVersion }
@@ -141,7 +141,7 @@ class VersionedMetadataResource(
         }.toMap()
     }
 
-    private fun getSupportedLanguages() = (if (multilingual) Language.values() else arrayOf(ENGLISH))
+    private fun getSupportedLanguages(): List<Language> = (if (multilingual) Language.entries else listOf(ENGLISH))
 
     private fun retrieveItems(virtualTreasureClassNames: Set<String>, apiItemQuality: ApiItemQuality) =
         itemLibrary.items

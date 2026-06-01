@@ -1,8 +1,8 @@
 package com.silospen.dropcalc.translations
 
-import com.fasterxml.jackson.module.kotlin.jsonMapper
-import com.fasterxml.jackson.module.kotlin.kotlinModule
 import com.silospen.dropcalc.Language
+import tools.jackson.module.kotlin.jsonMapper
+import tools.jackson.module.kotlin.kotlinModule
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder.LITTLE_ENDIAN
@@ -35,15 +35,15 @@ class MapBasedTranslations(private val translationData: Map<Language, Map<String
         }
 
         fun loadTranslationsFromJsonFile(inputStream: InputStream): Translations {
-            val result = Language.values().associateByTo(mutableMapOf(), { it }) { mutableMapOf<String, String>() }
+            val result = Language.entries.associateByTo(mutableMapOf(), { it }) { mutableMapOf<String, String>() }
 
             mapper.readTree(inputStream).forEach { json ->
-                val key = json.get("Key").textValue()
-                for (fieldName in json.fieldNames()) {
+                val key = json.get("Key").stringValue()
+                for (fieldName in json.propertyNames()) {
                     val language = Language.forD2String(fieldName)
                     language?.let {
                         result.getValue(language)
-                            .put(key, json.get(fieldName).textValue().replace(Regex("^\\[[^]]+]"), ""))
+                            .put(key, json.get(fieldName).stringValue().replace(Regex("^\\[[^]]+]"), ""))
                     }
                 }
             }

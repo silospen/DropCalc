@@ -1,8 +1,5 @@
 package com.silospen.dropcalc
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import com.silospen.dropcalc.LegacyTabularApiResponse.Companion.fromTabularApiResponse
 import com.silospen.dropcalc.resource.ApiResource
@@ -13,13 +10,16 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import tools.jackson.core.type.TypeReference
+import tools.jackson.databind.json.JsonMapper
 import java.io.File
+import java.nio.charset.StandardCharsets.UTF_8
 import java.util.concurrent.Callable
 
 @SpringBootTest
 class DropCalcLargeDesecratedIntegTests {
     @Autowired
-    private lateinit var jacksonObjectMapper: ObjectMapper
+    private lateinit var jacksonObjectMapper: JsonMapper
 
     private val largeIntegTestRunner by lazy {
         LargeIntegTestRunner(jacksonObjectMapper)
@@ -308,7 +308,7 @@ class DropCalcLargeDesecratedIntegTests {
 
     private fun generateHash(apiResponse: TabularApiResponse): String {
         return Hashing.sha256()
-            .hashString(fromTabularApiResponse(apiResponse).toString().removePrefix("Legacy"), Charsets.UTF_8)
+            .hashString(fromTabularApiResponse(apiResponse).toString().removePrefix("Legacy"), UTF_8)
             .toString()
     }
 }
